@@ -9,7 +9,7 @@
       "value": "Standard_A1"
     },
     "numberOfNodes": {
-      "value": 1
+      "value": 3
     },
     "adminUsername": {
       "value": "stephgou"
