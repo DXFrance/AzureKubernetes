@@ -57,7 +57,7 @@
     "publicIPAddressType": "Dynamic",
     "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
     "subnet1Ref": "[concat(variables('vnetID'),'/subnets/',variables('subnet1Name'))]",
-    "vmNamePrefix": "coreos",
+    "vmNamePrefix": "etcd",
     "imageSku": "Stable",
     "vmStorageAccountContainerName": "vhds",
     "storageAccountType": "Standard_LRS",
