@@ -25,15 +25,15 @@
   <Import Condition=" Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Deployment\1.1\DeploymentProject.targets') " Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Deployment\1.1\DeploymentProject.targets" />
   <!-- vertag<:>end -->
   <ItemGroup>
-    <Folder Include="Scripts\" />
     <Folder Include="Tools\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Scripts\Deploy-VM-ScaleSet-Cluster.ps1" />
     <Content Include="Templates\VM-Cluster\azuredeploy.json" />
     <None Include="Deployment.targets">
       <Visible>False</Visible>
     </None>
-    <Content Include="Scripts\Deploy-AzureResourceGroup.ps1" />
+    <Content Include="Scripts\Deploy-VM-Cluster.ps1" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Templates\VM-Cluster\azuredeploy.parameters.json" />
