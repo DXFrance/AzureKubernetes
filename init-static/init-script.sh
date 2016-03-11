@@ -34,8 +34,6 @@ kub_node=3
 
 gen_tpl_etcd
 
-exit 0
-
 #  Create resource group
 azure group create ${prefix} northeurope
 
