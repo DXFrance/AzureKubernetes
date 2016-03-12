@@ -83,7 +83,6 @@ kube_node=3
 gen_tpl_etcd
 gen_tpl_kube
 
-exit 0
 
 #  Create resource group
 azure group create ${prefix} ${location}
