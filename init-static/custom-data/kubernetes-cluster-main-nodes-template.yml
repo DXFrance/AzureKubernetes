@@ -4,12 +4,12 @@ write_files:
     permissions: '0755'
     owner: root
     content: |
-      172.16.0.6  zwkubernetes-etcd02
-      172.16.0.5  zwkubernetes-etcd01
-      172.16.0.4  zwkubernetes-etcd00
-      172.16.0.9  zwkubernetes-kube02
-      172.16.0.8  zwkubernetes-kube01
-      172.16.0.7  zwkubernetes-kube00
+      172.16.0.6  zzkubernetes-etcd02
+      172.16.0.5  zzkubernetes-etcd01
+      172.16.0.4  zzkubernetes-etcd00
+      172.16.0.9  zzkubernetes-kube02
+      172.16.0.8  zzkubernetes-kube01
+      172.16.0.7  zzkubernetes-kube00
   - path: /opt/bin/curl-retry.sh
     permissions: '0755'
     owner: root
@@ -24,7 +24,7 @@ write_files:
     permissions: '0600'
     content: >
       WEAVE_PASSWORD=aa28e88e522463246cc79cdae6705cdd92e41f75d2db781104f23209293d5757
-      WEAVE_PEERS=zwkubernetes-kube00
+      WEAVE_PEERS=zzkubernetes-kube00
       BREAKOUT_ROUTE=10.2.0.0/16
       BRIDGE_ADDRESS_CIDR=10.2.0.1/24
     
@@ -33,7 +33,7 @@ write_files:
     permissions: '0600'
     content: >
       WEAVE_PASSWORD=aa28e88e522463246cc79cdae6705cdd92e41f75d2db781104f23209293d5757
-      WEAVE_PEERS=zwkubernetes-kube00
+      WEAVE_PEERS=zzkubernetes-kube00
       BREAKOUT_ROUTE=10.2.0.0/16
       BRIDGE_ADDRESS_CIDR=10.2.1.1/24
     
@@ -42,14 +42,13 @@ write_files:
     permissions: '0600'
     content: >
       WEAVE_PASSWORD=aa28e88e522463246cc79cdae6705cdd92e41f75d2db781104f23209293d5757
-      WEAVE_PEERS=zwkubernetes-kube00
+      WEAVE_PEERS=zzkubernetes-kube00
       BREAKOUT_ROUTE=10.2.0.0/16
       BRIDGE_ADDRESS_CIDR=10.2.2.1/24
     
   - path: /etc/kubernetes/addons/skydns-rc.yaml
     owner: root
     permissions: '0640'
-    encoding: base64
     content: |
       apiVersion: v1
       kind: ReplicationController
@@ -150,6 +149,134 @@ write_files:
             - name: etcd-storage
               emptyDir: {}
             dnsPolicy: Default  # Don't use cluster DNS.
+  - path: /etc/kubernetes/addons/skydns-rc.yaml
+    owner: root
+    permissions: '0640'
+    content: |
+      apiVersion: v1
+      kind: ReplicationController
+      metadata:
+        name: kube-dns-v9
+        namespace: kube-system
+        labels:
+          k8s-app: kube-dns
+          version: v9
+          kubernetes.io/cluster-service: true
+      spec:
+        replicas: 3
+        selector:
+          k8s-app: kube-dns
+          version: v9
+        template:
+          metadata:
+            labels:
+              k8s-app: kube-dns
+              version: v9
+              kubernetes.io/cluster-service: true
+          spec:
+            containers:
+            - name: etcd
+              image: gcr.io/google_containers/etcd:2.0.9
+              resources:
+                limits:
+                  cpu: 100m
+                  memory: 50Mi
+              command:
+              - /usr/local/bin/etcd
+              - -data-dir
+              - /var/etcd/data
+              - -listen-client-urls
+              - http://127.0.0.1:2379,http://127.0.0.1:4001
+              - -advertise-client-urls
+              - http://127.0.0.1:2379,http://127.0.0.1:4001
+              - -initial-cluster-token
+              - skydns-etcd
+              volumeMounts:
+              - name: etcd-storage
+                mountPath: /var/etcd/data
+            - name: kube2sky
+              image: gcr.io/google_containers/kube2sky:1.11
+              resources:
+                limits:
+                  cpu: 100m
+                  memory: 50Mi
+              args:
+              # command = /kube2sky
+              - -domain=kube.local
+              - -kube_master_url=http://zzkubernetes-kube00:8080
+            - name: skydns
+              image: gcr.io/google_containers/skydns:2015-03-11-001
+              resources:
+                limits:
+                  cpu: 100m
+                  memory: 50Mi
+              args:
+              # command = /skydns
+              - -machines=http://localhost:4001
+              - -addr=0.0.0.0:53
+              - -domain=kube.local
+              ports:
+              - containerPort: 53
+                name: dns
+                protocol: UDP
+              - containerPort: 53
+                name: dns-tcp
+                protocol: TCP
+              livenessProbe:
+                httpGet:
+                  path: /healthz
+                  port: 8080
+                  scheme: HTTP
+                initialDelaySeconds: 30
+                timeoutSeconds: 5
+              readinessProbe:
+                httpGet:
+                  path: /healthz
+                  port: 8080
+                  scheme: HTTP
+                initialDelaySeconds: 1
+                timeoutSeconds: 5
+            - name: healthz
+              image: gcr.io/google_containers/exechealthz:1.0
+              resources:
+                limits:
+                  cpu: 10m
+                  memory: 20Mi
+              args:
+              - -cmd=nslookup kubernetes.default.svc.kube.local localhost >/dev/null
+              - -port=8080
+              ports:
+              - containerPort: 8080
+                protocol: TCP
+            volumes:
+            - name: etcd-storage
+              emptyDir: {}
+            dnsPolicy: Default  # Don't use cluster DNS.
+  - path: /etc/kubernetes/addons/skydns-svc.yaml
+    owner: root
+    permissions: '0640'
+    encoding: base64
+    content: |
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: kube-dns
+        namespace: kube-system
+        labels:
+          k8s-app: kube-dns
+          kubernetes.io/cluster-service: true
+          kubernetes.io/name: KubeDNS
+      spec:
+        selector:
+          k8s-app: kube-dns
+        clusterIP: 10.16.0.3
+        ports:
+        - name: dns
+          port: 53
+          protocol: UDP
+        - name: dns-tcp
+          port: 53
+          protocol: TCP
   - path: /etc/kubernetes/addons/skydns-svc.yaml
     owner: root
     permissions: '0640'
@@ -211,7 +338,7 @@ coreos:
         RefuseManualStart=no
         After=weave-network.target
         Requires=weave-network.target
-        ConditionHost=zwkubernetes-kube00
+        ConditionHost=zzkubernetes-kube00
         Wants=kube-apiserver.service
         Wants=kube-scheduler.service
         Wants=kube-controller-manager.service
@@ -229,7 +356,7 @@ coreos:
         RefuseManualStart=no
         After=weave-network.target
         Requires=weave-network.target
-        ConditionHost=!zwkubernetes-kube00
+        ConditionHost=!zzkubernetes-kube00
         Wants=kube-proxy.service
         Wants=kubelet.service
         [Install]
@@ -371,7 +498,7 @@ coreos:
         Description=Kubernetes API Server
         Documentation=http://kubernetes.io/
         Wants=install-kubernetes.service
-        ConditionHost=zwkubernetes-kube00
+        ConditionHost=zzkubernetes-kube00
         [Service]
         ExecStart=/opt/kubernetes/server/bin/kube-apiserver             --insecure-bind-address=0.0.0.0             --advertise-address=$public_ipv4             --port=8080             $ETCD_SERVERS             --service-cluster-ip-range=10.16.0.0/12             --cloud-provider=vagrant             --logtostderr=true
         Restart=always
@@ -389,7 +516,7 @@ coreos:
         Description=Kubernetes Scheduler
         Documentation=http://kubernetes.io/
         Wants=kube-apiserver.service
-        ConditionHost=zwkubernetes-kube00
+        ConditionHost=zzkubernetes-kube00
         [Service]
         ExecStart=/opt/kubernetes/server/bin/kube-scheduler             --logtostderr=true             --master=127.0.0.1:8080
         Restart=always
@@ -408,7 +535,7 @@ coreos:
         Documentation=http://kubernetes.io/
         Wants=kube-apiserver.service
         Wants=install-kubernetes.service
-        ConditionHost=zwkubernetes-kube00
+        ConditionHost=zzkubernetes-kube00
         [Service]
         ExecStart=/opt/kubernetes/server/bin/kube-controller-manager             --master=127.0.0.1:8080             --logtostderr=true
         Restart=always
@@ -425,10 +552,10 @@ coreos:
         Description=Kubernetes Kubelet
         Documentation=http://kubernetes.io/
         Wants=install-kubernetes.service
-        ConditionHost=!zwkubernetes-kube00
+        ConditionHost=!zzkubernetes-kube00
         [Service]
         ExecStartPre=/bin/mkdir -p /etc/kubernetes/manifests/
-        ExecStart=/opt/kubernetes/server/bin/kubelet             --docker-endpoint=unix:/var/run/weave/weave.sock             --address=0.0.0.0             --port=10250             --hostname-override=%H             --api-servers=http://zwkubernetes-kube00:8080             --logtostderr=true             --cluster-dns=10.16.0.3             --cluster-domain=kube.local             --config=/etc/kubernetes/manifests/
+        ExecStart=/opt/kubernetes/server/bin/kubelet             --docker-endpoint=unix:/var/run/weave/weave.sock             --address=0.0.0.0             --port=10250             --hostname-override=%H             --api-servers=http://zzkubernetes-kube00:8080             --logtostderr=true             --cluster-dns=10.16.0.3             --cluster-domain=kube.local             --config=/etc/kubernetes/manifests/
         Restart=always
         RestartSec=10
         [Install]
@@ -444,7 +571,7 @@ coreos:
         Documentation=http://kubernetes.io/
         Wants=install-kubernetes.service
         [Service]
-        ExecStart=/opt/kubernetes/server/bin/kube-proxy              --master=http://zwkubernetes-kube00:8080              --logtostderr=true
+        ExecStart=/opt/kubernetes/server/bin/kube-proxy              --master=http://zzkubernetes-kube00:8080              --logtostderr=true
         Restart=always
         RestartSec=10
         [Install]
@@ -458,7 +585,7 @@ coreos:
         After=install-kubernetes.service
         ConditionFileIsExecutable=/opt/kubernetes/server/bin/kubectl
         ConditionPathIsDirectory=/etc/kubernetes/addons/
-        ConditionHost=zwkubernetes-kube00
+        ConditionHost=zzkubernetes-kube00
         Description=Kubernetes Addons
         Documentation=http://kubernetes.io/
         Wants=install-kubernetes.service
@@ -477,4 +604,4 @@ coreos:
           content: >
             [Service]
 
-            Environment=ETCD_INITIAL_CLUSTER=zwkubernetes-kube00=http://zwkubernetes-kube00:4001,zwkubernetes-kube01=http://zwkubernetes-kube01:4001,zwkubernetes-kube02=http://zwkubernetes-kube02:4001
+            Environment=ETCD_INITIAL_CLUSTER=zzkubernetes-kube00=http://zzkubernetes-kube00:4001,zzkubernetes-kube01=http://zzkubernetes-kube01:4001,zzkubernetes-kube02=http://zzkubernetes-kube02:4001

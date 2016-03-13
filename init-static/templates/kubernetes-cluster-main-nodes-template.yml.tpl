@@ -15,7 +15,6 @@ ${Etc_Host}
       done
 
 ${Wave_Env}
-
 coreos:
   update:
     group: stable

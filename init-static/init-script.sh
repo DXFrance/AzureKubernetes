@@ -81,6 +81,8 @@ function gen_tpl_kube()
    else
     WEAVE_PEERS="${prefix}-kube00"
    fi
+   Current_Host="${prefix}-kube0${j}"
+   
    render_template "${tpl_wave}" >> "${tmp_wave}"
    str="$str${prefix}-kube0${j}=http://${prefix}-kube0${j}:4001,"
   done
