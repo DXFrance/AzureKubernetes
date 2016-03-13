@@ -1,7 +1,6 @@
 ﻿Param(  
-
-    #Paramètres du Azure Ressource Group
-    $resourceGroupName = "stephgou-Kubernetes-VM-Cluster"
+    $subscriptionId = "fb79eb46-411c-4097-86ba-801dca0ff5d5",
+    $resourceGroupName = "az-Kubernetes-VM-Cluster"
     )
 
 #region init
@@ -19,7 +18,7 @@ set-location $scriptFolder
 
 #Login-AzureRmAccount -SubscriptionId $subscriptionId
 
-# Resource group create
+# Resource groupe create
 Remove-AzureRmResourceGroup -Name $resourceGroupName
 
 $d = get-date

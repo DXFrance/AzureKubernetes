@@ -37,6 +37,8 @@
     <Content Include="Scripts\Deploy-VM-Cluster.ps1" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Scripts\Deploy-VM-Cluster-PowerShell.ps1" />
+    <None Include="Scripts\Undeploy-VM-Cluster-PowerShell.ps1" />
     <None Include="Templates\VM-Cluster\azuredeploy.parameters.json" />
     <None Include="Tools\AzCopy.exe" />
     <None Include="Tools\Microsoft.Data.Edm.dll">

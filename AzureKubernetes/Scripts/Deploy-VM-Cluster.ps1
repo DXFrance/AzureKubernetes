@@ -3,8 +3,8 @@
     $subscriptionName = "stephgou - External",
     $subscriptionId = "fb79eb46-411c-4097-86ba-801dca0ff5d5",
     #Paramètres du Azure Ressource Group
-    $resourceGroupeName = "stephgou-Kubernetes-VM-Cluster",
-    $resourceGroupeDeploymentName = "stephgou-Kubernetes-VM-Cluster-Deployed",
+    $resourceGroupName = "stephgou-Kubernetes-VM-Cluster",
+    $resourceGroupDeploymentName = "stephgou-Kubernetes-VM-Cluster-Deployed",
     $resourceLocation = "West Europe",
     $templateFile = "azuredeploy.json",
     $templateParameterFile = "azuredeploy.parameters.json",
@@ -28,17 +28,17 @@ set-location $scriptFolder
 
 #Login-AzureRmAccount -SubscriptionId $subscriptionId
 
-# Resource groupe create
+# Resource group create
 New-AzureRmResourceGroup `
-	-Name $resourceGroupeName `
+	-Name $resourceGroupName `
 	-Location $resourceLocation `
     -Tag @{Name=$tagName;Value=$tagValue} `
     -Verbose
 
 # Resource group deploy
 New-AzureRmResourceGroupDeployment `
-    -Name $resourceGroupeDeploymentName `
-	-ResourceGroupName $resourceGroupeName `
+    -Name $resourceGroupDeploymentName `
+	-ResourceGroupName $resourceGroupName `
 	-TemplateFile "$scriptFolder\$templatefolder\$templateFile" `
 	-TemplateParameterFile "$scriptFolder\$templatefolder\$templateParameterFile" `
     -Verbose `
