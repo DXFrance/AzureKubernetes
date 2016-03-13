@@ -1,5 +1,26 @@
 #!/bin/bash
 
+
+# Variables
+
+prefix="zzkubernetes"
+sub="fb79eb46-411c-4097-86ba-801dca0ff5d5"
+ssh_pub="/Users/hleclerc/.ssh/id_rsa.pub"
+location="northeurope"
+user="devops"
+password="VeL0c1RaPt0R#"
+tpl_etcd="templates/kubernetes-cluster-etcd-nodes.yml.tpl"
+cust_etcd="custom-data/kubernetes-cluster-etcd-nodes.yml"
+tpl_kube="templates/kubernetes-cluster-main-nodes-template.yml.tpl"
+cust_kube="custom-data/kubernetes-cluster-main-nodes-template.yml"
+tpl_wave="templates/weave-env.yml.tpl"
+tmp_wave="/tmp/weave-env.yml"
+
+tpl_sky_rc="templates/addons/skydns-rc.yaml.tpl"
+tpl_sky_svc="templates/addons/skydns-svc.yaml.tpl"
+tmp_sky_rc="/tmp/sky-rc.yml"
+tmp_sky_svc="/tmp/sky-svc.yml"
+
 function dummy()
 {
   echo "$*" > /dev/null
@@ -239,26 +260,12 @@ function create_vm()
   done
 }
 
-# Variables
-prefix="zwkubernetes"
-sub="fb79eb46-411c-4097-86ba-801dca0ff5d5"
-ssh_pub="/Users/hleclerc/.ssh/id_rsa.pub"
-location="northeurope"
-user="devops"
-password="VeL0c1RaPt0R#"
-tpl_etcd="templates/kubernetes-cluster-etcd-nodes.yml.tpl"
-cust_etcd="custom-data/kubernetes-cluster-etcd-nodes.yml"
-tpl_kube="templates/kubernetes-cluster-main-nodes-template.yml.tpl"
-cust_kube="custom-data/kubernetes-cluster-main-nodes-template.yml"
-tpl_wave="templates/weave-env.yml.tpl"
-tmp_wave="/tmp/weave-env.yml"
+function clean_files()
+{
+  rm -rf "${tmp_wave}" "${tmp_sky_rc}" "${tmp_sky_svc}"
+}
 
-tpl_sky_rc="templates/addons/skydns-rc.yaml.tpl"
-tpl_sky_svc="templates/addons/skydns-svc.yaml.tpl"
-tmp_sky_rc="/tmp/sky-rc.yml"
-tmp_sky_svc="/tmp/sky-svc.yml"
 
-rm -rf "${tmp_wave}" "${tmp_sky_rc}" "${tmp_sky_svc}"
 
 # Number of nodes
 etcd_node=3
@@ -274,9 +281,10 @@ dummy "${ConditionHost}" "${BREAKOUT_ROUTE}" "${BRIDGE_ADDRESS_CIDR}" "${WEAVE_P
 
 ### IT BEGINS HERE !
 # Generate custom data from template
+
 gen_tpl_etcd
 gen_tpl_kube
-
+clean_files
 create_resource_group
 create_avail_set
 create_vnet
