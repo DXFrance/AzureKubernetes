@@ -266,7 +266,5 @@ create_inbound_nat_rules
 create_nics
 create_vm
 
-
-
 #azure vm extension set zwkubernetes zwkubernetes-etcd00  CustomScriptForLinux Microsoft.OSTCExtensions 1.4
 
