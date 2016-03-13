@@ -1,5 +1,10 @@
 #!/bin/bash
 
+function dummy()
+{
+  echo "$*" > /dev/null
+}
+
 # Pocess Template
 render_template() {
   eval "echo \"$(cat "$1")\""
@@ -63,20 +68,20 @@ function gen_tpl_kube()
 #  Create resource group
 function create_resource_group()
 {
-  azure group create ${prefix} ${location}
+  azure group create "${prefix}" "${location}"
 }
 
 # Cretae availset 
 function create_avail_set()
 {
-  azure availset create ${prefix} ${prefix}-av-etcd ${location}
-  azure availset create ${prefix} ${prefix}-av-kube ${location}
+  azure availset create "${prefix}" "${prefix}-av-etcd" "${location}"
+  azure availset create "${prefix}" "${prefix}-av-kube" "${location}"
 }
 
 # create vnet
 function create_vnet()
 {
-  azure network vnet create ${prefix} -n ${prefix}-vnet -l ${location} -a "172.16.0.0/12" -d "8.8.8.8"
+  azure network vnet create "${prefix}" -n "${prefix}-vnet" -l "${location}" -a "172.16.0.0/12" -d "8.8.8.8"
 }
 
 # create subnet
@@ -88,31 +93,31 @@ function create_subnet()
 # create Public IP  etcd / kube
 function create_public_ip()
 {
-  azure network public-ip create "${prefix}" "${prefix}"-pip-etcd ${location} -a Dynamic -d "${prefix}"-etcd
-  azure network public-ip create "${prefix}" "${prefix}"-pip-kube ${location} -a Dynamic -d "${prefix}"-kube
+  azure network public-ip create "${prefix}" "${prefix}-pip-etcd" "${location}" -a Dynamic -d "${prefix}-etcd"
+  azure network public-ip create "${prefix}" "${prefix}-pip-kube" "${location}" -a Dynamic -d "${prefix}-kube"
 }
 
 # Create Load balancer for etcd /kube
 function create_lb()
 {
-  azure network lb create "${prefix}" "${prefix}"-lb-etcd ${location}
-  azure network lb create "${prefix}" "${prefix}"-lb-kube ${location}
+  azure network lb create "${prefix}" "${prefix}-lb-etcd" "${location}"
+  azure network lb create "${prefix}" "${prefix}-lb-kube" "${location}"
 }
 
 # create front-ip etcd / kubernetes
 function create_front_ip()
 {
   azure network lb frontend-ip create \
-      "${prefix}" "${prefix}"-lb-etcd "${prefix}"-fip-etcd  --public-ip-name "${prefix}"-pip-etcd
+      "${prefix}" "${prefix}-lb-etcd" "${prefix}-fip-etcd"  --public-ip-name "${prefix}-pip-etcd"
 
   azure network lb frontend-ip create \
-      "${prefix}" "${prefix}"-lb-kube "${prefix}"-fip-kube  --public-ip-name "${prefix}"-pip-kube
+      "${prefix}" "${prefix}-lb-kube" "${prefix}-fip-kube"  --public-ip-name "${prefix}-pip-kube"
 }
 function create_bk_pool()
 {
   # Create backend pool for etcd /kube
-  azure network lb address-pool create "${prefix}" "${prefix}"-lb-etcd "${prefix}"-bp-etcd
-  azure network lb address-pool create "${prefix}" "${prefix}"-lb-kube "${prefix}"-bp-kube
+  azure network lb address-pool create "${prefix}" "${prefix}-lb-etcd" "${prefix}-bp-etcd"
+  azure network lb address-pool create "${prefix}" "${prefix}-lb-kube" "${prefix}-bp-kube"
 }
 
   # inbound nat for etcd  / ssh
@@ -147,7 +152,7 @@ function create_nics()
       --subnet-vnet-name "${prefix}-vnet" \
       -d "/subscriptions/${sub}/resourceGroups/${prefix}/providers/Microsoft.Network/loadbalancers/${prefix}-lb-etcd/backendAddressPools/${prefix}-bp-etcd" \
       -e "/subscriptions/${sub}/resourceGroups/${prefix}/providers/Microsoft.Network/loadBalancers/${prefix}-lb-etcd/inboundNatRules/ssh-etcd${i}" \
-     ${location}
+      "${location}"
   done 
 
   # create kube  nics
@@ -160,7 +165,7 @@ function create_nics()
       --subnet-vnet-name "${prefix}-vnet" \
       -d "/subscriptions/${sub}/resourceGroups/${prefix}/providers/Microsoft.Network/loadbalancers/${prefix}-lb-kube/backendAddressPools/${prefix}-bp-kube" \
       -e "/subscriptions/${sub}/resourceGroups/${prefix}/providers/Microsoft.Network/loadBalancers/${prefix}-lb-kube/inboundNatRules/ssh-kube${i}" \
-     ${location}
+      "${location}"
   done 
 }
 
@@ -168,7 +173,7 @@ function create_vm()
 {
   j=0
   # create etcd VM
-  for i in $(seq 1 $etcd_node)
+  for i in $(seq 1 "${etcd_node}")
   do
   let j=$i-1     
   azure vm create \
@@ -191,7 +196,7 @@ function create_vm()
 
   j=0
   # create kube VM
-  for i in $(seq 1 $kube_node)
+  for i in $(seq 1 "${kube_node}")
   do
   let j=$i-1     
   azure vm create \
@@ -236,6 +241,13 @@ tmp_sky_svc="/tmp/sky-svc.yml"
 etcd_node=3
 kube_node=3
 
+# just to avoid shellcheck warning
+ConditionHost=""
+BREAKOUT_ROUTE=""
+BRIDGE_ADDRESS_CIDR=""
+WEAVE_PEERS=""
+dummy "${ConditionHost}" "${BREAKOUT_ROUTE}" "${BRIDGE_ADDRESS_CIDR}" "${WEAVE_PEERS}"
+
 
 ### IT BEGINS HERE !
 # Generate custom data from template
@@ -253,9 +265,6 @@ create_bk_pool
 create_inbound_nat_rules
 create_nics
 create_vm
-
-
-
 
 
 
