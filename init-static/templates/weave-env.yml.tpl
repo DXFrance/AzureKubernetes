@@ -1,4 +1,4 @@
-  - path: /etc/weave."${Current_Host}.env
+  - path: /etc/weave."${Current_Host}".env
     owner: root
     permissions: '0600'
     content: >
