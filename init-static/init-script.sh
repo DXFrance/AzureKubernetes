@@ -3,7 +3,7 @@
 
 # Variables
 
-prefix="hkubernetes"
+prefix="mxkubernetes"
 sub="fb79eb46-411c-4097-86ba-801dca0ff5d5"
 ssh_pub="/Users/hleclerc/.ssh/id_rsa.pub"
 location="northeurope"
@@ -69,6 +69,7 @@ function gen_tpl_kube()
   cp /dev/null "${tmp_wave}"
   j=0
   str="Environment=ETCD_INITIAL_CLUSTER="
+  
   for i in $(seq 1 "${kube_node}")
   do
    let j=$i-1
@@ -81,10 +82,10 @@ function gen_tpl_kube()
    else
     WEAVE_PEERS="${prefix}-kube00"
    fi
-   Current_Host="${prefix}-kube0${j}"
 
+   Current_Host="${prefix}-kube0${j}"
    render_template "${tpl_wave}" >> "${tmp_wave}"
-   str="$str${prefix}-kube0${j}=http://${prefix}-kube0${j}:4001,"
+  
   done
 
   j=0
@@ -93,6 +94,7 @@ function gen_tpl_kube()
    let j=$i-1
    let ip=$i+3
    Etc_Host=$(printf "      %s  %s\n%s" "172.16.0.${ip}"  "${prefix}-etcd0${j}" "$Etc_Host")
+   str="$str${prefix}-etcd0${j}=http://${prefix}-etcd0${j}:4001,"
   done
 
   Environment="${str::-1}"
@@ -106,6 +108,7 @@ function gen_tpl_kube()
   Wave_Env=$(cat "${tmp_wave}")
 
   export Wave_Env
+  export Environment
   render_template "${tpl_kube}" > "${cust_kube}"
 }
 
