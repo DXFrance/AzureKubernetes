@@ -4,12 +4,12 @@ write_files:
     permissions: '0755'
     owner: root
     content: |
-      172.16.0.9  hlkubernetes-kube02
-      172.16.0.8  hlkubernetes-kube01
-      172.16.0.7  hlkubernetes-kube00
-      172.16.0.6  hlkubernetes-etcd02
-      172.16.0.5  hlkubernetes-etcd01
-      172.16.0.4  hlkubernetes-etcd00
+      172.16.0.9  hkubernetes-kube02
+      172.16.0.8  hkubernetes-kube01
+      172.16.0.7  hkubernetes-kube00
+      172.16.0.6  hkubernetes-etcd02
+      172.16.0.5  hkubernetes-etcd01
+      172.16.0.4  hkubernetes-etcd00
  
 coreos:
   units:
@@ -22,7 +22,7 @@ coreos:
           content: >
             [Service]
 
-            Environment=ETCD_INITIAL_CLUSTER=hlkubernetes-etcd00=http://hlkubernetes-etcd00:2380,hlkubernetes-etcd01=http://hlkubernetes-etcd01:2380,hlkubernetes-etcd02=http://hlkubernetes-etcd02:2380
+            Environment=ETCD_INITIAL_CLUSTER=hkubernetes-etcd00=http://hkubernetes-etcd00:2380,hkubernetes-etcd01=http://hkubernetes-etcd01:2380,hkubernetes-etcd02=http://hkubernetes-etcd02:2380
   etcd2:
     name: '%H'
     initial-cluster-token: etcd-cluster

@@ -10,7 +10,7 @@ ${Etc_Host}
     owner: root
     content: |
       #!/bin/sh -x
-      until curl $@
+      until curl \$@
       do sleep 1
       done
 

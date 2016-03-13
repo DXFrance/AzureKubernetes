@@ -4,12 +4,12 @@ write_files:
     permissions: '0755'
     owner: root
     content: |
-      172.16.0.6  hlkubernetes-etcd02
-      172.16.0.5  hlkubernetes-etcd01
-      172.16.0.4  hlkubernetes-etcd00
-      172.16.0.9  hlkubernetes-kube02
-      172.16.0.8  hlkubernetes-kube01
-      172.16.0.7  hlkubernetes-kube00
+      172.16.0.6  hkubernetes-etcd02
+      172.16.0.5  hkubernetes-etcd01
+      172.16.0.4  hkubernetes-etcd00
+      172.16.0.9  hkubernetes-kube02
+      172.16.0.8  hkubernetes-kube01
+      172.16.0.7  hkubernetes-kube00
   - path: /opt/bin/curl-retry.sh
     permissions: '0755'
     owner: root
@@ -19,37 +19,36 @@ write_files:
       do sleep 1
       done
 
-  - path: /etc/weave.hlkubernetes-kube00.env
+  - path: /etc/weave.hkubernetes-kube00.env
     owner: root
     permissions: '0600'
     content: >
       WEAVE_PASSWORD=aa28e88e522463246cc79cdae6705cdd92e41f75d2db781104f23209293d5757
-      WEAVE_PEERS=hlkubernetes-kube00
+      WEAVE_PEERS=hkubernetes-kube00
       BREAKOUT_ROUTE=10.2.0.0/16
       BRIDGE_ADDRESS_CIDR=10.2.0.1/24
     
-  - path: /etc/weave.hlkubernetes-kube01.env
+  - path: /etc/weave.hkubernetes-kube01.env
     owner: root
     permissions: '0600'
     content: >
       WEAVE_PASSWORD=aa28e88e522463246cc79cdae6705cdd92e41f75d2db781104f23209293d5757
-      WEAVE_PEERS=hlkubernetes-kube00
+      WEAVE_PEERS=hkubernetes-kube00
       BREAKOUT_ROUTE=10.2.0.0/16
       BRIDGE_ADDRESS_CIDR=10.2.1.1/24
     
-  - path: /etc/weave.hlkubernetes-kube02.env
+  - path: /etc/weave.hkubernetes-kube02.env
     owner: root
     permissions: '0600'
     content: >
       WEAVE_PASSWORD=aa28e88e522463246cc79cdae6705cdd92e41f75d2db781104f23209293d5757
-      WEAVE_PEERS=hlkubernetes-kube00
+      WEAVE_PEERS=hkubernetes-kube00
       BREAKOUT_ROUTE=10.2.0.0/16
       BRIDGE_ADDRESS_CIDR=10.2.2.1/24
     
   - path: /etc/kubernetes/addons/skydns-rc.yaml
     owner: root
     permissions: '0640'
-    encoding: base64
     content: |
       apiVersion: v1
       kind: ReplicationController
@@ -101,7 +100,7 @@ write_files:
               args:
               # command = /kube2sky
               - -domain=kube.local
-              - -kube_master_url=http://hlkubernetes-kube00:8080
+              - -kube_master_url=http://hkubernetes-kube00:8080
             - name: skydns
               image: gcr.io/google_containers/skydns:2015-03-11-001
               resources:
@@ -153,7 +152,6 @@ write_files:
   - path: /etc/kubernetes/addons/skydns-svc.yaml
     owner: root
     permissions: '0640'
-    encoding: base64
     content: |
       apiVersion: v1
       kind: Service
@@ -210,7 +208,7 @@ coreos:
         RefuseManualStart=no
         After=weave-network.target
         Requires=weave-network.target
-        ConditionHost=hlkubernetes-kube00
+        ConditionHost=hkubernetes-kube00
         Wants=kube-apiserver.service
         Wants=kube-scheduler.service
         Wants=kube-controller-manager.service
@@ -228,7 +226,7 @@ coreos:
         RefuseManualStart=no
         After=weave-network.target
         Requires=weave-network.target
-        ConditionHost=!hlkubernetes-kube00
+        ConditionHost=!hkubernetes-kube00
         Wants=kube-proxy.service
         Wants=kubelet.service
         [Install]
@@ -370,7 +368,7 @@ coreos:
         Description=Kubernetes API Server
         Documentation=http://kubernetes.io/
         Wants=install-kubernetes.service
-        ConditionHost=hlkubernetes-kube00
+        ConditionHost=hkubernetes-kube00
         [Service]
         ExecStart=/opt/kubernetes/server/bin/kube-apiserver             --insecure-bind-address=0.0.0.0             --advertise-address=$public_ipv4             --port=8080             $ETCD_SERVERS             --service-cluster-ip-range=10.16.0.0/12             --cloud-provider=vagrant             --logtostderr=true
         Restart=always
@@ -388,7 +386,7 @@ coreos:
         Description=Kubernetes Scheduler
         Documentation=http://kubernetes.io/
         Wants=kube-apiserver.service
-        ConditionHost=hlkubernetes-kube00
+        ConditionHost=hkubernetes-kube00
         [Service]
         ExecStart=/opt/kubernetes/server/bin/kube-scheduler             --logtostderr=true             --master=127.0.0.1:8080
         Restart=always
@@ -407,7 +405,7 @@ coreos:
         Documentation=http://kubernetes.io/
         Wants=kube-apiserver.service
         Wants=install-kubernetes.service
-        ConditionHost=hlkubernetes-kube00
+        ConditionHost=hkubernetes-kube00
         [Service]
         ExecStart=/opt/kubernetes/server/bin/kube-controller-manager             --master=127.0.0.1:8080             --logtostderr=true
         Restart=always
@@ -424,10 +422,10 @@ coreos:
         Description=Kubernetes Kubelet
         Documentation=http://kubernetes.io/
         Wants=install-kubernetes.service
-        ConditionHost=!hlkubernetes-kube00
+        ConditionHost=!hkubernetes-kube00
         [Service]
         ExecStartPre=/bin/mkdir -p /etc/kubernetes/manifests/
-        ExecStart=/opt/kubernetes/server/bin/kubelet             --docker-endpoint=unix:/var/run/weave/weave.sock             --address=0.0.0.0             --port=10250             --hostname-override=%H             --api-servers=http://hlkubernetes-kube00:8080             --logtostderr=true             --cluster-dns=10.16.0.3             --cluster-domain=kube.local             --config=/etc/kubernetes/manifests/
+        ExecStart=/opt/kubernetes/server/bin/kubelet             --docker-endpoint=unix:/var/run/weave/weave.sock             --address=0.0.0.0             --port=10250             --hostname-override=%H             --api-servers=http://hkubernetes-kube00:8080             --logtostderr=true             --cluster-dns=10.16.0.3             --cluster-domain=kube.local             --config=/etc/kubernetes/manifests/
         Restart=always
         RestartSec=10
         [Install]
@@ -443,7 +441,7 @@ coreos:
         Documentation=http://kubernetes.io/
         Wants=install-kubernetes.service
         [Service]
-        ExecStart=/opt/kubernetes/server/bin/kube-proxy              --master=http://hlkubernetes-kube00:8080              --logtostderr=true
+        ExecStart=/opt/kubernetes/server/bin/kube-proxy              --master=http://hkubernetes-kube00:8080              --logtostderr=true
         Restart=always
         RestartSec=10
         [Install]
@@ -457,7 +455,7 @@ coreos:
         After=install-kubernetes.service
         ConditionFileIsExecutable=/opt/kubernetes/server/bin/kubectl
         ConditionPathIsDirectory=/etc/kubernetes/addons/
-        ConditionHost=hlkubernetes-kube00
+        ConditionHost=hkubernetes-kube00
         Description=Kubernetes Addons
         Documentation=http://kubernetes.io/
         Wants=install-kubernetes.service
@@ -476,4 +474,4 @@ coreos:
           content: >
             [Service]
 
-            Environment=ETCD_INITIAL_CLUSTER=hlkubernetes-kube00=http://hlkubernetes-kube00:4001,hlkubernetes-kube01=http://hlkubernetes-kube01:4001,hlkubernetes-kube02=http://hlkubernetes-kube02:4001
+            Environment=ETCD_INITIAL_CLUSTER=hkubernetes-kube00=http://hkubernetes-kube00:4001,hkubernetes-kube01=http://hkubernetes-kube01:4001,hkubernetes-kube02=http://hkubernetes-kube02:4001

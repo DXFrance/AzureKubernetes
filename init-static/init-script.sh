@@ -3,7 +3,7 @@
 
 # Variables
 
-prefix="hlkubernetes"
+prefix="hkubernetes"
 sub="fb79eb46-411c-4097-86ba-801dca0ff5d5"
 ssh_pub="/Users/hleclerc/.ssh/id_rsa.pub"
 location="northeurope"
