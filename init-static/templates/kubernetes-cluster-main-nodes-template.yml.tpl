@@ -1,8 +1,10 @@
-## This file is used as input to deployment script, which amends it as needed.
-## More specifically, we need to add environment files for as many nodes as we
-## are going to deploy.
-
+#cloud-config
 write_files:
+  - path: /etc/hosts
+    permissions: '0755'
+    owner: root
+    content: |
+${Etc_Host}
   - path: /opt/bin/curl-retry.sh
     permissions: '0755'
     owner: root

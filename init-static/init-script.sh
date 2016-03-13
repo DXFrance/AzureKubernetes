@@ -24,15 +24,26 @@ function gen_tpl_etcd()
    str="$str${prefix}-etcd0${j}=http://${prefix}-etcd0${j}:2380,"
    Etc_Host=$(printf "      %s  %s\n%s" "172.16.0.${ip}"  "${prefix}-etcd0${j}" "$Etc_Host")
   done
-   Environment="${str::-1}"
-   export Environment
-   export Etc_Host
-   render_template "${tpl_etcd}" > "${cust_etcd}"
+
+  j=0
+  for i in $(seq 1 "${kube_node}")
+  do
+   let j=$i-1
+   let ip=$i+6
+   Etc_Host=$(printf "      %s  %s\n%s" "172.16.0.${ip}"  "${prefix}-kube0${j}" "$Etc_Host")
+  done
+
+
+  Environment="${str::-1}"
+  export Environment
+  export Etc_Host
+  render_template "${tpl_etcd}" > "${cust_etcd}"
 }
 
 # Generate kube template
 function gen_tpl_kube()
 {
+  Etc_Host=""
   ConditionHost="${prefix}-kube00"
   cp /dev/null "${tmp_wave}"
   j=0
@@ -40,6 +51,8 @@ function gen_tpl_kube()
   for i in $(seq 1 "${kube_node}")
   do
    let j=$i-1
+   let ip=$i+6
+   Etc_Host=$(printf "      %s  %s\n%s" "172.16.0.${ip}"  "${prefix}-kube0${j}" "$Etc_Host")
    BREAKOUT_ROUTE="10.2.0.0/16"
    BRIDGE_ADDRESS_CIDR="10.2.${j}.1/24"
    if [ "$i" = "0" ]; then
@@ -49,6 +62,14 @@ function gen_tpl_kube()
    fi
    render_template "${tpl_wave}" >> "${tmp_wave}"
    str="$str${prefix}-kube0${j}=http://${prefix}-kube0${j}:4001,"
+  done
+
+  j=0
+  for i in $(seq 1 "${etcd_node}")
+  do
+   let j=$i-1
+   let ip=$i+3
+   Etc_Host=$(printf "      %s  %s\n%s" "172.16.0.${ip}"  "${prefix}-etcd0${j}" "$Etc_Host")
   done
 
   Environment="${str::-1}"
@@ -236,6 +257,8 @@ tpl_sky_rc="templates/addons/skydns-rc.yaml.tpl"
 tpl_sky_svc="templates/addons/skydns-svc.yaml.tpl"
 tmp_sky_rc="/tmp/sky-rc.yml"
 tmp_sky_svc="/tmp/sky-svc.yml"
+
+rm -rf "${tmp_wave}" "${tmp_sky_rc}" "${tmp_sky_svc}"
 
 # Number of nodes
 etcd_node=3

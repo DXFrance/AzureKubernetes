@@ -1,8 +1,8 @@
- - path: /etc/kubernetes/addons/skydns-rc.yaml
+  - path: /etc/kubernetes/addons/skydns-rc.yaml
     owner: root
     permissions: '0640'
     encoding: base64
-    content: 
+    content: |
       apiVersion: v1
       kind: ReplicationController
       metadata:

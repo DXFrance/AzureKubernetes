@@ -4,6 +4,9 @@ write_files:
     permissions: '0755'
     owner: root
     content: |
+      172.16.0.9  zwkubernetes-kube02
+      172.16.0.8  zwkubernetes-kube01
+      172.16.0.7  zwkubernetes-kube00
       172.16.0.6  zwkubernetes-etcd02
       172.16.0.5  zwkubernetes-etcd01
       172.16.0.4  zwkubernetes-etcd00

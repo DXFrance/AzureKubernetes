@@ -2,7 +2,7 @@
     owner: root
     permissions: '0640'
     encoding: base64
-    content: 
+    content: |
       apiVersion: v1
       kind: Service
       metadata:

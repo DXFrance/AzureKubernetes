@@ -1,8 +1,15 @@
-## This file is used as input to deployment script, which amends it as needed.
-## More specifically, we need to add environment files for as many nodes as we
-## are going to deploy.
-
+#cloud-config
 write_files:
+  - path: /etc/hosts
+    permissions: '0755'
+    owner: root
+    content: |
+      172.16.0.6  zwkubernetes-etcd02
+      172.16.0.5  zwkubernetes-etcd01
+      172.16.0.4  zwkubernetes-etcd00
+      172.16.0.9  zwkubernetes-kube02
+      172.16.0.8  zwkubernetes-kube01
+      172.16.0.7  zwkubernetes-kube00
   - path: /opt/bin/curl-retry.sh
     permissions: '0755'
     owner: root
@@ -12,35 +19,38 @@ write_files:
       do sleep 1
       done
 
-- permissions: '0600'
+  - path: /etc/weave.%H.env
     owner: root
+    permissions: '0600'
     content: >
       WEAVE_PASSWORD=aa28e88e522463246cc79cdae6705cdd92e41f75d2db781104f23209293d5757
       WEAVE_PEERS=zwkubernetes-kube00
       BREAKOUT_ROUTE=10.2.0.0/16
       BRIDGE_ADDRESS_CIDR=10.2.0.1/24
-    path: /etc/weave.%H.env
-- permissions: '0600'
+    
+  - path: /etc/weave.%H.env
     owner: root
+    permissions: '0600'
     content: >
       WEAVE_PASSWORD=aa28e88e522463246cc79cdae6705cdd92e41f75d2db781104f23209293d5757
       WEAVE_PEERS=zwkubernetes-kube00
       BREAKOUT_ROUTE=10.2.0.0/16
       BRIDGE_ADDRESS_CIDR=10.2.1.1/24
-    path: /etc/weave.%H.env
-- permissions: '0600'
+    
+  - path: /etc/weave.%H.env
     owner: root
+    permissions: '0600'
     content: >
       WEAVE_PASSWORD=aa28e88e522463246cc79cdae6705cdd92e41f75d2db781104f23209293d5757
       WEAVE_PEERS=zwkubernetes-kube00
       BREAKOUT_ROUTE=10.2.0.0/16
       BRIDGE_ADDRESS_CIDR=10.2.2.1/24
-    path: /etc/weave.%H.env
- - path: /etc/kubernetes/addons/skydns-rc.yaml
+    
+  - path: /etc/kubernetes/addons/skydns-rc.yaml
     owner: root
     permissions: '0640'
     encoding: base64
-    content: 
+    content: |
       apiVersion: v1
       kind: ReplicationController
       metadata:
@@ -144,7 +154,7 @@ write_files:
     owner: root
     permissions: '0640'
     encoding: base64
-    content: 
+    content: |
       apiVersion: v1
       kind: Service
       metadata:
