@@ -474,4 +474,4 @@ coreos:
           content: >
             [Service]
 
-            Environment=ETCD_INITIAL_CLUSTER=mxkubernetes-kube00=http://mxkubernetes-kube00:4001,mxkubernetes-kube01=http://mxkubernetes-kube01:4001,mxkubernetes-kube02=http://mxkubernetes-kube02:4001
+            Environment=ETCD_INITIAL_CLUSTER=mxkubernetes-etcd00=http://mxkubernetes-etcd00:4001,mxkubernetes-etcd01=http://mxkubernetes-etcd01:4001,mxkubernetes-etcd02=http://mxkubernetes-etcd02:4001

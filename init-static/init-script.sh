@@ -68,8 +68,8 @@ function gen_tpl_kube()
   ConditionHost="${prefix}-kube00"
   cp /dev/null "${tmp_wave}"
   j=0
-  str="Environment=ETCD_INITIAL_CLUSTER="
-  
+  str="Environment=ETCD_SERVERS=--etcd-servers="
+
   for i in $(seq 1 "${kube_node}")
   do
    let j=$i-1
@@ -94,7 +94,7 @@ function gen_tpl_kube()
    let j=$i-1
    let ip=$i+3
    Etc_Host=$(printf "      %s  %s\n%s" "172.16.0.${ip}"  "${prefix}-etcd0${j}" "$Etc_Host")
-   str="$str${prefix}-etcd0${j}=http://${prefix}-etcd0${j}:4001,"
+   str="${str}http://${prefix}-etcd0${j}:4001,"
   done
 
   Environment="${str::-1}"
