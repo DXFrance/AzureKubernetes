@@ -8,7 +8,7 @@
     $resourceLocation = "North Europe",
     $templateFile = "azuredeploy.json",
     $templateParameterFile = "azuredeploy.parameters.json",
-    $templateFolder = "..\..\Kubernetes-Ansible-Centos-Azure",
+    $templateFolder = "..\..\Kubernetes-Ansible-Centos-Azure\arm-templates",
     $tagName = "Kubernetes_RG",
     $tagValue = "Ansible-Centos"
     )

@@ -41,6 +41,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "arm-templates", "arm-templates", "{A74AA8FB-434B-4A57-85AB-66847B6043A9}"
+	ProjectSection(SolutionItems) = preProject
+		Kubernetes-Ansible-Centos-Azure\arm-templates\azuredeploy.json = Kubernetes-Ansible-Centos-Azure\arm-templates\azuredeploy.json
+		Kubernetes-Ansible-Centos-Azure\arm-templates\azuredeploy.parameters.json = Kubernetes-Ansible-Centos-Azure\arm-templates\azuredeploy.parameters.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{96E00745-1332-445B-9F2C-7B14EE9DE861}"
+	ProjectSection(SolutionItems) = preProject
+		Kubernetes-Ansible-Centos-Azure\scripts\deploy.sh = Kubernetes-Ansible-Centos-Azure\scripts\deploy.sh
+		Kubernetes-Ansible-Centos-Azure\scripts\first-boot.sh = Kubernetes-Ansible-Centos-Azure\scripts\first-boot.sh
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,5 +71,7 @@ Global
 		{9D395FB0-4E8A-4583-B853-5DA742A60311} = {0B071DD1-ACBE-4736-AD34-06DDCC61D4D8}
 		{8AB3EE56-AE24-4B2E-952E-1F3A66BDDD1D} = {0B071DD1-ACBE-4736-AD34-06DDCC61D4D8}
 		{34519E4F-8AEB-4936-972D-B93B7554A187} = {9D395FB0-4E8A-4583-B853-5DA742A60311}
+		{A74AA8FB-434B-4A57-85AB-66847B6043A9} = {1A97D0D4-DBDC-4DC0-8D4B-F3822B63FC8E}
+		{96E00745-1332-445B-9F2C-7B14EE9DE861} = {1A97D0D4-DBDC-4DC0-8D4B-F3822B63FC8E}
 	EndGlobalSection
 EndGlobal
