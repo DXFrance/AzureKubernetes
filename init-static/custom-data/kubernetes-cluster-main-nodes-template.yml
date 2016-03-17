@@ -4,12 +4,12 @@ write_files:
     permissions: '0755'
     owner: root
     content: |
-      172.16.0.6  mxkubernetes-etcd02
-      172.16.0.5  mxkubernetes-etcd01
-      172.16.0.4  mxkubernetes-etcd00
-      172.16.0.9  mxkubernetes-kube02
-      172.16.0.8  mxkubernetes-kube01
-      172.16.0.7  mxkubernetes-kube00
+      172.16.0.6  pokubernetes-etcd02
+      172.16.0.5  pokubernetes-etcd01
+      172.16.0.4  pokubernetes-etcd00
+      172.16.0.9  pokubernetes-kube02
+      172.16.0.8  pokubernetes-kube01
+      172.16.0.7  pokubernetes-kube00
   - path: /opt/bin/curl-retry.sh
     permissions: '0755'
     owner: root
@@ -19,30 +19,30 @@ write_files:
       do sleep 1
       done
 
-  - path: /etc/weave.mxkubernetes-kube00.env
+  - path: /etc/weave.pokubernetes-kube00.env
     owner: root
     permissions: '0600'
-    content: >
+    content: |
       WEAVE_PASSWORD=aa28e88e522463246cc79cdae6705cdd92e41f75d2db781104f23209293d5757
-      WEAVE_PEERS=mxkubernetes-kube00
+      WEAVE_PEERS=pokubernetes-kube00
       BREAKOUT_ROUTE=10.2.0.0/16
       BRIDGE_ADDRESS_CIDR=10.2.0.1/24
     
-  - path: /etc/weave.mxkubernetes-kube01.env
+  - path: /etc/weave.pokubernetes-kube01.env
     owner: root
     permissions: '0600'
-    content: >
+    content: |
       WEAVE_PASSWORD=aa28e88e522463246cc79cdae6705cdd92e41f75d2db781104f23209293d5757
-      WEAVE_PEERS=mxkubernetes-kube00
+      WEAVE_PEERS=pokubernetes-kube00
       BREAKOUT_ROUTE=10.2.0.0/16
       BRIDGE_ADDRESS_CIDR=10.2.1.1/24
     
-  - path: /etc/weave.mxkubernetes-kube02.env
+  - path: /etc/weave.pokubernetes-kube02.env
     owner: root
     permissions: '0600'
-    content: >
+    content: |
       WEAVE_PASSWORD=aa28e88e522463246cc79cdae6705cdd92e41f75d2db781104f23209293d5757
-      WEAVE_PEERS=mxkubernetes-kube00
+      WEAVE_PEERS=pokubernetes-kube00
       BREAKOUT_ROUTE=10.2.0.0/16
       BRIDGE_ADDRESS_CIDR=10.2.2.1/24
     
@@ -58,7 +58,7 @@ write_files:
         labels:
           k8s-app: kube-dns
           version: v9
-          kubernetes.io/cluster-service: true
+          kubernetes.io/cluster-service: 'true'
       spec:
         replicas: 3
         selector:
@@ -69,7 +69,7 @@ write_files:
             labels:
               k8s-app: kube-dns
               version: v9
-              kubernetes.io/cluster-service: true
+              kubernetes.io/cluster-service: 'true'
           spec:
             containers:
             - name: etcd
@@ -100,7 +100,7 @@ write_files:
               args:
               # command = /kube2sky
               - -domain=kube.local
-              - -kube_master_url=http://mxkubernetes-kube00:8080
+              - -kube_master_url=http://pokubernetes-kube00:8080
             - name: skydns
               image: gcr.io/google_containers/skydns:2015-03-11-001
               resources:
@@ -160,8 +160,8 @@ write_files:
         namespace: kube-system
         labels:
           k8s-app: kube-dns
-          kubernetes.io/cluster-service: true
-          kubernetes.io/name: KubeDNS
+          kubernetes.io/cluster-service: 'true'
+          kubernetes.io/name: 'KubeDNS'
       spec:
         selector:
           k8s-app: kube-dns
@@ -208,7 +208,7 @@ coreos:
         RefuseManualStart=no
         After=weave-network.target
         Requires=weave-network.target
-        ConditionHost=mxkubernetes-kube00
+        ConditionHost=pokubernetes-kube00
         Wants=kube-apiserver.service
         Wants=kube-scheduler.service
         Wants=kube-controller-manager.service
@@ -226,7 +226,7 @@ coreos:
         RefuseManualStart=no
         After=weave-network.target
         Requires=weave-network.target
-        ConditionHost=!mxkubernetes-kube00
+        ConditionHost=!pokubernetes-kube00
         Wants=kube-proxy.service
         Wants=kubelet.service
         [Install]
@@ -368,7 +368,7 @@ coreos:
         Description=Kubernetes API Server
         Documentation=http://kubernetes.io/
         Wants=install-kubernetes.service
-        ConditionHost=mxkubernetes-kube00
+        ConditionHost=pokubernetes-kube00
         [Service]
         ExecStart=/opt/kubernetes/server/bin/kube-apiserver             --insecure-bind-address=0.0.0.0             --advertise-address=$public_ipv4             --port=8080             $ETCD_SERVERS             --service-cluster-ip-range=10.16.0.0/12             --cloud-provider=vagrant             --logtostderr=true
         Restart=always
@@ -386,7 +386,7 @@ coreos:
         Description=Kubernetes Scheduler
         Documentation=http://kubernetes.io/
         Wants=kube-apiserver.service
-        ConditionHost=mxkubernetes-kube00
+        ConditionHost=pokubernetes-kube00
         [Service]
         ExecStart=/opt/kubernetes/server/bin/kube-scheduler             --logtostderr=true             --master=127.0.0.1:8080
         Restart=always
@@ -405,7 +405,7 @@ coreos:
         Documentation=http://kubernetes.io/
         Wants=kube-apiserver.service
         Wants=install-kubernetes.service
-        ConditionHost=mxkubernetes-kube00
+        ConditionHost=pokubernetes-kube00
         [Service]
         ExecStart=/opt/kubernetes/server/bin/kube-controller-manager             --master=127.0.0.1:8080             --logtostderr=true
         Restart=always
@@ -422,10 +422,10 @@ coreos:
         Description=Kubernetes Kubelet
         Documentation=http://kubernetes.io/
         Wants=install-kubernetes.service
-        ConditionHost=!mxkubernetes-kube00
+        ConditionHost=!pokubernetes-kube00
         [Service]
         ExecStartPre=/bin/mkdir -p /etc/kubernetes/manifests/
-        ExecStart=/opt/kubernetes/server/bin/kubelet             --docker-endpoint=unix:/var/run/weave/weave.sock             --address=0.0.0.0             --port=10250             --hostname-override=%H             --api-servers=http://mxkubernetes-kube00:8080             --logtostderr=true             --cluster-dns=10.16.0.3             --cluster-domain=kube.local             --config=/etc/kubernetes/manifests/
+        ExecStart=/opt/kubernetes/server/bin/kubelet             --docker-endpoint=unix:/var/run/weave/weave.sock             --address=0.0.0.0             --port=10250             --hostname-override=%H             --api-servers=http://pokubernetes-kube00:8080             --logtostderr=true             --cluster-dns=10.16.0.3             --cluster-domain=kube.local             --config=/etc/kubernetes/manifests/
         Restart=always
         RestartSec=10
         [Install]
@@ -441,7 +441,7 @@ coreos:
         Documentation=http://kubernetes.io/
         Wants=install-kubernetes.service
         [Service]
-        ExecStart=/opt/kubernetes/server/bin/kube-proxy              --master=http://mxkubernetes-kube00:8080              --logtostderr=true
+        ExecStart=/opt/kubernetes/server/bin/kube-proxy              --master=http://pokubernetes-kube00:8080              --logtostderr=true
         Restart=always
         RestartSec=10
         [Install]
@@ -455,7 +455,7 @@ coreos:
         After=install-kubernetes.service
         ConditionFileIsExecutable=/opt/kubernetes/server/bin/kubectl
         ConditionPathIsDirectory=/etc/kubernetes/addons/
-        ConditionHost=mxkubernetes-kube00
+        ConditionHost=pokubernetes-kube00
         Description=Kubernetes Addons
         Documentation=http://kubernetes.io/
         Wants=install-kubernetes.service
@@ -474,4 +474,4 @@ coreos:
           content: >
             [Service]
 
-            Environment=ETCD_INITIAL_CLUSTER=mxkubernetes-etcd00=http://mxkubernetes-etcd00:4001,mxkubernetes-etcd01=http://mxkubernetes-etcd01:4001,mxkubernetes-etcd02=http://mxkubernetes-etcd02:4001
+            Environment=ETCD_SERVERS=--etcd-servers=http://pokubernetes-etcd00:4001,http://pokubernetes-etcd01:4001,http://pokubernetes-etcd02:4001

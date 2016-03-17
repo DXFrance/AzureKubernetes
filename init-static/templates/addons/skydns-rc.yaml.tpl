@@ -10,7 +10,7 @@
         labels:
           k8s-app: kube-dns
           version: v9
-          kubernetes.io/cluster-service: "true"
+          kubernetes.io/cluster-service: 'true'
       spec:
         replicas: 3
         selector:
@@ -21,7 +21,7 @@
             labels:
               k8s-app: kube-dns
               version: v9
-              kubernetes.io/cluster-service: "true"
+              kubernetes.io/cluster-service: 'true'
           spec:
             containers:
             - name: etcd
