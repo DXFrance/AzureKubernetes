@@ -5,7 +5,7 @@
     #Paramètres du Azure Ressource Group
     $resourceGroupName = "stephgou-Kubernetes-Ansible-Centos",
     $resourceGroupDeploymentName = "stephgou-Kubernetes-Ansible-Centos-Deployed",
-    $resourceLocation = "West Europe",
+    $resourceLocation = "North Europe",
     $templateFile = "azuredeploy.json",
     $templateParameterFile = "azuredeploy.parameters.json",
     $templateFolder = "..\..\Kubernetes-Ansible-Centos-Azure",
