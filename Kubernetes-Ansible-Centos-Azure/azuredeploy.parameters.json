@@ -5,9 +5,6 @@
     "vmSuffix": {
       "value": "GEN-UNIQUE"
     },
-    "location": {
-      "value": "North Europe"
-    },
     "newStorageAccountName": {
       "value": "GEN-UNIQUE"
     },

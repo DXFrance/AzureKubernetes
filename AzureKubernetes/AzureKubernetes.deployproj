@@ -28,6 +28,8 @@
     <Folder Include="Tools\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Scripts\Deploy-Kubernetes-Ansible-Centos-Azure.ps1" />
+    <Content Include="Scripts\Undeploy-Deploy-Kubernetes-Ansible-Centos-Azure.ps1" />
     <Content Include="Scripts\Undeploy-VM-Cluster.ps1" />
     <Content Include="Scripts\Deploy-VM-ScaleSet-Cluster.ps1" />
     <Content Include="Templates\VM-Cluster\azuredeploy.json" />

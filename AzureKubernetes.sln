@@ -30,6 +30,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "addons", "addons", "{34519E
 		init-static\templates\addons\skydns-svc.yaml.tpl = init-static\templates\addons\skydns-svc.yaml.tpl
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kubernetes-Ansible-Centos-Azure", "Kubernetes-Ansible-Centos-Azure", "{1A97D0D4-DBDC-4DC0-8D4B-F3822B63FC8E}"
+	ProjectSection(SolutionItems) = preProject
+		Kubernetes-Ansible-Centos-Azure\azuredeploy.json = Kubernetes-Ansible-Centos-Azure\azuredeploy.json
+		Kubernetes-Ansible-Centos-Azure\azuredeploy.parameters.json = Kubernetes-Ansible-Centos-Azure\azuredeploy.parameters.json
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
