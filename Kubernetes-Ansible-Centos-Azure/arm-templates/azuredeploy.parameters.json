@@ -1,0 +1,42 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vmSuffix": {
+      "value": "GEN-UNIQUE"
+    },
+    "location": {
+      "value": "North Europe"
+    },
+    "newStorageAccountName": {
+      "value": "GEN-UNIQUE"
+    },
+    "ansibleVmSize": {
+      "value": "Standard_A0"
+    },
+    "kubernetesVmSize": {
+      "value": "Standard_A1"
+    },
+    "numberOfNodes": {
+      "value": 1
+    },
+    "adminUsername": {
+      "value": "GEN-UNIQUE"
+    },
+    "sshKeyData": {
+      "value": "GEN-SSH-PUB-KEY"
+    },
+    "centosOSVersion": {
+      "value": "8"
+    },
+    "fileUris": {
+      "value": "https://raw.githubusercontent.com/herveleclerc/TechDaysCampDemo/master/ansible-stack-driven-lb/deploy.sh"
+    },
+    "commandToExecute": {
+      "value": "bash deploy.sh"
+    },
+    "vaultAccountName": {
+      "value": "ansiblevault"
+    }
+  }
+}
