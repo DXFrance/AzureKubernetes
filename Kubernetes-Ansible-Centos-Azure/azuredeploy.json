@@ -16,7 +16,7 @@
         "description": "Name of the storage account for VM OS Disks"
       }
     },
-    "KubernetesVmSize": {
+    "kubernetesVmSize": {
       "type": "string",
       "defaultValue": "Standard_A0",
       "allowedValues": [
