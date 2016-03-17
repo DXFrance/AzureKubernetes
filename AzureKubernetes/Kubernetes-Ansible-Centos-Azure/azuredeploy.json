@@ -318,6 +318,7 @@
       "location": "[parameters('location')]",
       "dependsOn": [
         "[concat('Microsoft.Compute/virtualMachines/', variables('hcdomainName'))]",
+        "[variables('hcDomainName')]",
         "vmLoop",
         "extensionLoop"
       ],
