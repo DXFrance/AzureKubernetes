@@ -114,19 +114,19 @@
     "addressPrefix": "10.0.0.0/16",
    
     "subnetAdminName": "SubnetADMIN",
-    "subnetAdminPrefix": "10.0.0.0/24",
+    "subnetAdminPrefix": "10.0.2.0/24",
     "subnetAdminRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetAdminName'))]",
     
     "subnetMastersName": "SubnetMASTERS",
-    "subnetMastersPrefix": "10.0.2.0/24",
+    "subnetMastersPrefix": "10.0.4.0/24",
     "subnetMastersRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetMastersName'))]",
     
     "subnetMinionsName": "SubnetMINIONS",
-    "subnetMinionsPrefix": "10.0.4.0/24",
+    "subnetMinionsPrefix": "10.0.6.0/24",
     "subnetMinionsRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetMinionsName'))]", 
     
     "subnetEtcdName": "SubnetETCD",
-    "subnetEtcdPrefix": "10.0.4.0/24",
+    "subnetEtcdPrefix": "10.0.8.0/24",
     "subnetEtcdRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetEtcdName'))]", 
        
     "storageAccountName": "[concat(uniquestring(resourceGroup().id), parameters('nameSuffix'))]",
