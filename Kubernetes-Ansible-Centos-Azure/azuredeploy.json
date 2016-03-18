@@ -113,19 +113,19 @@
     "virtualNetworkName": "KubVNET",
     "addressPrefix": "10.0.0.0/16",
    
-    "subnetAdminName": "Subnet-ADMIN",
+    "subnetAdminName": "SubnetADMIN",
     "subnetAdminPrefix": "10.0.0.0/24",
     "subnetAdminRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetAdminName'))]",
     
-    "subnetMastersName": "Subnet-MASTERS",
+    "subnetMastersName": "SubnetMASTERS",
     "subnetMastersPrefix": "10.0.2.0/24",
     "subnetMastersRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetMastersName'))]",
     
-    "subnetMinionsName": "Subnet-MINIONS",
+    "subnetMinionsName": "SubnetMINIONS",
     "subnetMinionsPrefix": "10.0.4.0/24",
     "subnetMinionsRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetMinionsName'))]", 
     
-    "subnetEtcdName": "Subnet-ETCD",
+    "subnetEtcdName": "SubnetETCD",
     "subnetEtcdPrefix": "10.0.4.0/24",
     "subnetEtcdRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetEtcdName'))]", 
        
