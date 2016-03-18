@@ -88,14 +88,14 @@
     },
     "fileUris": {
       "type": "string",
-      "defaultValue": "https://something.com/deploy.sh",
+      "defaultValue": "https://raw.githubusercontent.com/DXFrance/AzureKubernetes/master/Kubernetes-Ansible-Centos-Azure/scripts/first-boot.sh",
       "metadata": {
         "description": "Deploy/SetUp script url for ansible control vm"
       }
     },
     "commandToExecute": {
       "type": "string",
-      "defaultValue": "bash deploy.sh",
+      "defaultValue": "bash first-boot.sh",
       "metadata": {
         "description": "The command to execute."
       }
@@ -714,7 +714,7 @@
           "fileUris": [
             "[parameters('fileUris')]"
           ],
-          "commandToExecute": "echo 'Masters' "
+          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(concat('mastersNic', copyindex())).ipConfigurations[0].properties.privateIPAddress),' masters']"
         }
       }
     },
@@ -738,7 +738,7 @@
           "fileUris": [
             "[parameters('fileUris')]"
           ],
-          "commandToExecute": "echo 'Minions' "
+          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(concat('minionsNic', copyindex())).ipConfigurations[0].properties.privateIPAddress),' minions']"
         }
       }
     },
@@ -762,7 +762,7 @@
           "fileUris": [
             "[parameters('fileUris')]"
           ],
-          "commandToExecute": "echo 'ETCD' "
+          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(concat('etcdNic', copyindex())).ipConfigurations[0].properties.privateIPAddress),' etcd']"
         }
       }
     }

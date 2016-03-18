@@ -21,7 +21,7 @@
       "value": 1
     },
     "adminUsername": {
-      "value": "GEN-UNIQUE"
+      "value": "devops"
     },
     "sshKeyData": {
       "value": "GEN-SSH-PUB-KEY"
