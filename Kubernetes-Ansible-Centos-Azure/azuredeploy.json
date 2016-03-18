@@ -147,15 +147,17 @@
     "ansibleIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('ansibleIPAddressName'))]",
     
     "ansibleDomainName": "[concat('hc',parameters('nameSuffix'))]",
-    "scriptBlobLocation": "scripts/deploy-via-ansible.sh",
+    "scriptBlobLocation": "scripts/deploy.sh",
     "scriptBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('scriptBlobLocation'))]",
+    
     "keysBlobLocation": "keys/id_rsa",
     "keysBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('keysBlobLocation'))]",
+    
     "pubBlobLocation": "keys/id_rsa.pub",
     "pubBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('pubBlobLocation'))]",
-    "playBlobLocation": "playbooks/crate-setup.yml",
-    "playBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('playBlobLocation'))]",
+ 
     "assetsStorageAccountId": "[resourceId('ansiblevault','Microsoft.Storage/storageAccounts', parameters('vaultAccountName'))]",
+    
     "imageReference": {
       "publisher": "OpenLogic",
       "offer": "CentOS",
@@ -457,6 +459,7 @@
         "osProfile": {
           "computerName": "[variables('ansibleDomainName')]",
           "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[variables('adminPassword')]",
           "linuxConfiguration": {
             "disablePasswordAuthentication": "true",
             "ssh": {
@@ -683,8 +686,7 @@
           "fileUris": [
             "[variables('scriptBlobUrl')]",
             "[variables('keysBlobUrl')]",
-            "[variables('pubBlobUrl')]",
-            "[variables('playBlobUrl')]"
+            "[variables('pubBlobUrl')]"
           ],
           "commandToExecute": "echo 'Ansible'"
         },
