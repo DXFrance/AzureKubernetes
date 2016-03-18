@@ -129,9 +129,6 @@
     "subnetEtcdPrefix": "10.0.4.0/24",
     "subnetEtcdRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetEtcdName'))]", 
        
-    
-    
-    
     "storageAccountName": "[concat(uniquestring(resourceGroup().id), variables('nameSuffix'))]",
     
     "availabilitySetMasters": "[concat('avma',variables('nameSuffix'))]",
@@ -289,8 +286,6 @@
         }
       }
     },
-    
-
     {
       "type": "Microsoft.Network/virtualNetworks",
       "name": "[variables('virtualNetworkName')]",
@@ -330,8 +325,6 @@
         ]
       }
     },
-    
-    
     {
       "apiVersion": "[variables('apiVersion')]",
       "type": "Microsoft.Network/networkInterfaces",
@@ -370,7 +363,6 @@
         ]
       }
     },
-    
     {
       "apiVersion": "[variables('apiVersion')]",
       "type": "Microsoft.Network/networkInterfaces",
