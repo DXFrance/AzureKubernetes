@@ -668,8 +668,12 @@
       "dependsOn": [
         "[concat('Microsoft.Compute/virtualMachines/', variables('ansibleDomainName'))]",
         "[variables('ansibleDomainName')]",
-        "vmLoop",
-        "extensionLoop"
+        "vmLoopMasters",
+        "vmLoopMinions",
+        "vmLoopEtcd",
+        "extensionLoopMasters",
+        "extensionLoopMinions",
+        "extensionLoopEtcd"
       ],
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
@@ -696,7 +700,7 @@
       "apiVersion": "[variables('apiVersion')]",
       "location": "[resourceGroup().location]",
       "copy": {
-        "name": "extensionLoop",
+        "name": "extensionLoopMasters",
         "count": "[parameters('numberOfMasters')]"
       },
       "dependsOn": [
@@ -720,7 +724,7 @@
       "apiVersion": "[variables('apiVersion')]",
       "location": "[resourceGroup().location]",
       "copy": {
-        "name": "extensionLoop",
+        "name": "extensionLoopMinions",
         "count": "[parameters('numberOfMinions')]"
       },
       "dependsOn": [
@@ -744,7 +748,7 @@
       "apiVersion": "[variables('apiVersion')]",
       "location": "[resourceGroup().location]",
       "copy": {
-        "name": "extensionLoop",
+        "name": "extensionLoopEtcd",
         "count": "[parameters('numberOfEtcd')]"
       },
       "dependsOn": [
