@@ -274,7 +274,9 @@ export FACTS
 
 ### It begins here
 
-log "Begin Installation on Azure parameters : numberOfNodes=$numberOfNodes vmNamePrefix=$vmNamePrefix ansiblefqdn=$ansiblefqdn sshu=$sshu viplb=$viplb" "0"
+log "Begin Installation on Azure parameters : numberOfMasters=$numberOfMasters -  numberOfMinions=$numberOfMinions - numberOfEtcd=$numberOfEtcd" "0"
+log ">>>subnetMasters=$subnetMasters - subnetMinions=$subnetMinions - numberOfEtcd=$numberOfEtcd" "0"
+log ">>>vmNamePrefix=$vmNamePrefix ansiblefqdn=$ansiblefqdn sshu=$sshu viplb=$viplb" "0"
 
 
 install_curl
