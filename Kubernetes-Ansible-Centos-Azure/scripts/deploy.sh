@@ -33,7 +33,7 @@ function log()
 function usage()
  {
     echo "INFO:"
-    echo "Usage: deploy-via-ansible.sh [number of nodes] [prefix des vm] [fqdn of ansible control vm] [ansible user]"
+    echo "Usage: deploy.sh [number of nodes] [prefix des vm] [fqdn of ansible control vm] [ansible user]"
 }
 
 
@@ -119,17 +119,35 @@ function get_private_ip()
 {
   log "Get private Ips..." "0"
 
-  let numberOfNodes=$numberOfNodes-1
-
-  for i in $(seq 0 $numberOfNodes)
+  # Masters
+  let numberOfMasters=$numberOfMasters-1
+  
+  for i in $(seq 0 $numberOfMasters)
   do
-  	# log "trying to su - devops -c ssh -l ${sshu} ${vmNamePrefix}${i}.${tld} cat $FACTS/private-ip.fact"
-  	su - devops -c "ssh -p 220${i} -l ${sshu} ${viplb} cat $FACTS/private-ip.fact" >> /tmp/hosts.inv 
+    let j=4+$i
+  	su - devops -c "ssh -l ${sshu} ${subnetMasters3}.${j} cat $FACTS/private-ip.fact" >> /tmp/hosts.inv 
     error_log "unable to ssh to ${viplb} with user $sshu"
   done
 
-  # install Ansible (in a loop because a lot of installs happen
-  # on VM init, so won't be able to grab the dpkg lock immediately)
+  # Minions
+  let numberOfMinions=$numberOfMinions-1
+  
+  for i in $(seq 0 $numberOfMinions)
+  do
+    let j=4+$i
+  	su - devops -c "ssh -l ${sshu} ${subnetMinions3}.${j} cat $FACTS/private-ip.fact" >> /tmp/hosts.inv 
+    error_log "unable to ssh to ${viplb} with user $sshu"
+  done
+
+  # Etcd
+  let numberOfEtcd=$numberOfEtcd-1
+  
+  for i in $(seq 0 $numberOfEtcd)
+  do
+    let j=4+$i
+  	su - devops -c "ssh -l ${sshu} ${subnetEtcd3}.${j} cat $FACTS/private-ip.fact" >> /tmp/hosts.inv 
+    error_log "unable to ssh to ${viplb} with user $sshu"
+  done
   
 }
 
@@ -246,18 +264,18 @@ function deploy()
 
 ### PARAMETERS
 
-numberOfMasters=$1
-numberOfMinions=$2
-numberOfEtcd=$3
+numberOfMasters="${1}"
+numberOfMinions="${2}"
+numberOfEtcd="${3}"
 
-subnetMasters=$4
-subnetMinions=$5
-subnetEtcd=$6
+subnetMasters="${4}"
+subnetMinions="${5}"
+subnetEtcd="${6}"
 
-vmNamePrefix=$7
-ansiblefqdn=$8
-sshu=$9
-viplb=$10
+vmNamePrefix="${7}"
+ansiblefqdn="${8}"
+sshu="${9}"
+viplb="${10}"
 
 FACTS="/etc/ansible/facts"
 ANSIBLE_HOST_FILE="/etc/ansible/hosts"
@@ -271,6 +289,15 @@ tld=$(echo "$ansiblefqdn"  | sed "s?${ansible_hostname}\.??")
 
 CWD="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
 export FACTS
+
+subnetMasters=$(echo "${subnetMasters}"| cut -f1 -d/)
+subnetMinions=$(echo "${subnetMinions}"| cut -f1 -d/)
+subnetEtcd=$(echo "${subnetEtcd}"| cut -f1 -d/)
+
+subnetMasters3=$(echo "${subnetMasters}"| cut -f1,2,3 -d.)
+subnetMinions3=$(echo "${subnetMinions}"| cut -f1,2,3 -d.)
+subnetEtcd3=$(echo "${subnetEtcd}"| cut -f1,2,3 -d.)
+
 
 ### It begins here
 
