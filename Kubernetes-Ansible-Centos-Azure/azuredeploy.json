@@ -301,7 +301,7 @@
           {
             "name": "[variables('subnetMastersName')]",
             "properties": {
-              "addressPrefix": "[variables('subnetAdminPrefix')]"
+              "addressPrefix": "[variables('subnetMasterPrefix')]"
             }
           },
           {
