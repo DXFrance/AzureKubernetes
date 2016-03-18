@@ -406,11 +406,11 @@
       "properties": {
         "ipConfigurations": [
           {
-            "name": "MinionsIpConfig",
+            "name": "EtcdIpConfig",
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
               "subnet": {
-                "id": "[variables('subnetMinionsRef')]"
+                "id": "[variables('subnetEtcdRef')]"
               }
             }
           }

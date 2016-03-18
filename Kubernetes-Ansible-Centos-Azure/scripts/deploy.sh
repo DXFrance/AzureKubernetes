@@ -40,7 +40,7 @@ function usage()
 function install_curl()
 {
   # Installation of curl for logging
-  until apt-get -y update && apt-get -y install curl 
+  until yum install -y curl 
   do
     log "Lock detected on VM init Try again..."
     sleep 2
@@ -125,8 +125,8 @@ function get_private_ip()
   for i in $(seq 0 $numberOfMasters)
   do
     let j=4+$i
-  	su - devops -c "ssh -l ${sshu} ${subnetMasters3}.${j} cat $FACTS/private-ip.fact" >> /tmp/hosts.inv 
-    error_log "unable to ssh to ${viplb} with user $sshu"
+  	su - devops -c "ssh -l ${sshu} ${subnetMasters3}.${j} cat $FACTS/private-ip-role.fact" >> /tmp/hosts.inv 
+    error_log "unable to ssh -l ${sshu} ${subnetMasters3}.${j}"
   done
 
   # Minions
@@ -135,8 +135,8 @@ function get_private_ip()
   for i in $(seq 0 $numberOfMinions)
   do
     let j=4+$i
-  	su - devops -c "ssh -l ${sshu} ${subnetMinions3}.${j} cat $FACTS/private-ip.fact" >> /tmp/hosts.inv 
-    error_log "unable to ssh to ${viplb} with user $sshu"
+  	su - devops -c "ssh -l ${sshu} ${subnetMinions3}.${j} cat $FACTS/private-ip-role.fact" >> /tmp/hosts.inv 
+    error_log "unable to ssh -l ${sshu} ${subnetMinions3}.${j}"
   done
 
   # Etcd
@@ -145,10 +145,15 @@ function get_private_ip()
   for i in $(seq 0 $numberOfEtcd)
   do
     let j=4+$i
-  	su - devops -c "ssh -l ${sshu} ${subnetEtcd3}.${j} cat $FACTS/private-ip.fact" >> /tmp/hosts.inv 
-    error_log "unable to ssh to ${viplb} with user $sshu"
+  	su - devops -c "ssh -l ${sshu} ${subnetEtcd3}.${j} cat $FACTS/private-ip-role.fact" >> /tmp/hosts.inv 
+    error_log "unable to ssh -l ${sshu} ${subnetEtcd3}.${j}"
   done
   
+}
+
+function install_epel_repo()
+{
+   rpm -iUvh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
 }
 
 function install_required_packages()
@@ -156,7 +161,7 @@ function install_required_packages()
 
   log "Install ansible required packages..." "0"
 
-  until apt-get -y update && apt-get -y install python-pip python-dev git 
+  until yumm install -y git python2-devel python-pip
   do
     log "Lock detected on VM init Try again..." "0"
     sleep 2
@@ -306,6 +311,7 @@ log ">>>subnetMasters=$subnetMasters - subnetMinions=$subnetMinions - numberOfEt
 log ">>>vmNamePrefix=$vmNamePrefix ansiblefqdn=$ansiblefqdn sshu=$sshu viplb=$viplb" "0"
 
 
+install_epel_repo
 install_curl
 ssh_config
 get_private_ip
