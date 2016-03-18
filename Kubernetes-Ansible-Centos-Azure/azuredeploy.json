@@ -714,7 +714,7 @@
           "fileUris": [
             "[parameters('fileUris')]"
           ],
-          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(concat('mastersNic', copyindex())).ipConfigurations[0].properties.privateIPAddress),' masters']"
+          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(concat('mastersNic', copyindex())).ipConfigurations[0].properties.privateIPAddress,' masters')]"
         }
       }
     },
@@ -738,7 +738,7 @@
           "fileUris": [
             "[parameters('fileUris')]"
           ],
-          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(concat('minionsNic', copyindex())).ipConfigurations[0].properties.privateIPAddress),' minions']"
+          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(concat('minionsNic', copyindex())).ipConfigurations[0].properties.privateIPAddress,' minions')]"
         }
       }
     },
@@ -762,7 +762,7 @@
           "fileUris": [
             "[parameters('fileUris')]"
           ],
-          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(concat('etcdNic', copyindex())).ipConfigurations[0].properties.privateIPAddress),' etcd']"
+          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(concat('etcdNic', copyindex())).ipConfigurations[0].properties.privateIPAddress,' etcd')]"
         }
       }
     }
