@@ -225,7 +225,7 @@
     },
     {
       "type": "Microsoft.Storage/storageAccounts",
-      "name": "[parameters('storageAccountName')]",
+      "name": "[variables('storageAccountName')]",
       "location": "[resourceGroup().location]",
       "apiVersion": "[variables('apiVersion')]",
       "properties": {
@@ -447,7 +447,7 @@
       "location": "[resourceGroup().location]",
       "dependsOn": [
         "[concat('Microsoft.Network/networkInterfaces/', 'ansibleNic')]",
-        "[concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]",
+        "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
         "[concat('Microsoft.Network/publicIPAddresses/',variables('ansibleIPAddressName'))]"
       ],
       "properties": {
@@ -474,7 +474,7 @@
           "osDisk": {
             "name": "osdisk",
             "vhd": {
-              "uri": "[concat('http://', parameters('storageAccountName'), '.blob.core.windows.net/vhds/', variables('ansibleDomainName'), '-osdisk.vhd')]"
+              "uri": "[concat('http://', variables('storageAccountName'), '.blob.core.windows.net/vhds/', variables('ansibleDomainName'), '-osdisk.vhd')]"
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
@@ -498,7 +498,7 @@
       },
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]",
+        "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
         "[concat('Microsoft.Network/networkInterfaces/', 'mastersNic', copyindex())]",
         "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetMasters'))]"
       ],
@@ -531,7 +531,7 @@
           "osDisk": {
             "name": "[concat('ma',parameters('nameSuffix'), copyindex())]",
             "vhd": {
-              "uri": "[concat('http://',parameters('storageAccountName'),'.blob.core.windows.net/vhds/','ma',parameters('nameSuffix'), copyindex(),'.vhd')]"
+              "uri": "[concat('http://',variables('storageAccountName'),'.blob.core.windows.net/vhds/','ma',parameters('nameSuffix'), copyindex(),'.vhd')]"
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
@@ -555,7 +555,7 @@
       },
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]",
+        "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
         "[concat('Microsoft.Network/networkInterfaces/', 'minionsNic', copyindex())]",
         "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetMinions'))]"
       ],
@@ -588,7 +588,7 @@
           "osDisk": {
             "name": "[concat('mi',parameters('nameSuffix'), copyindex())]",
             "vhd": {
-              "uri": "[concat('http://',parameters('storageAccountName'),'.blob.core.windows.net/vhds/','mi',parameters('nameSuffix'), copyindex(),'.vhd')]"
+              "uri": "[concat('http://',variables('storageAccountName'),'.blob.core.windows.net/vhds/','mi',parameters('nameSuffix'), copyindex(),'.vhd')]"
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
@@ -612,7 +612,7 @@
       },
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]",
+        "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
         "[concat('Microsoft.Network/networkInterfaces/', 'etcdNic', copyindex())]",
         "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetEtcd'))]"
       ],
@@ -645,7 +645,7 @@
           "osDisk": {
             "name": "[concat('et',parameters('nameSuffix'), copyindex())]",
             "vhd": {
-              "uri": "[concat('http://',parameters('storageAccountName'),'.blob.core.windows.net/vhds/','et',parameters('nameSuffix'), copyindex(),'.vhd')]"
+              "uri": "[concat('http://',variables('storageAccountName'),'.blob.core.windows.net/vhds/','et',parameters('nameSuffix'), copyindex(),'.vhd')]"
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
