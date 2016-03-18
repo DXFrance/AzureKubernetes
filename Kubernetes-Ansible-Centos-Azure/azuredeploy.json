@@ -447,7 +447,8 @@
       "location": "[resourceGroup().location]",
       "dependsOn": [
         "[concat('Microsoft.Network/networkInterfaces/', 'ansibleNic')]",
-        "[concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]"
+        "[concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]",
+        "[concat('Microsoft.Network/publicIPAddresses/',variables('ansibleIPAddressName'))]"
       ],
       "properties": {
         "hardwareProfile": {
@@ -681,7 +682,7 @@
             "[variables('pubBlobUrl')]",
             "[variables('playBlobUrl')]"
           ],
-          "commandToExecute": "[concat('bash deploy-via-ansible.sh ', parameters('numberOfNodes'), ' ', variables('nameSuffix'),' ', reference(variables('ansibleIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn,' ', parameters('adminUsername'), ' ', reference(variables('lbPublicIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn)]"
+          "commandToExecute": "echo 'Ansible'"
         },
         "protectedSettings": {
           "storageAccountName": "[parameters('vaultAccountName')]",
@@ -709,7 +710,7 @@
           "fileUris": [
             "[parameters('fileUris')]"
           ],
-          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(concat('nic', copyindex())).ipConfigurations[0].properties.privateIPAddress)]"
+          "commandToExecute": "echo 'Masters' "
         }
       }
     },
@@ -733,7 +734,7 @@
           "fileUris": [
             "[parameters('fileUris')]"
           ],
-          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(concat('nic', copyindex())).ipConfigurations[0].properties.privateIPAddress)]"
+          "commandToExecute": "echo 'Minions' "
         }
       }
     },
@@ -757,7 +758,7 @@
           "fileUris": [
             "[parameters('fileUris')]"
           ],
-          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(concat('nic', copyindex())).ipConfigurations[0].properties.privateIPAddress)]"
+          "commandToExecute": "echo 'ETCD' "
         }
       }
     }
