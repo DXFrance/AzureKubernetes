@@ -129,11 +129,11 @@
     "subnetEtcdPrefix": "10.0.4.0/24",
     "subnetEtcdRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetEtcdName'))]", 
        
-    "storageAccountName": "[concat(uniquestring(resourceGroup().id), variables('nameSuffix'))]",
+    "storageAccountName": "[concat(uniquestring(resourceGroup().id), parameters('nameSuffix'))]",
     
-    "availabilitySetMasters": "[concat('avma',variables('nameSuffix'))]",
-    "availabilitySetMinions": "[concat('avmi',variables('nameSuffix'))]",
-    "availabilitySetEtcd": "[concat('avet',variables('nameSuffix'))]",
+    "availabilitySetMasters": "[concat('avma',parameters('nameSuffix'))]",
+    "availabilitySetMinions": "[concat('avmi',parameters('nameSuffix'))]",
+    "availabilitySetEtcd": "[concat('avet',parameters('nameSuffix'))]",
     
     "faultDomainCount": "3",
     "updateDomainCount": "10",
@@ -146,7 +146,7 @@
     "ansibleIPAddressName": "ansiblePip",
     "ansibleIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('ansibleIPAddressName'))]",
     
-    "ansibleDomainName": "[concat('hc',variables('nameSuffix'))]",
+    "ansibleDomainName": "[concat('hc',parameters('nameSuffix'))]",
     "scriptBlobLocation": "scripts/deploy-via-ansible.sh",
     "scriptBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('scriptBlobLocation'))]",
     "keysBlobLocation": "keys/id_rsa",
@@ -163,10 +163,10 @@
       "version": "latest"
     },
     
-    "lbDomainName": "[concat('lb',variables('nameSuffix'))]",
+    "lbDomainName": "[concat('lb',parameters('nameSuffix'))]",
     "lbPublicIPAddressName": "lbPublicIP",
     "lbPublicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('lbPublicIPAddressName'))]",
-    "lbName": "[concat('lb',variables('nameSuffix'))]",
+    "lbName": "[concat('lb',parameters('nameSuffix'))]",
     "lbPublicIPAddressType": "Dynamic",
     "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('lbName'))]",
     "frontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/loadBalancerFrontend')]",
@@ -491,7 +491,7 @@
     },
     {
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[concat('ma', variables('nameSuffix'), copyindex())]",
+      "name": "[concat('ma', parameters('nameSuffix'), copyindex())]",
       "copy": {
         "name": "vmLoopMasters",
         "count": "[parameters('numberOfMasters')]"
@@ -511,7 +511,7 @@
           "vmSize": "[parameters('kubernetesvmSize')]"
         },
         "osProfile": {
-          "computerName": "[concat('ma-', variables('nameSuffix'), copyindex())]",
+          "computerName": "[concat('ma-', parameters('nameSuffix'), copyindex())]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[variables('adminPassword')]",
           "linuxConfiguration": {
@@ -529,9 +529,9 @@
         "storageProfile": {
           "imageReference": "[variables('imageReference')]",
           "osDisk": {
-            "name": "[concat('ma',variables('nameSuffix'), copyindex())]",
+            "name": "[concat('ma',parameters('nameSuffix'), copyindex())]",
             "vhd": {
-              "uri": "[concat('http://',parameters('storageAccountName'),'.blob.core.windows.net/vhds/','ma',variables('nameSuffix'), copyindex(),'.vhd')]"
+              "uri": "[concat('http://',parameters('storageAccountName'),'.blob.core.windows.net/vhds/','ma',parameters('nameSuffix'), copyindex(),'.vhd')]"
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
@@ -548,7 +548,7 @@
     },
     {
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[concat('mi', variables('nameSuffix'), copyindex())]",
+      "name": "[concat('mi', parameters('nameSuffix'), copyindex())]",
       "copy": {
         "name": "vmLoopMinions",
         "count": "[parameters('numberOfMinions')]"
@@ -568,7 +568,7 @@
           "vmSize": "[parameters('kubernetesvmSize')]"
         },
         "osProfile": {
-          "computerName": "[concat('ma-', variables('nameSuffix'), copyindex())]",
+          "computerName": "[concat('ma-', parameters('nameSuffix'), copyindex())]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[variables('adminPassword')]",
           "linuxConfiguration": {
@@ -586,9 +586,9 @@
         "storageProfile": {
           "imageReference": "[variables('imageReference')]",
           "osDisk": {
-            "name": "[concat('mi',variables('nameSuffix'), copyindex())]",
+            "name": "[concat('mi',parameters('nameSuffix'), copyindex())]",
             "vhd": {
-              "uri": "[concat('http://',parameters('storageAccountName'),'.blob.core.windows.net/vhds/','mi',variables('nameSuffix'), copyindex(),'.vhd')]"
+              "uri": "[concat('http://',parameters('storageAccountName'),'.blob.core.windows.net/vhds/','mi',parameters('nameSuffix'), copyindex(),'.vhd')]"
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
@@ -605,7 +605,7 @@
     },
     {
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[concat('et', variables('nameSuffix'), copyindex())]",
+      "name": "[concat('et', parameters('nameSuffix'), copyindex())]",
       "copy": {
         "name": "vmLoopEtcd",
         "count": "[parameters('numberOfEtcd')]"
@@ -625,7 +625,7 @@
           "vmSize": "[parameters('kubernetesvmSize')]"
         },
         "osProfile": {
-          "computerName": "[concat('et-', variables('nameSuffix'), copyindex())]",
+          "computerName": "[concat('et-', parameters('nameSuffix'), copyindex())]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[variables('adminPassword')]",
           "linuxConfiguration": {
@@ -643,9 +643,9 @@
         "storageProfile": {
           "imageReference": "[variables('imageReference')]",
           "osDisk": {
-            "name": "[concat('et',variables('nameSuffix'), copyindex())]",
+            "name": "[concat('et',parameters('nameSuffix'), copyindex())]",
             "vhd": {
-              "uri": "[concat('http://',parameters('storageAccountName'),'.blob.core.windows.net/vhds/','et',variables('nameSuffix'), copyindex(),'.vhd')]"
+              "uri": "[concat('http://',parameters('storageAccountName'),'.blob.core.windows.net/vhds/','et',parameters('nameSuffix'), copyindex(),'.vhd')]"
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
@@ -692,7 +692,7 @@
     },
     {
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat('ma', variables('nameSuffix'),copyIndex(),'/ma', variables('nameSuffix'))]",
+      "name": "[concat('ma', parameters('nameSuffix'),copyIndex(),'/ma', parameters('nameSuffix'))]",
       "apiVersion": "[variables('apiVersion')]",
       "location": "[resourceGroup().location]",
       "copy": {
@@ -700,7 +700,7 @@
         "count": "[parameters('numberOfMasters')]"
       },
       "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', 'ma', variables('nameSuffix'), copyIndex())]"
+        "[concat('Microsoft.Compute/virtualMachines/', 'ma', parameters('nameSuffix'), copyIndex())]"
       ],
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
@@ -716,7 +716,7 @@
     },
     {
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat('mi', variables('nameSuffix'),copyIndex(),'/mi', variables('nameSuffix'))]",
+      "name": "[concat('mi', parameters('nameSuffix'),copyIndex(),'/mi', parameters('nameSuffix'))]",
       "apiVersion": "[variables('apiVersion')]",
       "location": "[resourceGroup().location]",
       "copy": {
@@ -724,7 +724,7 @@
         "count": "[parameters('numberOfMinions')]"
       },
       "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', 'mi', variables('nameSuffix'), copyIndex())]"
+        "[concat('Microsoft.Compute/virtualMachines/', 'mi', parameters('nameSuffix'), copyIndex())]"
       ],
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
@@ -740,7 +740,7 @@
     },
     {
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat('et', variables('nameSuffix'),copyIndex(),'/et', variables('nameSuffix'))]",
+      "name": "[concat('et', parameters('nameSuffix'),copyIndex(),'/et', parameters('nameSuffix'))]",
       "apiVersion": "[variables('apiVersion')]",
       "location": "[resourceGroup().location]",
       "copy": {
@@ -748,7 +748,7 @@
         "count": "[parameters('numberOfEtcd')]"
       },
       "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', 'et', variables('nameSuffix'), copyIndex())]"
+        "[concat('Microsoft.Compute/virtualMachines/', 'et', parameters('nameSuffix'), copyIndex())]"
       ],
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
