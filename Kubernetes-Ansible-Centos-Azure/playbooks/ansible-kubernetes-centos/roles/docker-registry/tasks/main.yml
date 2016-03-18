@@ -1,0 +1,23 @@
+- name: Make sure directory exists for private docker registry ca
+  file: path={{ registry_ca_path }} state=directory mode=0644
+
+- name: Create the ca for pricate docker registry
+  template: src=dockerCA.crt.j2 dest={{ registry_ca_path }}/dockerCA.crt
+
+- name: Update ca trust enable
+  command: /usr/bin/update-ca-trust enable
+
+- name: Update ca trust extract
+  command: /usr/bin/update-ca-trust extract
+
+- name: Restart docker
+  service: name=docker state=restarted
+
+- name: Login registry
+  command: /usr/bin/docker login -u {{ registry_username }} -p {{ registry_password }} -e {{ registry_email }} https://{{ docker_registry }}:8080
+
+- name: Copy dockercfg to /
+  command: /usr/bin/cp /root/.dockercfg /
+
+- name: Copy dockercfg to /var/lib/kubelet
+  command: /usr/bin/cp /root/.dockercfg /var/lib/kubelet/

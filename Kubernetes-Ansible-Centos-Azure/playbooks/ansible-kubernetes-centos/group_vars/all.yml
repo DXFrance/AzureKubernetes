@@ -1,0 +1,25 @@
+# user
+ansible_ssh_user: xuan_tang
+
+# kubernetes api version (default: v1)
+api_version: v1
+
+# service ip range and pod (flannel) ip range
+kube_service_addresses: 10.254.0.0/16
+flannel_ip: 11.1.1.1
+flannel_prefix: 16
+
+# private docker registry
+docker_registry: registry.example.com
+registry_ca_path: /etc/pki/ca-trust/source/anchors/
+registry_username: username
+registry_password: password
+registry_email: test@test.com
+
+# http proxy
+enable_http_proxy: false
+http_proxy: http://proxy.example.net:8080/
+
+# dns
+dns_server: 10.254.0.3
+dns_domain: kubernetes.local

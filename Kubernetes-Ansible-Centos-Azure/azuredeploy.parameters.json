@@ -2,10 +2,7 @@
   "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "vmSuffix": {
-      "value": "GEN-UNIQUE"
-    },
-    "newStorageAccountName": {
+    "nameSuffix": {
       "value": "GEN-UNIQUE"
     },
     "ansibleVmSize": {
@@ -14,7 +11,13 @@
     "kubernetesVmSize": {
       "value": "Standard_A1"
     },
-    "numberOfNodes": {
+    "numberOfMasters": {
+      "value": 1
+    },
+    "numberOfMinions": {
+      "value": 1
+    },
+     "numberOfEtcd": {
       "value": 1
     },
     "adminUsername": {

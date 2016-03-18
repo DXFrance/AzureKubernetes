@@ -1,0 +1,16 @@
+---
+- name: Configure config
+  template: src=config.j2 dest=/etc/kubernetes/config
+
+- name: Configure kubelet
+  template: src=kubelet.j2 dest=/etc/kubernetes/kubelet
+
+- name: Configure proxy
+  template: src=proxy.j2 dest=/etc/kubernetes/proxy
+
+- name: Restart kubernetes services
+  service: name={{ item }} state=restarted enabled=yes
+  with_items:
+    - docker
+    - kube-proxy.service
+    - kubelet.service

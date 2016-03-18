@@ -1,0 +1,6 @@
+---
+- hosts: minions
+  serial: 1
+  sudo: yes
+  roles:
+    - dns

@@ -1,0 +1,6 @@
+---
+- name: Install flannel
+  yum: name=flannel state=latest
+
+- name: Create Flannel configuration file
+  command: /usr/bin/curl -s -L http://{{ groups['etcd'][0] }}:4001/v2/keys/coreos.com/network/config -XPUT -d value='{"Network":"{{ flannel_ip }}/{{ flannel_prefix }}", "SubnetLen":24, "Backend":{"Type":"vxlan", "VNI":1}}'

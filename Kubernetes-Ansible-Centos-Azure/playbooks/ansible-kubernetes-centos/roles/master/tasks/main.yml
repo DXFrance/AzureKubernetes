@@ -1,0 +1,22 @@
+---
+- name: Configure controller-manager
+  template: src=controller-manager.j2 dest=/etc/kubernetes/controller-manager
+
+- name: Configure config
+  template: src=config.j2 dest=/etc/kubernetes/config
+
+- name: Configure apiserver
+  template: src=apiserver.j2 dest=/etc/kubernetes/apiserver
+
+- name: Restart kubernetes services
+  service: name={{ item }} state=restarted enabled=yes
+  with_items:
+    - kube-apiserver
+    - kube-controller-manager
+    - kube-scheduler
+
+- pause: seconds=2
+
+- name: Identify nodes
+  command: /usr/bin/curl -L http://{{ groups['masters'][0] }}:8080/api/v1beta3/nodes -XPOST -d '{"apiVersion":"v1beta3","kind":"Node","metadata":{"name":"{{ item }}","labels":{"name":"{{ item }}"}},"spec":{"externalID":"{{ item }}"}}'
+  with_items: groups["minions"]

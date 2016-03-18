@@ -1,0 +1,28 @@
+---
+- name: Install flannel if not already installed
+  yum: name=flannel state=latest
+
+- name: Config flanneld
+  template: src=flanneld.j2 dest=/etc/sysconfig/flanneld
+
+- name: Enable and restart flanneld
+  service: name=flanneld state=restarted enabled=yes
+
+- name: Stop Docker
+  service: name=docker state=stopped
+
+- pause: seconds=2
+
+- name: Delete docker0
+  command: ip link delete docker0
+  ignore_errors: yes
+
+- pause: seconds=2
+
+- name: Start docker
+  service: name=docker state=started
+
+- pause: seconds=2
+
+- name: Restart kubelet
+  service: name=kubelet state=started

@@ -1,0 +1,6 @@
+---
+- name: Configure dns
+  template: src=kubelet.j2 dest=/etc/kubernetes/kubelet
+
+- name: Restart kubelet
+  service: name=kubelet state=restarted enabled=yes

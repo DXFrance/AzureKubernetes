@@ -2,98 +2,74 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "vmSuffix": {
+    "nameSuffix": {
       "type": "string",
       "defaultValue": "mskub8",
       "metadata": {
-        "description": "Suffix of the vms, and load balancers"
-      }
-    },
-    "newStorageAccountName": {
-      "type": "string",
-      "defaultValue": "mskubstorage",
-      "metadata": {
-        "description": "Name of the storage account for VM OS Disks"
+        "description": "Prefix of the components"
       }
     },
     "kubernetesVmSize": {
       "type": "string",
       "defaultValue": "Standard_A0",
       "allowedValues": [
-	 	  "Standard_A0",
-		  "Standard_A1",
-		  "Standard_A2",
-		  "Standard_A3",
-		  "Standard_A4",
-		  "Basic_A0",
-		  "Basic_A1",
-		  "Basic_A2",
-		  "Basic_A3",
-		  "Basic_A4",
-		  "Standard_A5",
-		  "Standard_A6",
-		  "Standard_A7",
-		  "Standard_D1",
-		  "Standard_D2",
-		  "Standard_D3",
-		  "Standard_D4",
-		  "Standard_D11",
-		  "Standard_D12",
-		  "Standard_D13",
-		  "Standard_D14",
-		  "Standard_D1_v2",
-		  "Standard_D2_v2",
-		  "Standard_D3_v2",
-		  "Standard_D4_v2",
-		  "Standard_D5_v2",
-		  "Standard_D11_v2",
-		  "Standard_D12_v2",
-		  "Standard_D13_v2",
-		  "Standard_D14_v2",
-		  "Standard_DS1",
-		  "Standard_DS2",
-		  "Standard_DS3",
-		  "Standard_DS4",
-		  "Standard_DS11",
-		  "Standard_DS12",
-		  "Standard_DS13",
-		  "Standard_DS14",
-		  "Standard_G1",
-		  "Standard_G2",
-		  "Standard_G3",
-		  "Standard_G4",
-		  "Standard_G5",
-		  "Standard_GS1",
-		  "Standard_GS2",
-		  "Standard_GS3",
-		  "Standard_GS4",
-		  "Standard_GS5",
-		  "Standard_A8",
-		  "Standard_A9",
-		  "Standard_A10",
-		  "Standard_A11"
-	    ],
+        "Basic_A0","Basic_A1","Basic_A2","Basic_A3","Basic_A4",
+        "Standard_A0","Standard_A1","Standard_A2","Standard_A3","Standard_A4","Standard_A5","Standard_A6","Standard_A7","Standard_A8","Standard_A9","Standard_A10","Standard_A11","Standard_D1",
+        "Standard_D2","Standard_D3","Standard_D4","Standard_D11","Standard_D12","Standard_D13","Standard_D14",
+        "Standard_D1_v2","Standard_D2_v2","Standard_D3_v2","Standard_D4_v2","Standard_D5_v2","Standard_D11_v2","Standard_D12_v2","Standard_D13_v2","Standard_D14_v2",
+        "Standard_DS1","Standard_DS2","Standard_DS3","Standard_DS4","Standard_DS11","Standard_DS12","Standard_DS13","Standard_DS14",
+        "Standard_G1","Standard_G2","Standard_G3","Standard_G4","Standard_G5","Standard_GS1","Standard_GS2","Standard_GS3","Standard_GS4","Standard_GS5"
+      ],
       "metadata": {
-        "description": "Instance size for the VMs"
+        "description": "Instance size for Kubernetes VMs"
       }
     },
-    "centosOSVersion":{
-      "type":"string",
-      "defaultValue":"7.0",
-      "allowedValues":[
+    "ansibleVmSize": {
+      "type": "string",
+      "defaultValue": "Standard_A0",
+      "allowedValues": [
+        "Basic_A0","Basic_A1","Basic_A2","Basic_A3","Basic_A4",
+        "Standard_A0","Standard_A1","Standard_A2","Standard_A3","Standard_A4","Standard_A5","Standard_A6","Standard_A7","Standard_A8","Standard_A9","Standard_A10","Standard_A11","Standard_D1",
+        "Standard_D2","Standard_D3","Standard_D4","Standard_D11","Standard_D12","Standard_D13","Standard_D14",
+        "Standard_D1_v2","Standard_D2_v2","Standard_D3_v2","Standard_D4_v2","Standard_D5_v2","Standard_D11_v2","Standard_D12_v2","Standard_D13_v2","Standard_D14_v2",
+        "Standard_DS1","Standard_DS2","Standard_DS3","Standard_DS4","Standard_DS11","Standard_DS12","Standard_DS13","Standard_DS14",
+        "Standard_G1","Standard_G2","Standard_G3","Standard_G4","Standard_G5","Standard_GS1","Standard_GS2","Standard_GS3","Standard_GS4","Standard_GS5"
+      ],
+      "metadata": {
+        "description": "Size of the Ansible virtual machine"
+      }
+    },
+    "centosOSVersion": {
+      "type": "string",
+      "defaultValue": "7.0",
+      "allowedValues": [
         "7.2",
         "7.1",
         "7.0"
       ],
-      "metadata":{
-        "description":"The CentOS version for the VM. This will pick a fully patched image of this given CentOS version. Allowed values are: 7.0, 7.1, 7.2"
+      "metadata": {
+        "description": "The CentOS version for the VM. This will pick a fully patched image of this given CentOS version. Allowed values are: 7.0, 7.1, 7.2"
       }
     },
-    "numberOfNodes": {
+    "numberOfMasters": {
       "type": "int",
       "defaultValue": 2,
       "metadata": {
-        "description": "Number of kubernetes nodes to create"
+        "description": "Number of kubernetes Masters nodes to create"
+      }
+    },
+    "numberOfMinions": {
+      "type": "int",
+      "defaultValue": 2,
+      "metadata": {
+        "description": "Number of kubernetes Minions nodes to create"
+      }
+    },
+    "numberOfEtcd": {
+      "type": "int",
+      "defaultValue": 2,
+      "metadata": {
+        "description": "Number of Etcd nodes to create"
       }
     },
     "adminUserName": {
@@ -124,20 +100,6 @@
         "description": "The command to execute."
       }
     },
-    "ansibleVmSize": {
-      "type": "string",
-      "defaultValue": "Standard_A0",
-      "metadata": {
-        "description": "Size of the Ansible virtual machine"
-      }
-    },
-    "kubernetesVmSize": {
-      "type": "string",
-      "defaultValue": "Standard_A0",
-      "metadata": {
-        "description": "Size of the Ansible virtual machine"
-      }
-    },
     "vaultAccountName": {
       "type": "string",
       "defaultValue": "ansiblevault",
@@ -150,25 +112,44 @@
     "apiVersion": "2015-06-15",
     "virtualNetworkName": "KubVNET",
     "addressPrefix": "10.0.0.0/16",
-    "subnet1Name": "Subnet-1",
-    "subnet1Prefix": "10.0.0.0/24",
-    "vmNamePrefix": "[concat('aw',parameters('vmSuffix'))]",
-    "storageAccountName": "[concat(uniquestring(resourceGroup().id), variables('vmNamePrefix'))]",
-    "availabilitySet": "[concat('av',variables('vmNamePrefix'))]",
+   
+    "subnetAdminName": "Subnet-ADMIN",
+    "subnetAdminPrefix": "10.0.0.0/24",
+    "subnetAdminRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetAdminName'))]",
+    
+    "subnetMastersName": "Subnet-MASTERS",
+    "subnetMastersPrefix": "10.0.2.0/24",
+    "subnetMastersRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetMastersName'))]",
+    
+    "subnetMinionsName": "Subnet-MINIONS",
+    "subnetMinionsPrefix": "10.0.4.0/24",
+    "subnetMinionsRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetMinionsName'))]", 
+    
+    "subnetEtcdName": "Subnet-MINIONS",
+    "subnetEtcdPrefix": "10.0.4.0/24",
+    "subnetEtcdRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetEtcdName'))]", 
+       
+    
+    
+    
+    "storageAccountName": "[concat(uniquestring(resourceGroup().id), variables('nameSuffix'))]",
+    
+    "availabilitySetMasters": "[concat('avma',variables('nameSuffix'))]",
+    "availabilitySetMinions": "[concat('avmi',variables('nameSuffix'))]",
+    "availabilitySetEtcd": "[concat('avet',variables('nameSuffix'))]",
+    
     "faultDomainCount": "3",
     "updateDomainCount": "10",
     "publicIPAddressType": "Dynamic",
     "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
-    "subnet1Ref": "[concat(variables('vnetID'),'/subnets/',variables('subnet1Name'))]",
-    "vmStorageAccountContainerName": "vhds",
+    
     "storageAccountType": "Standard_LRS",
+    
     "sshKeyPath": "[concat('/home/',parameters('adminUsername'),'/.ssh/authorized_keys')]",
-    "ansibleIPAddressName": "ansiblepip",
+    "ansibleIPAddressName": "ansiblePip",
     "ansibleIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('ansibleIPAddressName'))]",
-    "subnetDmzName": "Subnet-DMZ",
-    "subnetDmzPrefix": "10.0.2.0/24",
-    "subnetDmzRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetDmzName'))]",
-    "hcDomainName": "[concat('hc',variables('vmNamePrefix'))]",
+    
+    "ansibleDomainName": "[concat('hc',variables('nameSuffix'))]",
     "scriptBlobLocation": "scripts/deploy-via-ansible.sh",
     "scriptBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('scriptBlobLocation'))]",
     "keysBlobLocation": "keys/id_rsa",
@@ -179,18 +160,20 @@
     "playBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('playBlobLocation'))]",
     "assetsStorageAccountId": "[resourceId('ansiblevault','Microsoft.Storage/storageAccounts', parameters('vaultAccountName'))]",
     "imageReference": {
-            "publisher": "OpenLogic",
-            "offer": "CentOS",
-            "sku":"[parameters('centosOSVersion')]",
-            "version": "latest"
+      "publisher": "OpenLogic",
+      "offer": "CentOS",
+      "sku": "[parameters('centosOSVersion')]",
+      "version": "latest"
     },
-    "lbDomainName": "[concat('lb',variables('vmNamePrefix'))]",
-    "lbPublicIPAddressName": "viplb",
+    
+    "lbDomainName": "[concat('lb',variables('nameSuffix'))]",
+    "lbPublicIPAddressName": "lbPublicIP",
     "lbPublicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('lbPublicIPAddressName'))]",
-    "lbName": "cratelb",
+    "lbName": "[concat('lb',variables('nameSuffix'))]",
     "lbPublicIPAddressType": "Dynamic",
     "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('lbName'))]",
     "frontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/loadBalancerFrontend')]",
+    
     "disablePasswordAuthentication": "true",
     "adminPassword": "V3l0C1RaPt0R#"
   },
@@ -224,11 +207,11 @@
     {
       "apiVersion": "[variables('apiVersion')]",
       "type": "Microsoft.Network/loadBalancers/inboundNatRules",
-      "name": "[concat(variables('lbName'), '/', 'CRATE-420', copyIndex())]",
+      "name": "[concat(variables('lbName'), '/', 'HTTP-80', copyIndex())]",
       "location": "[resourceGroup().location]",
       "copy": {
-        "name": "lbNatLoop",
-        "count": "[parameters('numberOfNodes')]"
+        "name": "lbKubUi",
+        "count": "[parameters('numberOfMasters')]"
       },
       "dependsOn": [
         "[concat('Microsoft.Network/loadBalancers/', variables('lbName'))]"
@@ -238,112 +221,14 @@
           "id": "[variables('frontEndIPConfigID')]"
         },
         "protocol": "tcp",
-        "frontendPort": "[copyIndex(4200)]",
-        "backendPort": 4200,
+        "frontendPort": "[copyIndex(80)]",
+        "backendPort": 80,
         "enableFloatingIP": false
-      }
-    },
-    {
-      "apiVersion": "[variables('apiVersion')]",
-      "type": "Microsoft.Network/loadBalancers/inboundNatRules",
-      "name": "[concat(variables('lbName'), '/', 'CRATE-430', copyIndex())]",
-      "location": "[resourceGroup().location]",
-      "copy": {
-        "name": "lbNatLoop2",
-        "count": "[parameters('numberOfNodes')]"
-      },
-      "dependsOn": [
-        "[concat('Microsoft.Network/loadBalancers/', variables('lbName'))]"
-      ],
-      "properties": {
-        "frontendIPConfiguration": {
-          "id": "[variables('frontEndIPConfigID')]"
-        },
-        "protocol": "tcp",
-        "frontendPort": "[copyIndex(4300)]",
-        "backendPort": 4300,
-        "enableFloatingIP": false
-      }
-    },
-    {
-      "apiVersion": "[variables('apiVersion')]",
-      "type": "Microsoft.Network/loadBalancers/inboundNatRules",
-      "name": "[concat(variables('lbName'), '/', 'SSH-220', copyIndex())]",
-      "location": "[resourceGroup().location]",
-      "copy": {
-        "name": "lbNatLoop3",
-        "count": "[parameters('numberOfNodes')]"
-      },
-      "dependsOn": [
-        "[concat('Microsoft.Network/loadBalancers/', variables('lbName'))]"
-      ],
-      "properties": {
-        "frontendIPConfiguration": {
-          "id": "[variables('frontEndIPConfigID')]"
-        },
-        "protocol": "tcp",
-        "frontendPort": "[copyIndex(2200)]",
-        "backendPort": 22,
-        "enableFloatingIP": false
-      }
-    },
-    {
-      "apiVersion": "[variables('apiVersion')]",
-      "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(variables('hcdomainName'), '/install_ansible')]",
-      "location": "[resourceGroup().location]",
-      "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', variables('hcdomainName'))]",
-        "[variables('hcDomainName')]",
-        "vmLoop",
-        "extensionLoop"
-      ],
-      "properties": {
-        "publisher": "Microsoft.OSTCExtensions",
-        "type": "CustomScriptForLinux",
-        "typeHandlerVersion": "1.2",
-        "settings": {
-          "fileUris": [
-            "[variables('scriptBlobUrl')]",
-            "[variables('keysBlobUrl')]",
-            "[variables('pubBlobUrl')]",
-            "[variables('playBlobUrl')]"
-          ],
-          "commandToExecute": "[concat('bash deploy-via-ansible.sh ', parameters('numberOfNodes'), ' ', variables('vmNamePrefix'),' ', reference(variables('ansibleIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn,' ', parameters('adminUsername'), ' ', reference(variables('lbPublicIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn)]"
-        },
-        "protectedSettings": {
-          "storageAccountName": "[parameters('vaultAccountName')]",
-          "storageAccountKey": "[listKeys(variables('assetsStorageAccountId'),'2015-05-01-preview').key1]"
-        }
-      }
-    },
-    {
-      "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(variables('vmNamePrefix'),copyIndex(),'/', variables('vmNamePrefix'))]",
-      "apiVersion": "[variables('apiVersion')]",
-      "location": "[resourceGroup().location]",
-      "copy": {
-        "name": "extensionLoop",
-        "count": "[parameters('numberOfNodes')]"
-      },
-      "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', variables('vmNamePrefix'), copyIndex())]"
-      ],
-      "properties": {
-        "publisher": "Microsoft.OSTCExtensions",
-        "type": "CustomScriptForLinux",
-        "typeHandlerVersion": "1.2",
-        "settings": {
-          "fileUris": [
-            "[parameters('fileUris')]"
-          ],
-          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(concat('nic', copyindex())).ipConfigurations[0].properties.privateIPAddress)]"
-        }     
       }
     },
     {
       "type": "Microsoft.Storage/storageAccounts",
-      "name": "[parameters('newStorageAccountName')]",
+      "name": "[parameters('storageAccountName')]",
       "location": "[resourceGroup().location]",
       "apiVersion": "[variables('apiVersion')]",
       "properties": {
@@ -352,7 +237,27 @@
     },
     {
       "type": "Microsoft.Compute/availabilitySets",
-      "name": "[variables('availabilitySet')]",
+      "name": "[variables('availabilitySetMasters')]",
+      "apiVersion": "[variables('apiVersion')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "PlatformFaultDomainCount": "[variables('faultDomainCount')]",
+        "PlatformUpdateDomainCount": "[variables('updateDomainCount')]"
+      }
+    },
+    {
+      "type": "Microsoft.Compute/availabilitySets",
+      "name": "[variables('availabilitySetMinions')]",
+      "apiVersion": "[variables('apiVersion')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "PlatformFaultDomainCount": "[variables('faultDomainCount')]",
+        "PlatformUpdateDomainCount": "[variables('updateDomainCount')]"
+      }
+    },
+    {
+      "type": "Microsoft.Compute/availabilitySets",
+      "name": "[variables('availabilitySetEtcd')]",
       "apiVersion": "[variables('apiVersion')]",
       "location": "[resourceGroup().location]",
       "properties": {
@@ -368,7 +273,7 @@
       "properties": {
         "publicIPAllocationMethod": "Dynamic",
         "dnsSettings": {
-          "domainNameLabel": "[variables('hcDomainName')]"
+          "domainNameLabel": "[variables('ansibleDomainName')]"
         }
       }
     },
@@ -384,31 +289,8 @@
         }
       }
     },
-    {
-      "apiVersion": "[variables('apiVersion')]",
-      "type": "Microsoft.Network/networkInterfaces",
-      "name": "nicansible",
-      "location": "[resourceGroup().location]",
-      "dependsOn": [
-        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
-      ],
-      "properties": {
-        "ipConfigurations": [
-          {
-            "name": "ipconfig1",
-            "properties": {
-              "privateIPAllocationMethod": "Dynamic",
-              "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses','ansiblepip')]"
-              },
-              "subnet": {
-                "id": "[variables('subnetDmzRef')]"
-              }
-            }
-          }
-        ]
-      }
-    },
+    
+
     {
       "type": "Microsoft.Network/virtualNetworks",
       "name": "[variables('virtualNetworkName')]",
@@ -422,44 +304,56 @@
         },
         "subnets": [
           {
-            "name": "[variables('subnet1Name')]",
+            "name": "[variables('subnetMastersName')]",
             "properties": {
-              "addressPrefix": "[variables('subnet1Prefix')]"
+              "addressPrefix": "[variables('subnetAdminPrefix')]"
             }
           },
           {
-            "name": "[variables('subnetDmzName')]",
+            "name": "[variables('subnetMinionsName')]",
             "properties": {
-              "addressPrefix": "[variables('subnetDmzPrefix')]"
+              "addressPrefix": "[variables('subnetMinionsPrefix')]"
+            }
+          },
+          {
+            "name": "[variables('subnetEtcdName')]",
+            "properties": {
+              "addressPrefix": "[variables('subnetEtcdPrefix')]"
+            }
+          },
+          {
+            "name": "[variables('subnetAdminName')]",
+            "properties": {
+              "addressPrefix": "[variables('subnetAdminPrefix')]"
             }
           }
         ]
       }
     },
+    
+    
     {
       "apiVersion": "[variables('apiVersion')]",
       "type": "Microsoft.Network/networkInterfaces",
-      "name": "[concat('nic', copyindex())]",
+      "name": "[concat('mastersNic', copyindex())]",
       "location": "[resourceGroup().location]",
       "copy": {
-        "name": "nicLoop",
-        "count": "[parameters('numberOfNodes')]"
+        "name": "nicLoopMasters",
+        "count": "[parameters('numberOfMasters')]"
       },
       "dependsOn": [
         "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
         "[concat('Microsoft.Network/loadBalancers/', variables('lbName'))]",
-        "[concat('Microsoft.Network/loadBalancers/', variables('lbName'), '/inboundNatRules/', 'CRATE-420', copyIndex())]",
-        "[concat('Microsoft.Network/loadBalancers/', variables('lbName'), '/inboundNatRules/', 'CRATE-430', copyIndex())]",
-        "[concat('Microsoft.Network/loadBalancers/', variables('lbName'), '/inboundNatRules/', 'SSH-220', copyIndex())]"
+        "[concat('Microsoft.Network/loadBalancers/', variables('lbName'), '/inboundNatRules/', 'HTTP-80', copyIndex())]"
       ],
       "properties": {
         "ipConfigurations": [
           {
-            "name": "ipconfig1",
+            "name": "MastersIpConfig",
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
               "subnet": {
-                "id": "[variables('subnet1Ref')]"
+                "id": "[variables('subnetMastersRef')]"
               },
               "loadBalancerBackendAddressPools": [
                 {
@@ -468,15 +362,87 @@
               ],
               "loadBalancerInboundNatRules": [
                 {
-                  "id": "[concat(variables('lbID'),'/inboundNatRules/CRATE-420', copyindex())]"
-                },
-                {
-                  "id": "[concat(variables('lbID'),'/inboundNatRules/CRATE-430', copyindex())]"
-                },
-                {
-                  "id": "[concat(variables('lbID'),'/inboundNatRules/SSH-220', copyindex())]"
+                  "id": "[concat(variables('lbID'),'/inboundNatRules/HTTP-80', copyindex())]"
                 }
               ]
+            }
+          }
+        ]
+      }
+    },
+    
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat('minionsNic', copyindex())]",
+      "location": "[resourceGroup().location]",
+      "copy": {
+        "name": "nicLoopMinions",
+        "count": "[parameters('numberOfMinions')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "MinionsIpConfig",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('subnetMinionsRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat('etcdNic', copyindex())]",
+      "location": "[resourceGroup().location]",
+      "copy": {
+        "name": "nicLoopEtcd",
+        "count": "[parameters('numberOfEtcd')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "MinionsIpConfig",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('subnetMinionsRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "ansibleNic",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ansibleIpConfig",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses','ansiblePip')]"
+              },
+              "subnet": {
+                "id": "[variables('subnetAdminRef')]"
+              }
             }
           }
         ]
@@ -485,18 +451,18 @@
     {
       "apiVersion": "[variables('apiVersion')]",
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[variables('hcDomainName')]",
+      "name": "[variables('ansibleDomainName')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[concat('Microsoft.Network/networkInterfaces/', 'nicansible')]",
-        "[concat('Microsoft.Storage/storageAccounts/', parameters('newStorageAccountName'))]"
+        "[concat('Microsoft.Network/networkInterfaces/', 'ansibleNic')]",
+        "[concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]"
       ],
       "properties": {
         "hardwareProfile": {
           "vmSize": "[parameters('ansibleVmSize')]"
         },
         "osProfile": {
-          "computerName": "[variables('hcDomainName')]",
+          "computerName": "[variables('ansibleDomainName')]",
           "adminUsername": "[parameters('adminUsername')]",
           "linuxConfiguration": {
             "disablePasswordAuthentication": "true",
@@ -515,7 +481,7 @@
           "osDisk": {
             "name": "osdisk",
             "vhd": {
-              "uri": "[concat('http://', parameters('newStorageAccountName'), '.blob.core.windows.net/vhds/', variables('hcDomainName'), '-osdisk.vhd')]"
+              "uri": "[concat('http://', parameters('storageAccountName'), '.blob.core.windows.net/vhds/', variables('ansibleDomainName'), '-osdisk.vhd')]"
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
@@ -524,7 +490,7 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces','nicansible')]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces','ansibleNic')]"
             }
           ]
         }
@@ -532,27 +498,27 @@
     },
     {
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[concat(variables('vmNamePrefix'), copyindex())]",
+      "name": "[concat('ma', variables('nameSuffix'), copyindex())]",
       "copy": {
-        "name": "vmLoop",
-        "count": "[parameters('numberOfNodes')]"
+        "name": "vmLoopMasters",
+        "count": "[parameters('numberOfMasters')]"
       },
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[concat('Microsoft.Storage/storageAccounts/', parameters('newStorageAccountName'))]",
-        "[concat('Microsoft.Network/networkInterfaces/', 'nic', copyindex())]",
-        "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySet'))]"
+        "[concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]",
+        "[concat('Microsoft.Network/networkInterfaces/', 'mastersNic', copyindex())]",
+        "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetMasters'))]"
       ],
       "apiVersion": "[variables('apiVersion')]",
       "properties": {
         "availabilitySet": {
-          "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySet'))]"
+          "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetMasters'))]"
         },
         "hardwareProfile": {
           "vmSize": "[parameters('kubernetesvmSize')]"
         },
         "osProfile": {
-          "computerName": "[concat(variables('vmNamePrefix'), copyindex())]",
+          "computerName": "[concat('ma-', variables('nameSuffix'), copyindex())]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[variables('adminPassword')]",
           "linuxConfiguration": {
@@ -570,9 +536,9 @@
         "storageProfile": {
           "imageReference": "[variables('imageReference')]",
           "osDisk": {
-            "name": "[concat(variables('vmNamePrefix'), copyindex())]",
+            "name": "[concat('ma',variables('nameSuffix'), copyindex())]",
             "vhd": {
-              "uri": "[concat('http://',parameters('newStorageAccountName'),'.blob.core.windows.net/vhds/',variables('vmNamePrefix'), copyindex(),'.vhd')]"
+              "uri": "[concat('http://',parameters('storageAccountName'),'.blob.core.windows.net/vhds/','ma',variables('nameSuffix'), copyindex(),'.vhd')]"
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
@@ -581,9 +547,225 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat('nic',copyindex()))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat('mastersNic',copyindex()))]"
             }
           ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[concat('mi', variables('nameSuffix'), copyindex())]",
+      "copy": {
+        "name": "vmLoopMinions",
+        "count": "[parameters('numberOfMinions')]"
+      },
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]",
+        "[concat('Microsoft.Network/networkInterfaces/', 'minionsNic', copyindex())]",
+        "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetMinions'))]"
+      ],
+      "apiVersion": "[variables('apiVersion')]",
+      "properties": {
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetMinions'))]"
+        },
+        "hardwareProfile": {
+          "vmSize": "[parameters('kubernetesvmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[concat('ma-', variables('nameSuffix'), copyindex())]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[variables('adminPassword')]",
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": "[variables('disablePasswordAuthentication')]",
+            "ssh": {
+              "publicKeys": [
+                {
+                  "path": "[variables('sshKeyPath')]",
+                  "keyData": "[parameters('sshKeyData')]"
+                }
+              ]
+            }
+          }
+        },
+        "storageProfile": {
+          "imageReference": "[variables('imageReference')]",
+          "osDisk": {
+            "name": "[concat('mi',variables('nameSuffix'), copyindex())]",
+            "vhd": {
+              "uri": "[concat('http://',parameters('storageAccountName'),'.blob.core.windows.net/vhds/','mi',variables('nameSuffix'), copyindex(),'.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat('minionsNic',copyindex()))]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[concat('et', variables('nameSuffix'), copyindex())]",
+      "copy": {
+        "name": "vmLoopEtcd",
+        "count": "[parameters('numberOfEtcd')]"
+      },
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]",
+        "[concat('Microsoft.Network/networkInterfaces/', 'etcdNic', copyindex())]",
+        "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetEtcd'))]"
+      ],
+      "apiVersion": "[variables('apiVersion')]",
+      "properties": {
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetEtcd'))]"
+        },
+        "hardwareProfile": {
+          "vmSize": "[parameters('kubernetesvmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[concat('et-', variables('nameSuffix'), copyindex())]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[variables('adminPassword')]",
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": "[variables('disablePasswordAuthentication')]",
+            "ssh": {
+              "publicKeys": [
+                {
+                  "path": "[variables('sshKeyPath')]",
+                  "keyData": "[parameters('sshKeyData')]"
+                }
+              ]
+            }
+          }
+        },
+        "storageProfile": {
+          "imageReference": "[variables('imageReference')]",
+          "osDisk": {
+            "name": "[concat('et',variables('nameSuffix'), copyindex())]",
+            "vhd": {
+              "uri": "[concat('http://',parameters('storageAccountName'),'.blob.core.windows.net/vhds/','et',variables('nameSuffix'), copyindex(),'.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat('etcdNic',copyindex()))]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(variables('ansibleDomainName'), '/install_ansible')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', variables('ansibleDomainName'))]",
+        "[variables('ansibleDomainName')]",
+        "vmLoop",
+        "extensionLoop"
+      ],
+      "properties": {
+        "publisher": "Microsoft.OSTCExtensions",
+        "type": "CustomScriptForLinux",
+        "typeHandlerVersion": "1.2",
+        "settings": {
+          "fileUris": [
+            "[variables('scriptBlobUrl')]",
+            "[variables('keysBlobUrl')]",
+            "[variables('pubBlobUrl')]",
+            "[variables('playBlobUrl')]"
+          ],
+          "commandToExecute": "[concat('bash deploy-via-ansible.sh ', parameters('numberOfNodes'), ' ', variables('nameSuffix'),' ', reference(variables('ansibleIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn,' ', parameters('adminUsername'), ' ', reference(variables('lbPublicIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn)]"
+        },
+        "protectedSettings": {
+          "storageAccountName": "[parameters('vaultAccountName')]",
+          "storageAccountKey": "[listKeys(variables('assetsStorageAccountId'),'2015-05-01-preview').key1]"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat('ma', variables('nameSuffix'),copyIndex(),'/ma', variables('nameSuffix'))]",
+      "apiVersion": "[variables('apiVersion')]",
+      "location": "[resourceGroup().location]",
+      "copy": {
+        "name": "extensionLoop",
+        "count": "[parameters('numberOfMasters')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', 'ma', variables('nameSuffix'), copyIndex())]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.OSTCExtensions",
+        "type": "CustomScriptForLinux",
+        "typeHandlerVersion": "1.2",
+        "settings": {
+          "fileUris": [
+            "[parameters('fileUris')]"
+          ],
+          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(concat('nic', copyindex())).ipConfigurations[0].properties.privateIPAddress)]"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat('mi', variables('nameSuffix'),copyIndex(),'/mi', variables('nameSuffix'))]",
+      "apiVersion": "[variables('apiVersion')]",
+      "location": "[resourceGroup().location]",
+      "copy": {
+        "name": "extensionLoop",
+        "count": "[parameters('numberOfMinions')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', 'mi', variables('nameSuffix'), copyIndex())]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.OSTCExtensions",
+        "type": "CustomScriptForLinux",
+        "typeHandlerVersion": "1.2",
+        "settings": {
+          "fileUris": [
+            "[parameters('fileUris')]"
+          ],
+          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(concat('nic', copyindex())).ipConfigurations[0].properties.privateIPAddress)]"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat('et', variables('nameSuffix'),copyIndex(),'/et', variables('nameSuffix'))]",
+      "apiVersion": "[variables('apiVersion')]",
+      "location": "[resourceGroup().location]",
+      "copy": {
+        "name": "extensionLoop",
+        "count": "[parameters('numberOfEtcd')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', 'et', variables('nameSuffix'), copyIndex())]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.OSTCExtensions",
+        "type": "CustomScriptForLinux",
+        "typeHandlerVersion": "1.2",
+        "settings": {
+          "fileUris": [
+            "[parameters('fileUris')]"
+          ],
+          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(concat('nic', copyindex())).ipConfigurations[0].properties.privateIPAddress)]"
         }
       }
     }
