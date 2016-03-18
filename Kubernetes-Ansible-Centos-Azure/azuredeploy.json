@@ -125,7 +125,7 @@
     "subnetMinionsPrefix": "10.0.4.0/24",
     "subnetMinionsRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetMinionsName'))]", 
     
-    "subnetEtcdName": "Subnet-MINIONS",
+    "subnetEtcdName": "Subnet-ETCD",
     "subnetEtcdPrefix": "10.0.4.0/24",
     "subnetEtcdRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetEtcdName'))]", 
        
