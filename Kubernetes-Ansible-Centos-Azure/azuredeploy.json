@@ -53,7 +53,7 @@
     },
     "numberOfMasters": {
       "type": "int",
-      "defaultValue": 2,
+      "defaultValue": 1,
       "metadata": {
         "description": "Number of kubernetes Masters nodes to create"
       }
@@ -67,7 +67,7 @@
     },
     "numberOfEtcd": {
       "type": "int",
-      "defaultValue": 2,
+      "defaultValue": 1,
       "metadata": {
         "description": "Number of Etcd nodes to create"
       }
