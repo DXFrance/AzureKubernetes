@@ -42,7 +42,7 @@ function install_curl()
   # Installation of curl for logging
   until yum install -y curl 
   do
-    log "Lock detected on VM init Try again..."
+    log "Lock detected on yum install VM init Try again..."
     sleep 2
   done
 }
@@ -153,7 +153,7 @@ function get_private_ip()
 
 function install_epel_repo()
 {
-   rpm -iUvh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
+   rpm -iUvh "${EPEL_REPO}"
 }
 
 function install_required_packages()
@@ -161,7 +161,7 @@ function install_required_packages()
 
   log "Install ansible required packages..." "0"
 
-  until yumm install -y git python2-devel python-pip
+  until yum install -y git python2-devel python-pip
   do
     log "Lock detected on VM init Try again..." "0"
     sleep 2
@@ -286,6 +286,7 @@ FACTS="/etc/ansible/facts"
 ANSIBLE_HOST_FILE="/etc/ansible/hosts"
 ANSIBLE_CONFIG_FILE="/etc/ansible/ansible.cfg"
 GIT_KUB8_URL="https://github.com/herveleclerc/ansible-kubernetes-centos.git"
+EPEL_REPO="http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm"
 
 local_kub8="kub8"
 
