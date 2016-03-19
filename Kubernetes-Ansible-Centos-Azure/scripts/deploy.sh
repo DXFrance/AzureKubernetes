@@ -125,8 +125,14 @@ function get_private_ip()
   for i in $(seq 0 $numberOfMasters)
   do
     let j=4+$i
-  	su - devops -c "ssh -l ${sshu} ${subnetMasters3}.${j} cat $FACTS/private-ip-role.fact" >> /tmp/hosts.inv 
+  	su - "${sshu}" -c "ssh -l ${sshu} ${subnetMasters3}.${j} cat $FACTS/private-ip-role.fact" >> /tmp/hosts.inv 
     error_log "unable to ssh -l ${sshu} ${subnetMasters3}.${j}"
+    su - "${sshu}" -c "scp /home/${sshu}/.ssh/id_rsa ${sshu}@${subnetMasters3}.${j}:/home/${sshu}/.ssh/id_rsa"
+    error_log "unable to scp id_rsa to ${subnetMasters3}.${j}"
+    su - "${sshu}" -c "scp /home/${sshu}/.ssh/id_rsa.pub ${sshu}@${subnetMasters3}.${j}:/home/${sshu}/.ssh/id_rsa.pub"
+    error_log "unable to scp id_rsa.pub to ${subnetMasters3}.${j}"
+    su - "${sshu}" -c "ssh -l ${sshu} ${subnetMasters3}.${j} chmod 400 /home/${sshu}/.ssh/id_rsa"
+    error_log "unable to chmod id_rsa to ${subnetMasters3}.${j}"
   done
 
   # Minions
@@ -135,8 +141,14 @@ function get_private_ip()
   for i in $(seq 0 $numberOfMinions)
   do
     let j=4+$i
-  	su - devops -c "ssh -l ${sshu} ${subnetMinions3}.${j} cat $FACTS/private-ip-role.fact" >> /tmp/hosts.inv 
+  	su - "${sshu}" -c "ssh -l ${sshu} ${subnetMinions3}.${j} cat $FACTS/private-ip-role.fact" >> /tmp/hosts.inv 
     error_log "unable to ssh -l ${sshu} ${subnetMinions3}.${j}"
+    su - "${sshu}" -c "scp /home/${sshu}/.ssh/id_rsa ${sshu}@${subnetMinions3}.${j}:/home/${sshu}/.ssh/id_rsa"
+    error_log "unable to scp id_rsa to ${subnetMinions3}.${j}"
+    su - "${sshu}" -c "scp /home/${sshu}/.ssh/id_rsa.pub ${sshu}@${subnetMinions3}.${j}:/home/${sshu}/.ssh/id_rsa.pub"
+    error_log "unable to scp id_rsa.pub to ${subnetMinions3}.${j}"
+    su - "${sshu}" -c "ssh -l ${sshu} ${subnetMinions3}.${j} chmod 400 /home/${sshu}/.ssh/id_rsa"
+    error_log "unable to chmod id_rsa to ${subnetMinions3}.${j}"
   done
 
   # Etcd
@@ -145,8 +157,14 @@ function get_private_ip()
   for i in $(seq 0 $numberOfEtcd)
   do
     let j=4+$i
-  	su - devops -c "ssh -l ${sshu} ${subnetEtcd3}.${j} cat $FACTS/private-ip-role.fact" >> /tmp/hosts.inv 
+  	su - "${sshu}" -c "ssh -l ${sshu} ${subnetEtcd3}.${j} cat $FACTS/private-ip-role.fact" >> /tmp/hosts.inv 
     error_log "unable to ssh -l ${sshu} ${subnetEtcd3}.${j}"
+    su - "${sshu}" -c "scp /home/${sshu}/.ssh/id_rsa ${sshu}@${subnetEtcd3}.${j}:/home/${sshu}/.ssh/id_rsa"
+    error_log "unable to scp id_rsa to ${subnetEtcd3}.${j}"
+    su - "${sshu}" -c "scp /home/${sshu}/.ssh/id_rsa.pub ${sshu}@${subnetEtcd3}.${j}:/home/${sshu}/.ssh/id_rsa.pub"
+    error_log "unable to scp id_rsa.pub to ${subnetEtcd3}.${j}"
+    su - "${sshu}" -c "ssh -l ${sshu} ${subnetEtcd3}.${j} chmod 400 /home/${sshu}/.ssh/id_rsa"
+    error_log "unable to chmod id_rsa to ${subnetEtcd3}.${j}"
   done
   
 }
