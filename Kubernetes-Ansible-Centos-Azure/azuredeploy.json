@@ -156,7 +156,7 @@
     "pubBlobLocation": "keys/id_rsa.pub",
     "pubBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('pubBlobLocation'))]",
  
-    "assetsStorageAccountId": "[resourceId('ansiblevault','Microsoft.Storage/storageAccounts', parameters('vaultAccountName'))]",
+    "assetsStorageAccountId": "[resourceId(parameters('vaultAccountName'),'Microsoft.Storage/storageAccounts', parameters('vaultAccountName'))]",
     
     "imageReference": {
       "publisher": "OpenLogic",
