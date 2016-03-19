@@ -156,11 +156,21 @@ function install_epel_repo()
    rpm -iUvh "${EPEL_REPO}"
 }
 
+function install_required_groups()
+{
+  log "Install ansible required groups..." "0"
+  until yum -y group install "Development Tools"
+  do
+    log "Lock detected on VM init Try again..." "0"
+    sleep 2
+  done
+  error_log "unable to get group packages"
+}
+
 function install_required_packages()
 {
 
   log "Install ansible required packages..." "0"
-
   until yum install -y git python2-devel python-pip
   do
     log "Lock detected on VM init Try again..." "0"
@@ -316,6 +326,7 @@ install_epel_repo
 install_curl
 ssh_config
 get_private_ip
+install_required_groups
 install_required_packages
 install_python_modules
 install_ansible

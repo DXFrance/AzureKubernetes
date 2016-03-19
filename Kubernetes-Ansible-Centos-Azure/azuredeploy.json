@@ -102,7 +102,7 @@
     },
     "vaultAccountName": {
       "type": "string",
-      "defaultValue": "ansiblevault",
+      "defaultValue": "kub8vault",
       "metadata": {
         "description": "Private storage account name in which you are storing your certificates for ansible and the template bash scripts"
       }

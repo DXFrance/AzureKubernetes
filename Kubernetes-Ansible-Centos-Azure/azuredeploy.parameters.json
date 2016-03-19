@@ -36,7 +36,7 @@
       "value": "bash deploy.sh"
     },
     "vaultAccountName": {
-      "value": "ansiblevault"
+      "value": "kub8vault"
     }
   }
 }
