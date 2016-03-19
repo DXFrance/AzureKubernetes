@@ -545,7 +545,7 @@
               "diskSizeGB": "1000",
               "lun": 0,
               "vhd": {
-                "uri": "[concat('http://', variables('storageAccountName'), copyindex(),'.blob.core.windows.net/vhds/', 'ma',parameters('nameSuffix'), copyIndex(), 'datadisk1.vhd')]"
+                "uri": "[concat('http://', variables('storageAccountName'),'.blob.core.windows.net/vhds/', 'ma',parameters('nameSuffix'), copyIndex(), 'datadisk1.vhd')]"
               },
               "createOption": "Empty"
             }
@@ -613,7 +613,7 @@
               "diskSizeGB": "1000",
               "lun": 0,
               "vhd": {
-                "uri": "[concat('http://', variables('storageAccountName'), copyindex(),'.blob.core.windows.net/vhds/', 'mi',parameters('nameSuffix'), copyIndex(), 'datadisk1.vhd')]"
+                "uri": "[concat('http://', variables('storageAccountName'),'.blob.core.windows.net/vhds/', 'mi',parameters('nameSuffix'), copyIndex(), 'datadisk1.vhd')]"
               },
               "createOption": "Empty"
             }
@@ -681,7 +681,7 @@
               "diskSizeGB": "1000",
               "lun": 0,
               "vhd": {
-                "uri": "[concat('http://', variables('storageAccountName'), copyindex(),'.blob.core.windows.net/vhds/', 'et',parameters('nameSuffix'), copyIndex(), 'datadisk1.vhd')]"
+                "uri": "[concat('http://', variables('storageAccountName'),'.blob.core.windows.net/vhds/', 'et',parameters('nameSuffix'), copyIndex(), 'datadisk1.vhd')]"
               },
               "createOption": "Empty"
             }
