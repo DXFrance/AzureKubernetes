@@ -1,6 +1,0 @@
----
-- name: Install kubernetes
-  yum: name=kubernetes state=latest
-
-- name: Docker config
-  template: src=docker.j2 dest=/etc/sysconfig/docker
