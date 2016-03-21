@@ -582,7 +582,7 @@
           "vmSize": "[parameters('kubernetesvmSize')]"
         },
         "osProfile": {
-          "computerName": "[concat('ma-', parameters('nameSuffix'), copyindex())]",
+          "computerName": "[concat('mi-', parameters('nameSuffix'), copyindex())]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[variables('adminPassword')]",
           "linuxConfiguration": {
