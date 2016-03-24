@@ -16,7 +16,7 @@
     $vnetAddressPrefix = "172.16.0.0/12",
     $subnetAddressPrefix = "172.16.0.0/24",
     $dnsServer = "8.8.8.8",
-    $etcd_node = 2,
+    $etcd_node = 1,
     $kub_node = 3,
     $diskName="OSDisk",
     $storageAccountName = "vmkubernetes",
@@ -38,6 +38,21 @@ Write-Host "scriptFolder" $scriptFolder
 set-location $scriptFolder
 #endregion init
 
+
+#region credentials
+$username = "devops"
+$password = "VeL0c1RaPt0R#" | ConvertTo-SecureString -AsPlainText -Force
+$credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $username, $password 
+#Generated key in 'C:\DEV\keys\idrsa.pub'
+$sshKey = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDhdhD4JCfI50HPBrgg+mQyhhid9CvN3oqpSBiCMp9FsCkAeVwsROXxvgz4UTdStcWd3p/Qa/vkMy6hQvAPdMs+LS8ltsbt6qIgUTxRbNxi+y2heL5a6VqHVPpcqDOncT3NsyqqNXdEVjZGaSSkD5MDSGkxMuwFakG5XJ4PtKfWHAwBtQuesBIFM3wYGS6Ty5PfsFZqPkd96Nx/oPdCoLCjqzlTy1xi2Uhn8tv5nehWC7MXKzJbAxjfI15kIx7A9VfBL1qjQoZKKKBB2wbPMEMxbZGRxKVPgf807v6CyplpJ2DTPnZCQIxNqZF/APUUtdqGTWyJ+Wq3aisIjxnnZQKecu4YdbjNsIBlVkzaQCdPggxMn0d/MWcep4xKqp+xCrVrDrVzUmp2vrHzTMg1JOozRMB8vom05NczsNT8reB3IWe4S4iS527+zjwDM7TZWxrUb+xxEC0uKpQuJ+8va95VSIbhm7tJrdl4EjBiGuoK243/bgPVbkLxa1yHIq8OKgezGHdSb1KJzv2yFJZwQm/57gxfsSxsfqpVWoPlLmGLQFIT1NNUQtkuoJIxCLW/1OwAMkbclmDPXyaW5smAem9+MSM25wN8kU5OytzRcLyG58bdnZyuUuBbGeKDWZwhBuYJ3ib7vHFbetCEmAQhHDmFGnUQf0Kd+0R6BE5en8dswQ== stephgou@X1CARBONW10TP"
+#From MinGW64 $ ssh -i "c/dev/keys/idrsa" -p 2200 devops@azkubernetes-etcd.westeurope.cloudapp.azure.com
+
+
+$encodedSshKey = [System.Text.Encoding]::UTF8.GetBytes($sshKey)
+$base64EncodedSshKey = [System.Convert]::ToBase64String($encodedSshKey)
+
+$sshPathOnLinuxMachine = "/home/$username/.ssh/authorized_keys"
+#endregion credentials
 #Login-AzureRmAccount -SubscriptionId $subscriptionId
 
 # Resource group create
@@ -46,13 +61,6 @@ New-AzureRmResourceGroup `
 	-Location $resourceLocation `
     -Tag @{Name=$tagName;Value=$tagValue} `
     -Verbose
-
-#region credentials
-#$sshkey = New-AzureSSHKey -PublicKey -Path 'C:\DEV\keys\idrsa.pub'
-$username = "devops"
-$password = "VeL0c1RaPt0R#" | ConvertTo-SecureString -AsPlainText -Force
-$credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $username, $password 
-#endregion credentials
 
 # create availabilitySets
 $etcdAS = New-AzureRmAvailabilitySet -Name $prefix-av-etcd -ResourceGroupName $resourceGroupName -Location $resourceLocation
@@ -137,7 +145,10 @@ for($i=0; $i -le $etcd_node-1; $i++)
         -Offer $offerName -Version $skuVersion
     $vm = Add-AzureRmVMNetworkInterface -VM $vm -Id $nic.Id
 
-    #$vm = Add-AzureRmVMSshPublicKey -VM $vm -SSHPublicKeys $sshKey
+    #Does not seem to work with a base64 encoded key
+    #-> Ask for a correction in https://msdn.microsoft.com/en-us/library/mt603458.aspx
+    #$vm = Add-AzureRmVMSshPublicKey -VM $vm -KeyData $base64EncodedSshKey -Path $sshPathOnLinuxMachine
+    $vm = Add-AzureRmVMSshPublicKey -VM $vm -KeyData $sshKey -Path $sshPathOnLinuxMachine
 
     $vm = Set-AzureRmVMOSDisk -VM $vm -Name $diskName -VhdUri $osDiskUri -CreateOption fromImage
 
