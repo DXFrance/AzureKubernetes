@@ -3,14 +3,14 @@
     $subscriptionName = "stephgou - External",
     $subscriptionId = "fb79eb46-411c-4097-86ba-801dca0ff5d5",
     #Paramètres du Azure Ressource Group
-    $resourceGroupName = "az-Kubernetes-VM-Cluster",
+    $resourceGroupName = "Az-Kubernetes-VM-Cluster",
     $resourceLocation = "West Europe",
     $coreOSImageName = "CoreOs:CoreOS:Beta:899.6.0",
     $publisherName = "CoreOS",
     $offerName = "CoreOS",
     $skuName ="Beta",
     $skuVersion = "899.6.0",
-    $prefix = "az-Kubernetes",
+    $prefix = "azKubernetes",
     $domainNameLabel = "azkubernetes",
     $frontendSubnet = "frontendSubnet",
     $vnetAddressPrefix = "172.16.0.0/12",
@@ -19,7 +19,8 @@
     $etcd_node = 1,
     $kub_node = 3,
     $diskName="OSDisk",
-    $storageAccountName = "vmkubernetes",
+    $customDataFile = "..\..\init-static\custom-data\kubernetes-cluster-etcd-nodes.yml",
+    $storageAccountName = "azkubernetes",
     $tagName = "Kubernetes_RG",
     $tagValue = "VM-Cluster"
     )
@@ -38,7 +39,6 @@ Write-Host "scriptFolder" $scriptFolder
 set-location $scriptFolder
 #endregion init
 
-
 #region credentials
 $username = "devops"
 $password = "VeL0c1RaPt0R#" | ConvertTo-SecureString -AsPlainText -Force
@@ -47,13 +47,13 @@ $credential = New-Object -TypeName System.Management.Automation.PSCredential -Ar
 $sshKey = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDhdhD4JCfI50HPBrgg+mQyhhid9CvN3oqpSBiCMp9FsCkAeVwsROXxvgz4UTdStcWd3p/Qa/vkMy6hQvAPdMs+LS8ltsbt6qIgUTxRbNxi+y2heL5a6VqHVPpcqDOncT3NsyqqNXdEVjZGaSSkD5MDSGkxMuwFakG5XJ4PtKfWHAwBtQuesBIFM3wYGS6Ty5PfsFZqPkd96Nx/oPdCoLCjqzlTy1xi2Uhn8tv5nehWC7MXKzJbAxjfI15kIx7A9VfBL1qjQoZKKKBB2wbPMEMxbZGRxKVPgf807v6CyplpJ2DTPnZCQIxNqZF/APUUtdqGTWyJ+Wq3aisIjxnnZQKecu4YdbjNsIBlVkzaQCdPggxMn0d/MWcep4xKqp+xCrVrDrVzUmp2vrHzTMg1JOozRMB8vom05NczsNT8reB3IWe4S4iS527+zjwDM7TZWxrUb+xxEC0uKpQuJ+8va95VSIbhm7tJrdl4EjBiGuoK243/bgPVbkLxa1yHIq8OKgezGHdSb1KJzv2yFJZwQm/57gxfsSxsfqpVWoPlLmGLQFIT1NNUQtkuoJIxCLW/1OwAMkbclmDPXyaW5smAem9+MSM25wN8kU5OytzRcLyG58bdnZyuUuBbGeKDWZwhBuYJ3ib7vHFbetCEmAQhHDmFGnUQf0Kd+0R6BE5en8dswQ== stephgou@X1CARBONW10TP"
 #From MinGW64 $ ssh -i "c/dev/keys/idrsa" -p 2200 devops@azkubernetes-etcd.westeurope.cloudapp.azure.com
 
-
-$encodedSshKey = [System.Text.Encoding]::UTF8.GetBytes($sshKey)
-$base64EncodedSshKey = [System.Convert]::ToBase64String($encodedSshKey)
-
 $sshPathOnLinuxMachine = "/home/$username/.ssh/authorized_keys"
 #endregion credentials
 #Login-AzureRmAccount -SubscriptionId $subscriptionId
+
+$customData = Get-Content $customDataFile -Raw 
+$encodedcustomData = [System.Text.Encoding]::UTF8.GetBytes($customData)
+$base64EncodedcustomData = [System.Convert]::ToBase64String($encodedcustomData)
 
 # Resource group create
 New-AzureRmResourceGroup `
@@ -128,18 +128,25 @@ for($i=0; $i -le $etcd_node-1; $i++)
 
     $vmName = "$prefix-etcd-$i"
     $vm = New-AzureRmVMConfig -VMName $vmName -VMSize standard_a1 -AvailabilitySetId $etcdAS.Id
-    $vm = Set-AzureRmVMOperatingSystem -VM $vm -Linux -ComputerName $vmName -Credential $credential
+      
+    #$vm = Set-AzureRmVMOperatingSystem -VM $vm -Linux -ComputerName $vmName -Credential $credential `
+    #    -CustomData $base64EncodedcustomData      
+
+    $vm = Set-AzureRmVMOperatingSystem -VM $vm -Linux -ComputerName $vmName -Credential $credential `
+        -CustomData $customData      
+    
+    # -CustomData must not be encoded in base64
+    #-> Ask for a correction in https://msdn.microsoft.com/en-us/library/mt603843.aspx
+    # Specifies a base-64 encoded string of custom data. 
+    # This is decoded to a binary array that is saved as a file on the virtual machine. 
+    # The maximum length of the binary array is 65535 bytes.
+    # "..\..\init-static\custom-data\kubernetes-cluster-etcd-nodes.yml"
 
     <#
     For Windows
     $vm = Set-AzureRmVMOperatingSystem -VM $vm -Windows -ComputerName $vmName -Credential $credential `
           -ProvisionVMAgent -EnableAutoUpdate
     #>
-    # -CustomData
-    # Specifies a base-64 encoded string of custom data. 
-    # This is decoded to a binary array that is saved as a file on the virtual machine. 
-    # The maximum length of the binary array is 65535 bytes.
-    # "..\..\init-static\custom-data\kubernetes-cluster-etcd-nodes.yml" 
 
     $vm = Set-AzureRmVMSourceImage -VM $vm -Skus $skuName -PublisherName $publisherName `
         -Offer $offerName -Version $skuVersion
@@ -155,8 +162,12 @@ for($i=0; $i -le $etcd_node-1; $i++)
     #Set-AzureRmVMExtension
 
     New-AzureRmVM -ResourceGroupName $resourceGroupName -Location $resourceLocation -VM $vm
+
+    Write-Host "$vmName has been created"
+
 }
 
-
+$d = get-date
+Write-Host "Stopping Deployment $d"
 
 
