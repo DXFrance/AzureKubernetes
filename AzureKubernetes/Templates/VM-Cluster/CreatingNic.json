@@ -1,0 +1,149 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "apiVersion": {
+      "type": "string",
+      "metadata": {
+        "description": "Schema api version from parent template"
+      }
+    },
+    "virtualNetworkName": {
+      "type": "string",
+      "metadata": {
+        "description": "virtual Network Name"
+      }
+    },
+    "kubemastersLbName": {
+      "type": "string",
+      "metadata": {
+        "description": "kubemasters Load Balancer Name"
+      }
+    }
+  },
+  "variables": {
+    "ansibleNicName": "[concat(parameters('prefix'),'-nic-ansible')]",
+    "ansibleIPAddressName": "[concat(parameters('prefix'),'-pip-ansible')]",
+    "masterNicName": "[concat(parameters('prefix'),'-nic-master')]",
+    "masterPIPAddressType": "Dynamic",
+    "masterNetworkInterfacesCopy": "nicopy-kube-master"
+  },
+  "resources": [
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(variables('masterNicName'), copyindex())]",
+      "location": "[resourceGroup().location]",
+      "copy": {
+        "name": "[variables('masterNetworkInterfacesCopy')]",
+        "count": "[parameters('numberOfMasters')]"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "MastersIpConfig",
+            "properties": {
+              "privateIPAllocationMethod": "[variables('masterPIPAddressType')]",
+              "subnet": {
+                "id": "[variables('subnetMastersRef')]"
+              },
+              "loadBalancerBackendAddressPools": [
+                {
+                  "id": "[concat(variables('kubemastersLbID'), '/backendAddressPools/LoadBalancerBackend')]"
+                }
+              ],
+              "loadBalancerInboundNatRules": [
+                {
+                  "id": "[concat(variables('kubemastersLbID'),'/inboundNatRules/HTTP-80', copyindex())]"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "[parameters('apiVersion')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat('minionsNic', copyindex())]",
+      "location": "[resourceGroup().location]",
+      "copy": {
+        "name": "nicLoopMinions",
+        "count": "[parameters('numberOfMinions')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "MinionsIpConfig",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('subnetMinionsRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat('etcdNic', copyindex())]",
+      "location": "[resourceGroup().location]",
+      "copy": {
+        "name": "nicLoopEtcd",
+        "count": "[parameters('numberOfEtcd')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "EtcdIpConfig",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('subnetEtcdRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "ansibleNic",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ansibleIpConfig",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('ansibleIPAddressName')]"
+              },
+              "subnet": {
+                "id": "[variables('subnetAdminRef')]"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "outputs": {
+    "result": {
+      "value": "Nic Provisioning achieved",
+      "type": "string"
+    }
+  }
+}}

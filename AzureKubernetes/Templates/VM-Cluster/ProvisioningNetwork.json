@@ -1,0 +1,81 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "apiVersion": {
+      "type": "string",
+      "metadata": {
+        "description": "Schema api version from parent template"
+      }
+    },
+    "virtualNetworkName": {
+      "type": "string",
+      "metadata": {
+        "description": "Virtual Network Name"
+      }
+    }
+  },
+  "variables": {
+    "addressPrefix": "10.0.0.0/16",
+    "vnetId": "[resourceId('Microsoft.Network/virtualNetworks',parameters('virtualNetworkName'))]",
+    "subnetAdminName": "SubnetADMIN",
+    "subnetAdminPrefix": "10.0.2.0/24",
+    "subnetAdminRef": "[concat(variables('vnetId'),'/subnets/',variables('subnetAdminName'))]",
+    "subnetMastersName": "SubnetMASTERS",
+    "subnetMastersPrefix": "10.0.4.0/24",
+    "subnetMastersRef": "[concat(variables('vnetId'),'/subnets/',variables('subnetMastersName'))]",
+    "subnetMinionsName": "SubnetMINIONS",
+    "subnetMinionsPrefix": "10.0.6.0/24",
+    "subnetMinionsRef": "[concat(variables('vnetId'),'/subnets/',variables('subnetMinionsName'))]",
+    "subnetEtcdName": "SubnetETCD",
+    "subnetEtcdPrefix": "10.0.8.0/24",
+    "subnetEtcdRef": "[concat(variables('vnetId'),'/subnets/',variables('subnetEtcdName'))]",
+  },
+  "resources": [
+    {
+      "apiVersion": "[parameters('apiVersion')]",
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[parameters('virtualNetworkName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[variables('addressPrefix')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('subnetMastersName')]",
+            "properties": {
+              "addressPrefix": "[variables('subnetMastersPrefix')]"
+            }
+          },
+          {
+            "name": "[variables('subnetMinionsName')]",
+            "properties": {
+              "addressPrefix": "[variables('subnetMinionsPrefix')]"
+            }
+          },
+          {
+            "name": "[variables('subnetEtcdName')]",
+            "properties": {
+              "addressPrefix": "[variables('subnetEtcdPrefix')]"
+            }
+          },
+          {
+            "name": "[variables('subnetAdminName')]",
+            "properties": {
+              "addressPrefix": "[variables('subnetAdminPrefix')]"
+            }
+          }
+        ]
+      }
+      }
+    ],
+  "outputs": {
+    "result": {
+      "value": "Network Provisioning achieved",
+      "type": "string"
+    }
+  }
+}

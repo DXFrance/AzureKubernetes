@@ -1,0 +1,145 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "apiVersion": {
+      "type": "string",
+      "metadata": {
+        "description": "Schema api version from parent template"
+      }
+    },
+    "kubemastersLbPIPAddressName": {
+      "type": "string",
+      "metadata": {
+        "description": "kubemastersLbPIPAddressName"
+      }
+    },
+    "kubemastersLbBackendPool": {
+      "type": "string",
+      "metadata": {
+        "description": "kubemastersLbBackendPool"
+      }
+    },
+    "kubemastersLbName": {
+      "type": "string",
+      "metadata": {
+        "description": "kubemastersLbName"
+      }
+    },
+    "kubemastersDomainName": {
+      "type": "string",
+      "metadata": {
+        "description": "kubemastersDomainName"
+      }
+    },
+    "ansibleIPAddressName": {
+      "type": "string",
+      "metadata": {
+        "description": "ansibleIPAddressName"
+      }
+    },
+    "ansibleDomainName": {
+      "type": "string",
+      "metadata": {
+        "description": "ansibleDomainName"
+      }
+    },
+    "numberOfMasters": {
+      "type": "int",
+      "metadata": {
+        "description": "Number of kubernetes Masters nodes to create"
+      }
+    }
+  },
+  "variables": {
+    "kubemastersLbPIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('kubemastersLbPIPAddressName'))]",
+    "kubemastersLbNatRulesCopy": "lbnrcopy-kube-masters",
+    "kubemastersLbPIPAddressType": "Dynamic",
+    "kubemastersLbID": "[resourceId('Microsoft.Network/loadBalancers',parameters('kubemastersLbName'))]",
+    "kubemastersFrontEndIPConfigID": "[concat(variables('kubemastersLbID'),'/frontendIPConfigurations/loadBalancerFrontend')]",
+    "ansibleIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('ansibleIPAddressName'))]",
+    "ansiblePIPAddressType": "Dynamic"
+  },
+  "resources": [
+    {
+      "apiVersion": "[parameters('apiVersion')]",
+      "name": "[parameters('kubemastersLbName')]",
+      "type": "Microsoft.Network/loadBalancers",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/publicIPAddresses/', parameters('kubemastersLbPIPAddressName'))]"
+      ],
+      "properties": {
+        "frontendIPConfigurations": [
+          {
+            "name": "parameters('kubemastersLbFrontend')",
+            "properties": {
+              "publicIPAddress": {
+                "id": "[variables('kubemastersLbPIPAddressID')]"
+              }
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "parameters('kubemastersLbBackendPool')"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "[parameters('apiVersion')]",
+      "type": "Microsoft.Network/loadBalancers/inboundNatRules",
+      "name": "[concat(parameters('kubemastersLbName'), '/', 'HTTP-80', copyIndex())]",
+      "location": "[resourceGroup().location]",
+      "copy": {
+        "b": null,
+        "name": "[variables('kubemastersLbNatRulesCopy')]",
+        "count": "[parameters('numberOfMasters')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/loadBalancers/', parameters('kubemastersLbName'))]"
+      ],
+      "properties": {
+        "frontendIPConfiguration": {
+          "id": "[variables('kubemastersFrontEndIPConfigID')]"
+        },
+        "protocol": "tcp",
+        "frontendPort": "[copyIndex(80)]",
+        "backendPort": 80,
+        "enableFloatingIP": false
+      },
+      {
+        "apiVersion": "[parameters('apiVersion')]",
+        "type": "Microsoft.Network/publicIPAddresses",
+        "name": "[parameters('ansibleIPAddressName')]",
+        "location": "[resourceGroup().location]",
+        "properties": {
+          "publicIPAllocationMethod": "[variables('ansiblePIPAddressType')]",
+          "dnsSettings": {
+            "domainNameLabel": "[parameters('ansibleDomainName')]"
+          }
+        }
+      },
+      {
+        "apiVersion": "[parameters('apiVersion')]",
+        "type": "Microsoft.Network/publicIPAddresses",
+        "name": "[parameters('kubemastersLbPIPAddressName')]",
+        "location": "[resourceGroup().location]",
+        "properties": {
+          "publicIPAllocationMethod": "[variables('kubemastersLbPIPAddressType')]",
+          "dnsSettings": {
+            "domainNameLabel": "[parameters('kubemastersDomainName')]"
+          }
+        }
+      },
+    }
+  ],
+  "outputs": {
+    "result": {
+      "value": "Load Balancers and IP Provisioning achieved",
+      "type": "string"
+    }
+  }
+  }
+}

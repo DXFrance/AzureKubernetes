@@ -2,96 +2,297 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "newStorageAccountName": {
+    "nameSuffix": {
       "type": "string",
-      "defaultValue": "storageaccount",
+      "defaultValue": "mskub8",
       "metadata": {
-        "description": "Name of the storage account for VM OS Disks"
+        "description": "Prefix of the components"
       }
     },
-    "vmSize": {
+    "kubernetesVmSize": {
       "type": "string",
-      "defaultValue": "Standard_A1",
+      "defaultValue": "Standard_A0",
       "allowedValues": [
-        "Standard_A1",
-        "Standard_A2",
-        "Standard_A3",
-        "Standard_A4"
+        "Basic_A0","Basic_A1","Basic_A2","Basic_A3","Basic_A4",
+        "Standard_A0","Standard_A1","Standard_A2","Standard_A3","Standard_A4","Standard_A5","Standard_A6","Standard_A7","Standard_A8","Standard_A9","Standard_A10","Standard_A11","Standard_D1",
+        "Standard_D2","Standard_D3","Standard_D4","Standard_D11","Standard_D12","Standard_D13","Standard_D14",
+        "Standard_D1_v2","Standard_D2_v2","Standard_D3_v2","Standard_D4_v2","Standard_D5_v2","Standard_D11_v2","Standard_D12_v2","Standard_D13_v2","Standard_D14_v2",
+        "Standard_DS1","Standard_DS2","Standard_DS3","Standard_DS4","Standard_DS11","Standard_DS12","Standard_DS13","Standard_DS14",
+        "Standard_G1","Standard_G2","Standard_G3","Standard_G4","Standard_G5","Standard_GS1","Standard_GS2","Standard_GS3","Standard_GS4","Standard_GS5"
       ],
       "metadata": {
-        "description": "Instance size for the VMs"
+        "description": "Instance size for Kubernetes VMs"
       }
     },
-    "numberOfNodes": {
-      "type": "int",
-      "defaultValue": 3,
+    "ansibleVmSize": {
+      "type": "string",
+      "defaultValue": "Standard_A0",
+      "allowedValues": [
+        "Basic_A0","Basic_A1","Basic_A2","Basic_A3","Basic_A4",
+        "Standard_A0","Standard_A1","Standard_A2","Standard_A3","Standard_A4","Standard_A5","Standard_A6","Standard_A7","Standard_A8","Standard_A9","Standard_A10","Standard_A11","Standard_D1",
+        "Standard_D2","Standard_D3","Standard_D4","Standard_D11","Standard_D12","Standard_D13","Standard_D14",
+        "Standard_D1_v2","Standard_D2_v2","Standard_D3_v2","Standard_D4_v2","Standard_D5_v2","Standard_D11_v2","Standard_D12_v2","Standard_D13_v2","Standard_D14_v2",
+        "Standard_DS1","Standard_DS2","Standard_DS3","Standard_DS4","Standard_DS11","Standard_DS12","Standard_DS13","Standard_DS14",
+        "Standard_G1","Standard_G2","Standard_G3","Standard_G4","Standard_G5","Standard_GS1","Standard_GS2","Standard_GS3","Standard_GS4","Standard_GS5"
+      ],
       "metadata": {
-        "description": "Number of compute nodes to create (3+ recommended)"
+        "description": "Size of the Ansible virtual machine"
+      }
+    },
+    "centosOSVersion": {
+      "type": "string",
+      "defaultValue": "7.2",
+      "allowedValues": [
+        "7.2",
+        "7.1",
+        "7.0"
+      ],
+      "metadata": {
+        "description": "The CentOS version for the VM. This will pick a fully patched image of this given CentOS version. Allowed values are: 7.0, 7.1, 7.2"
+      }
+    },
+    "numberOfMasters": {
+      "type": "int",
+      "defaultValue": 1,
+      "metadata": {
+        "description": "Number of kubernetes Masters nodes to create"
+      }
+    },
+    "numberOfMinions": {
+      "type": "int",
+      "defaultValue": 2,
+      "metadata": {
+        "description": "Number of kubernetes Minions nodes to create"
+      }
+    },
+    "numberOfEtcd": {
+      "type": "int",
+      "defaultValue": 1,
+      "metadata": {
+        "description": "Number of Etcd nodes to create"
       }
     },
     "adminUserName": {
       "type": "string",
-      "defaultValue": "core",
+      "defaultValue": "devops",
       "metadata": {
         "description": "Username to login to the VMs"
       }
     },
     "sshKeyData": {
       "type": "string",
+      "defaultValue": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDLWadgtcq8rg0HMWlv1/1HQfRayLzGKmHg2ISmAJx+LQCa8SWCwBFGS0vKKwgdwhpMMCl0wI2/eURmxbpOF4Tp10jRikSIlSZyua7FU9VmlLWtYAmRQ42eWvmsCCI/IpgJ4LGODe8xDQtcXOtp3yUhkX5g9HHNwwR35Nnzum1VGMk4ftTA9CC3gfqWcIIKqQ+xE1BzqUNmGpJHghCgG/g8Oh7/sR05CXwASMoGTYuLpPHp2sEfGNm91CmnMa21ifaz4RMAcD2SwqReLgMmi0tZGUGQqLnzX/6ibJvpYSU5iZ/7qEzgDy83dBqaHbI0LEA4H0q59TJ2DWXYu+dloITz hleclerc@HeL.local",
       "metadata": {
         "description": "Public key for SSH authentication"
       }
     },
-    "discoveryUrl": {
+    "fileUris": {
       "type": "string",
+      "defaultValue": "https://raw.githubusercontent.com/DXFrance/AzureKubernetes/master/Kubernetes-Ansible-Centos-Azure/scripts/first-boot.sh",
       "metadata": {
-        "description": "discoveryUrl for etcd2 cluster"
+        "description": "Deploy/SetUp script url for ansible control vm"
+      }
+    },
+    "commandToExecute": {
+      "type": "string",
+      "defaultValue": "bash first-boot.sh",
+      "metadata": {
+        "description": "The command to execute."
+      }
+    },
+    "vaultAccountName": {
+      "type": "string",
+      "defaultValue": "kub8vault",
+      "metadata": {
+        "description": "Private storage account name in which you are storing your certificates for ansible and the template bash scripts"
       }
     }
   },
   "variables": {
-    "virtualNetworkName": "ClusterVNET",
+    "apiVersion": "2015-06-15",
+    "virtualNetworkName": "KubVNET",
     "addressPrefix": "10.0.0.0/16",
-    "subnet1Name": "Subnet-1",
-    "subnet1Prefix": "10.0.0.0/24",
+
+    "subnetAdminName": "SubnetADMIN",
+    "subnetAdminPrefix": "10.0.2.0/24",
+    "subnetAdminRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetAdminName'))]",
+
+    "subnetMastersName": "SubnetMASTERS",
+    "subnetMastersPrefix": "10.0.4.0/24",
+    "subnetMastersRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetMastersName'))]",
+
+    "subnetMinionsName": "SubnetMINIONS",
+    "subnetMinionsPrefix": "10.0.6.0/24",
+    "subnetMinionsRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetMinionsName'))]",
+
+    "subnetEtcdName": "SubnetETCD",
+    "subnetEtcdPrefix": "10.0.8.0/24",
+    "subnetEtcdRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetEtcdName'))]",
+
+    "storageAccountName": "[concat(uniquestring(resourceGroup().id), parameters('nameSuffix'))]",
+
+    "availabilitySetMasters": "[concat('avma',parameters('nameSuffix'))]",
+    "availabilitySetMinions": "[concat('avmi',parameters('nameSuffix'))]",
+    "availabilitySetEtcd": "[concat('avet',parameters('nameSuffix'))]",
+
+    "faultDomainCount": "3",
+    "updateDomainCount": "10",
     "publicIPAddressType": "Dynamic",
     "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
-    "subnet1Ref": "[concat(variables('vnetID'),'/subnets/',variables('subnet1Name'))]",
-    "vmNamePrefix": "etcd",
-    "imageSku": "Stable",
-    "vmStorageAccountContainerName": "vhds",
+
     "storageAccountType": "Standard_LRS",
+
     "sshKeyPath": "[concat('/home/',parameters('adminUsername'),'/.ssh/authorized_keys')]",
-    "unitFile": "[concat('#cloud-config\n\ncoreos:\n  etcd2:\n    discovery: ', parameters('discoveryUrl'),'\n    advertise-client-urls: http://$private_ipv4:2379,http://$private_ipv4:4001\n    initial-advertise-peer-urls: http://$private_ipv4:2380\n    listen-client-urls: http://0.0.0.0:2379,http://0.0.0.0:4001\n    listen-peer-urls: http://$private_ipv4:2380\n  units:\n    - name: etcd2.service\n      command: start\n    - name: fleet.service\n      command: start')]"
+    "ansibleIPAddressName": "ansiblePip",
+    "ansibleIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('ansibleIPAddressName'))]",
+
+    "ansibleDomainName": "[concat('hc',parameters('nameSuffix'))]",
+    "scriptBlobLocation": "scripts/deploy.sh",
+    "scriptBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('scriptBlobLocation'))]",
+
+    "keysBlobLocation": "keys/id_rsa",
+    "keysBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('keysBlobLocation'))]",
+
+    "pubBlobLocation": "keys/id_rsa.pub",
+    "pubBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('pubBlobLocation'))]",
+
+    "assetsStorageAccountId": "[resourceId(parameters('vaultAccountName'),'Microsoft.Storage/storageAccounts', parameters('vaultAccountName'))]",
+
+    "imageReference": {
+      "publisher": "OpenLogic",
+      "offer": "CentOS",
+      "sku": "[parameters('centosOSVersion')]",
+      "version": "latest"
+    },
+
+    "lbDomainName": "[concat('lb',parameters('nameSuffix'))]",
+    "lbPublicIPAddressName": "lbPublicIP",
+    "lbPublicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('lbPublicIPAddressName'))]",
+    "lbName": "[concat('lb',parameters('nameSuffix'))]",
+    "lbPublicIPAddressType": "Dynamic",
+    "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('lbName'))]",
+    "frontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/loadBalancerFrontend')]",
+
+    "disablePasswordAuthentication": "true",
+    "adminPassword": "V3l0C1RaPt0R#"
   },
   "resources": [
     {
-      "type": "Microsoft.Storage/storageAccounts",
-      "name": "[parameters('newStorageAccountName')]",
+      "apiVersion": "[variables('apiVersion')]",
+      "name": "[variables('lbName')]",
+      "type": "Microsoft.Network/loadBalancers",
       "location": "[resourceGroup().location]",
-      "apiVersion": "2015-05-01-preview",
+      "dependsOn": [
+        "[concat('Microsoft.Network/publicIPAddresses/', variables('lbPublicIPAddressName'))]"
+      ],
+      "properties": {
+        "frontendIPConfigurations": [
+          {
+            "name": "LoadBalancerFrontend",
+            "properties": {
+              "publicIPAddress": {
+                "id": "[variables('lbPublicIPAddressID')]"
+              }
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "LoadBalancerBackend"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "type": "Microsoft.Network/loadBalancers/inboundNatRules",
+      "name": "[concat(variables('lbName'), '/', 'HTTP-80', copyIndex())]",
+      "location": "[resourceGroup().location]",
+      "copy": {
+        "name": "lbKubUi",
+        "count": "[parameters('numberOfMasters')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/loadBalancers/', variables('lbName'))]"
+      ],
+      "properties": {
+        "frontendIPConfiguration": {
+          "id": "[variables('frontEndIPConfigID')]"
+        },
+        "protocol": "tcp",
+        "frontendPort": "[copyIndex(80)]",
+        "backendPort": 80,
+        "enableFloatingIP": false
+      }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('storageAccountName')]",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "[variables('apiVersion')]",
       "properties": {
         "accountType": "[variables('storageAccountType')]"
       }
     },
     {
-      "type": "Microsoft.Network/publicIPAddresses",
-      "name": "[concat('publicIP', copyindex())]",
-      "copy": {
-        "name": "ipLoop",
-        "count": "[parameters('numberOfNodes')]"
-      },
+      "type": "Microsoft.Compute/availabilitySets",
+      "name": "[variables('availabilitySetMasters')]",
+      "apiVersion": "[variables('apiVersion')]",
       "location": "[resourceGroup().location]",
-      "apiVersion": "2015-05-01-preview",
       "properties": {
-        "publicIPAllocationMethod": "[variables('publicIPAddressType')]"
+        "PlatformFaultDomainCount": "[variables('faultDomainCount')]",
+        "PlatformUpdateDomainCount": "[variables('updateDomainCount')]"
+      }
+    },
+    {
+      "type": "Microsoft.Compute/availabilitySets",
+      "name": "[variables('availabilitySetMinions')]",
+      "apiVersion": "[variables('apiVersion')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "PlatformFaultDomainCount": "[variables('faultDomainCount')]",
+        "PlatformUpdateDomainCount": "[variables('updateDomainCount')]"
+      }
+    },
+    {
+      "type": "Microsoft.Compute/availabilitySets",
+      "name": "[variables('availabilitySetEtcd')]",
+      "apiVersion": "[variables('apiVersion')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "PlatformFaultDomainCount": "[variables('faultDomainCount')]",
+        "PlatformUpdateDomainCount": "[variables('updateDomainCount')]"
+      }
+    },
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[variables('ansibleIPAddressName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "publicIPAllocationMethod": "Dynamic",
+        "dnsSettings": {
+          "domainNameLabel": "[variables('ansibleDomainName')]"
+        }
+      }
+    },
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[variables('lbPublicIPAddressName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "publicIPAllocationMethod": "[variables('lbPublicIPAddressType')]",
+        "dnsSettings": {
+          "domainNameLabel": "[variables('lbDomainName')]"
+        }
       }
     },
     {
       "type": "Microsoft.Network/virtualNetworks",
       "name": "[variables('virtualNetworkName')]",
       "location": "[resourceGroup().location]",
-      "apiVersion": "2015-05-01-preview",
+      "apiVersion": "[variables('apiVersion')]",
       "properties": {
         "addressSpace": {
           "addressPrefixes": [
@@ -100,38 +301,90 @@
         },
         "subnets": [
           {
-            "name": "[variables('subnet1Name')]",
+            "name": "[variables('subnetMastersName')]",
             "properties": {
-              "addressPrefix": "[variables('subnet1Prefix')]"
+              "addressPrefix": "[variables('subnetMastersPrefix')]"
+            }
+          },
+          {
+            "name": "[variables('subnetMinionsName')]",
+            "properties": {
+              "addressPrefix": "[variables('subnetMinionsPrefix')]"
+            }
+          },
+          {
+            "name": "[variables('subnetEtcdName')]",
+            "properties": {
+              "addressPrefix": "[variables('subnetEtcdPrefix')]"
+            }
+          },
+          {
+            "name": "[variables('subnetAdminName')]",
+            "properties": {
+              "addressPrefix": "[variables('subnetAdminPrefix')]"
             }
           }
         ]
       }
     },
     {
+      "apiVersion": "[variables('apiVersion')]",
       "type": "Microsoft.Network/networkInterfaces",
-      "name": "[concat('nic', copyindex())]",
-      "copy": {
-        "name": "nicLoop",
-        "count": "[parameters('numberOfNodes')]"
-      },
+      "name": "[concat('mastersNic', copyindex())]",
       "location": "[resourceGroup().location]",
+      "copy": {
+        "name": "nicLoopMasters",
+        "count": "[parameters('numberOfMasters')]"
+      },
       "dependsOn": [
-        "[concat('Microsoft.Network/publicIPAddresses/', 'publicIP', copyindex())]",
-        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
+        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
+        "[concat('Microsoft.Network/loadBalancers/', variables('lbName'))]",
+        "[concat('Microsoft.Network/loadBalancers/', variables('lbName'), '/inboundNatRules/', 'HTTP-80', copyIndex())]"
       ],
-      "apiVersion": "2015-05-01-preview",
       "properties": {
         "ipConfigurations": [
           {
-            "name": "ipconfig1",
+            "name": "MastersIpConfig",
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
-              "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIpAddresses', concat('publicIP', copyindex()))]"
-              },
               "subnet": {
-                "id": "[variables('subnet1Ref')]"
+                "id": "[variables('subnetMastersRef')]"
+              },
+              "loadBalancerBackendAddressPools": [
+                {
+                  "id": "[concat(variables('lbID'), '/backendAddressPools/LoadBalancerBackend')]"
+                }
+              ],
+              "loadBalancerInboundNatRules": [
+                {
+                  "id": "[concat(variables('lbID'),'/inboundNatRules/HTTP-80', copyindex())]"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat('minionsNic', copyindex())]",
+      "location": "[resourceGroup().location]",
+      "copy": {
+        "name": "nicLoopMinions",
+        "count": "[parameters('numberOfMinions')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "MinionsIpConfig",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('subnetMinionsRef')]"
               }
             }
           }
@@ -139,26 +392,74 @@
       }
     },
     {
-      "type": "Microsoft.Compute/virtualMachines",
-      "name": "[concat(variables('vmNamePrefix'), copyindex())]",
+      "apiVersion": "[variables('apiVersion')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat('etcdNic', copyindex())]",
+      "location": "[resourceGroup().location]",
       "copy": {
-        "name": "vmLoop",
-        "count": "[parameters('numberOfNodes')]"
+        "name": "nicLoopEtcd",
+        "count": "[parameters('numberOfEtcd')]"
       },
+      "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "EtcdIpConfig",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('subnetEtcdRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "ansibleNic",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[concat('Microsoft.Storage/storageAccounts/', parameters('newStorageAccountName'))]",
-        "[concat('Microsoft.Network/networkInterfaces/', 'nic', copyindex())]"
+        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
       ],
-      "apiVersion": "2015-05-01-preview",
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ansibleIpConfig",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses','ansiblePip')]"
+              },
+              "subnet": {
+                "id": "[variables('subnetAdminRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[variables('ansibleDomainName')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkInterfaces/', 'ansibleNic')]",
+        "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
+        "[concat('Microsoft.Network/publicIPAddresses/',variables('ansibleIPAddressName'))]"
+      ],
       "properties": {
         "hardwareProfile": {
-          "vmSize": "[parameters('vmSize')]"
+          "vmSize": "[parameters('ansibleVmSize')]"
         },
         "osProfile": {
-          "computerName": "[concat(variables('vmNamePrefix'), copyindex())]",
+          "computerName": "[variables('ansibleDomainName')]",
           "adminUsername": "[parameters('adminUsername')]",
-          "customData": "[base64(variables('unitFile'))]",
+          "adminPassword": "[variables('adminPassword')]",
           "linuxConfiguration": {
             "disablePasswordAuthentication": "true",
             "ssh": {
@@ -172,16 +473,11 @@
           }
         },
         "storageProfile": {
-          "imageReference": {
-            "publisher": "CoreOS",
-            "offer": "CoreOS",
-            "sku": "[variables('imageSku')]",
-            "version": "latest"
-          },
+          "imageReference": "[variables('imageReference')]",
           "osDisk": {
-            "name": "[concat(variables('vmNamePrefix'), copyindex())]",
+            "name": "osdisk",
             "vhd": {
-              "uri": "[concat('http://',parameters('newStorageAccountName'),'.blob.core.windows.net/vhds/',variables('vmNamePrefix'), copyindex(),'.vhd')]"
+              "uri": "[concat('http://', variables('storageAccountName'), '.blob.core.windows.net/vhds/', variables('ansibleDomainName'), '-osdisk.vhd')]"
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
@@ -190,11 +486,216 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat('nic',copyindex()))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces','ansibleNic')]"
             }
           ]
         }
       }
-    }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[concat('ma', parameters('nameSuffix'), copyindex())]",
+      "copy": {
+        "name": "vmLoopMasters",
+        "count": "[parameters('numberOfMasters')]"
+      },
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
+        "[concat('Microsoft.Network/networkInterfaces/', 'mastersNic', copyindex())]",
+        "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetMasters'))]"
+      ],
+      "apiVersion": "[variables('apiVersion')]",
+      "properties": {
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetMasters'))]"
+        },
+        "hardwareProfile": {
+          "vmSize": "[parameters('kubernetesvmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[concat('ma-', parameters('nameSuffix'), copyindex())]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[variables('adminPassword')]",
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": "[variables('disablePasswordAuthentication')]",
+            "ssh": {
+              "publicKeys": [
+                {
+                  "path": "[variables('sshKeyPath')]",
+                  "keyData": "[parameters('sshKeyData')]"
+                }
+              ]
+            }
+          }
+        },
+        "storageProfile": {
+          "imageReference": "[variables('imageReference')]",
+          "osDisk": {
+            "name": "[concat('ma',parameters('nameSuffix'), copyindex())]",
+            "vhd": {
+              "uri": "[concat('http://',variables('storageAccountName'),'.blob.core.windows.net/vhds/','ma',parameters('nameSuffix'), copyindex(),'.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          },
+          "dataDisks": [
+            {
+              "name": "datadisk1",
+              "diskSizeGB": "1000",
+              "lun": 0,
+              "vhd": {
+                "uri": "[concat('http://', variables('storageAccountName'),'.blob.core.windows.net/vhds/', 'ma',parameters('nameSuffix'), copyIndex(), 'datadisk1.vhd')]"
+              },
+              "createOption": "Empty"
+            }
+          ]
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat('mastersNic',copyindex()))]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[concat('mi', parameters('nameSuffix'), copyindex())]",
+      "copy": {
+        "name": "vmLoopMinions",
+        "count": "[parameters('numberOfMinions')]"
+      },
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
+        "[concat('Microsoft.Network/networkInterfaces/', 'minionsNic', copyindex())]",
+        "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetMinions'))]"
+      ],
+      "apiVersion": "[variables('apiVersion')]",
+      "properties": {
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetMinions'))]"
+        },
+        "hardwareProfile": {
+          "vmSize": "[parameters('kubernetesvmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[concat('mi-', parameters('nameSuffix'), copyindex())]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[variables('adminPassword')]",
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": "[variables('disablePasswordAuthentication')]",
+            "ssh": {
+              "publicKeys": [
+                {
+                  "path": "[variables('sshKeyPath')]",
+                  "keyData": "[parameters('sshKeyData')]"
+                }
+              ]
+            }
+          }
+        },
+        "storageProfile": {
+          "imageReference": "[variables('imageReference')]",
+          "osDisk": {
+            "name": "[concat('mi',parameters('nameSuffix'), copyindex())]",
+            "vhd": {
+              "uri": "[concat('http://',variables('storageAccountName'),'.blob.core.windows.net/vhds/','mi',parameters('nameSuffix'), copyindex(),'.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          },
+          "dataDisks": [
+            {
+              "name": "datadisk1",
+              "diskSizeGB": "1000",
+              "lun": 0,
+              "vhd": {
+                "uri": "[concat('http://', variables('storageAccountName'),'.blob.core.windows.net/vhds/', 'mi',parameters('nameSuffix'), copyIndex(), 'datadisk1.vhd')]"
+              },
+              "createOption": "Empty"
+            }
+          ]
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat('minionsNic',copyindex()))]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[concat('et', parameters('nameSuffix'), copyindex())]",
+      "copy": {
+        "name": "vmLoopEtcd",
+        "count": "[parameters('numberOfEtcd')]"
+      },
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
+        "[concat('Microsoft.Network/networkInterfaces/', 'etcdNic', copyindex())]",
+        "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetEtcd'))]"
+      ],
+      "apiVersion": "[variables('apiVersion')]",
+      "properties": {
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetEtcd'))]"
+        },
+        "hardwareProfile": {
+          "vmSize": "[parameters('kubernetesvmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[concat('et-', parameters('nameSuffix'), copyindex())]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[variables('adminPassword')]",
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": "[variables('disablePasswordAuthentication')]",
+            "ssh": {
+              "publicKeys": [
+                {
+                  "path": "[variables('sshKeyPath')]",
+                  "keyData": "[parameters('sshKeyData')]"
+                }
+              ]
+            }
+          }
+        },
+        "storageProfile": {
+          "imageReference": "[variables('imageReference')]",
+          "osDisk": {
+            "name": "[concat('et',parameters('nameSuffix'), copyindex())]",
+            "vhd": {
+              "uri": "[concat('http://',variables('storageAccountName'),'.blob.core.windows.net/vhds/','et',parameters('nameSuffix'), copyindex(),'.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          },
+          "dataDisks": [
+            {
+              "name": "datadisk1",
+              "diskSizeGB": "1000",
+              "lun": 0,
+              "vhd": {
+                "uri": "[concat('http://', variables('storageAccountName'),'.blob.core.windows.net/vhds/', 'et',parameters('nameSuffix'), copyIndex(), 'datadisk1.vhd')]"
+              },
+              "createOption": "Empty"
+            }
+          ]
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat('etcdNic',copyindex()))]"
+            }
+          ]
+        }
+      }
+    },
+
   ]
 }

@@ -1,0 +1,146 @@
+﻿{ 
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "apiVersion": {
+      "type": "string",
+      "metadata": {
+        "description": "Schema api version from parent template"
+      }
+    },
+    "etcdAvailabilitySetName": {
+      "type": "string",
+      "metadata": {
+        "description": "etcd AvailabilitySet Name"
+      }
+    },
+    "kubeMastersAvailabilitySetName": {
+      "type": "string",
+      "metadata": {
+        "description": "kube Masters AvailabilitySet Name"
+      }
+    },
+    "kubeMinionsAvailabilitySetName": {
+      "type": "string",
+      "metadata": {
+        "description": "kube Minions AvailabilitySet Name"
+      }
+    },
+    "etcdStorageAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "etcd StorageAccount Name"
+      }
+    },
+    "kubeMastersStorageAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "kube StorageAccount Name"
+      }
+    },
+    "kubeMinionsStorageAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "kube StorageAccount Name"
+      }
+    },
+    "ansibleStorageAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "kube StorageAccount Name"
+      }
+    },
+    "storageAccountType": {
+      "type": "string",
+      "metadata": {
+        "description": "StorageAccount Type"
+      }
+    }
+  },
+  "variables": {
+    "faultDomainCount": "3",
+    "updateDomainCount": "10"
+  },
+  "resources": [
+    {
+      "apiVersion": "[parameters('apiVersion')]",
+      "type": "Microsoft.Compute/availabilitySets",
+      "name": "[parameters('etcdAvailabilitySetName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "PlatformFaultDomainCount": "[variables('faultDomainCount')]",
+        "PlatformUpdateDomainCount": "[variables('updateDomainCount')]"
+      }
+    },
+    {
+      "apiVersion": "[parameters('apiVersion')]",
+      "type": "Microsoft.Compute/availabilitySets",
+      "name": "[parameters('kubeMastersAvailabilitySetName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "PlatformFaultDomainCount": "[variables('faultDomainCount')]",
+        "PlatformUpdateDomainCount": "[variables('updateDomainCount')]"
+      }
+    },
+    {
+      "apiVersion": "[parameters('apiVersion')]",
+      "type": "Microsoft.Compute/availabilitySets",
+      "name": "[parameters('kubeMinionsAvailabilitySetName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "PlatformFaultDomainCount": "[variables('faultDomainCount')]",
+        "PlatformUpdateDomainCount": "[variables('updateDomainCount')]"
+      }
+    },
+    {
+      "apiVersion": "[parameters('apiVersion')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[parameters('etcdStorageAccountName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "accountType": "[parameters('storageAccountType')]"
+      }
+    },
+    {
+      "apiVersion": "[parameters('apiVersion')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[parameters('kubeMastersStorageAccountName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "accountType": "[parameters('storageAccountType')]"
+      }
+    },
+    {
+      "apiVersion": "[parameters('apiVersion')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[parameters('kubeMinionsStorageAccountName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "accountType": "[parameters('storageAccountType')]"
+      }
+    },
+    {
+      "apiVersion": "[parameters('apiVersion')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[parameters('ansibleStorageAccountName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "accountType": "[parameters('storageAccountType')]"
+      }
+    }
+  ],
+    "outputs": {
+      "etcdAvailabilitySetId": {
+        "type": "string",
+        "value": "[resourceId('Microsoft.Compute/availabilitySets',parameters('etcdAvailabilitySetName'))]"
+      },
+      "kubeMastersAvailabilitySetId": {
+        "type": "string",
+        "value": "[resourceId('Microsoft.Compute/availabilitySets',parameters('kubeMastersAvailabilitySetName'))]"
+      },
+      "kubeMinionsAvailabilitySetId": {
+        "type": "string",
+        "value": "[resourceId('Microsoft.Compute/availabilitySets',parameters('kubeMinionsAvailabilitySetName'))]"
+      }
+    }
+  }
