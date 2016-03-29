@@ -58,7 +58,15 @@
     "kubemastersLbID": "[resourceId('Microsoft.Network/loadBalancers',parameters('kubemastersLbName'))]",
     "kubemastersFrontEndIPConfigID": "[concat(variables('kubemastersLbID'),'/frontendIPConfigurations/loadBalancerFrontend')]",
     "ansibleIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('ansibleIPAddressName'))]",
-    "ansiblePIPAddressType": "Dynamic"
+    "ansiblePIPAddressType": "Dynamic",
+
+    "kubemastersLbPIPAddressName": "[concat(parameters('prefix'),'-pip-kube-masters')]",
+    "kubemastersLbBackendPool": "[concat(parameters('prefix'),'-bap-kube-masters')]",
+    "kubemastersLbName": "[concat(parameters('prefix'),'-lb-kube-masters')]",
+    "kubemastersDomainName": "[concat(parameters('prefix'),'-kube')]",
+    "ansibleIPAddressName": "[concat(parameters('prefix'),'-pip-ansible')]",
+    "ansibleDomainName": "[concat(parameters('prefix'),'-ansible')]"
+
   },
   "resources": [
     {
@@ -136,10 +144,13 @@
     }
   ],
   "outputs": {
+    "kubemastersLbPIPAddressID": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('kubemastersLbPIPAddressName'))]",
+    },
     "result": {
       "value": "Load Balancers and IP Provisioning achieved",
       "type": "string"
     }
-  }
   }
 }

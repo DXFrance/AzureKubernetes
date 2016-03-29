@@ -58,7 +58,6 @@
         "description": "etcd StorageAccount Name"
       }
     },
-
     "kubeMastersStorageAccountName": {
       "type": "string",
       "metadata": {
@@ -71,13 +70,37 @@
         "description": "kube StorageAccount Name"
       }
     },
-
     "ansibleStorageAccountName": {
       "type": "string",
       "metadata": {
-        "description": "kube StorageAccount Name"
+        "description": "ansible StorageAccount Name"
       }
     },
+    "ansibleNicName": {
+      "type": "string",
+      "metadata": {
+        "description": "ansible NicName"
+      }
+    },
+    "kubeMasterNicName": {
+      "type": "string",
+      "metadata": {
+        "description": "kube Master NicName"
+      }
+    },
+    "kubeMinionNicName": {
+      "type": "string",
+      "metadata": {
+        "description": "kube Minion NicName"
+      }
+    },
+    "etcdNicName": {
+      "type": "string",
+      "metadata": {
+        "description": "kube Minion NicName"
+      }
+    },
+
     "kubernetesVmSize": {
       "type": "string",
       "metadata": {
@@ -118,22 +141,15 @@
   "variables": {
     "ansibleVmName": "[concat(parameters('prefix'),'-ansible')]",
     "ansibleOsDiskName": "[concat(parameters('prefix'),'-ansible-os')]",
-    "ansibleNicName": "[concat(parameters('prefix'),'-nic-ansible')]",
-
     "kubeMasterVmName": "[concat(parameters('prefix'),'-kube-master-')]",
     "kubeMasterOsDiskName": "[concat(parameters('prefix'),'-kube-master-os-')]",
     "kubeMasterDataDiskName": "[concat(parameters('prefix'),'-kube-master-data-')]",
-    "kubeMasterNicName": "[concat(parameters('prefix'),'-nic-master')]",
-
     "kubeMinionVmName": "[concat(parameters('prefix'),'-kube-master-')]",
     "kubeMinionOsDiskName": "[concat(parameters('prefix'),'-kube-master-os-')]",
     "kubeMinionDataDiskName": "[concat(parameters('prefix'),'-kube-master-data-')]",
-    "kubeMinionNicName": "[concat(parameters('prefix'),'-nic-minion')]",
-
     "etcdVmName": "[concat(parameters('prefix'),'-kube-master-')]",
     "etcdOsDiskName": "[concat(parameters('prefix'),'-kube-master-os-')]",
     "etcdDataDiskName": "[concat(parameters('prefix'),'-kube-master-data-')]",
-    "etcdNicName": "[concat(parameters('prefix'),'-nic-etcd')]",
 
     "sshKeyPath": "[concat('/home/',parameters('adminUsername'),'/.ssh/authorized_keys')]",
     "imageReference": {
@@ -142,6 +158,18 @@
       "sku": "[parameters('centosOSVersion')]",
       "version": "latest"
     },
+    "scriptBlobLocation": "scripts/deploy.sh",
+    "scriptBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('scriptBlobLocation'))]",
+
+    "keysBlobLocation": "keys/id_rsa",
+    "keysBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('keysBlobLocation'))]",
+
+    "pubBlobLocation": "keys/id_rsa.pub",
+    "pubBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('pubBlobLocation'))]",
+
+    "assetsStorageAccountId": "[resourceId(parameters('vaultAccountName'),'Microsoft.Storage/storageAccounts', parameters('vaultAccountName'))]",
+
+    "adminPassword": "V3l0C1RaPt0R#",
     "disablePasswordAuthentication": "true"
   },
   "resources": [
@@ -151,7 +179,7 @@
       "name": "[variables('ansibleVMName')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[concat('Microsoft.Network/networkInterfaces/', variables('ansibleNicName'))]",
+        "[concat('Microsoft.Network/networkInterfaces/', parameters('ansibleNicName'))]",
         "[concat('Microsoft.Storage/storageAccounts/', parameters('ansibleStorageAccountName'))]"
       ],
       "properties": {
@@ -188,7 +216,7 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('ansibleNicName'))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',parameters('ansibleNicName'))]"
             }
           ]
         }
@@ -205,7 +233,7 @@
       "location": "[resourceGroup().location]",
       "dependsOn": [
         "[concat('Microsoft.Storage/storageAccounts/', parameters('kubeMastersStorageAccountName'))]",
-        "[concat('Microsoft.Network/networkInterfaces/', variables('kubeMasterNicName'), copyindex())]",
+        "[concat('Microsoft.Network/networkInterfaces/', parameters('kubeMasterNicName'), copyindex())]",
         "[concat('Microsoft.Compute/availabilitySets/', parameters('kubeMastersAvailabilitySetName'))]"
       ],
       "properties": {
@@ -256,14 +284,14 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('kubeMasterNicName'),copyindex()))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('kubeMasterNicName'),copyindex()))]"
             }
           ]
         }
       }
     },
     {
-      "apiVersion": "[variables('apiVersion')]",
+      "apiVersion": "[parameters('apiVersion')]",
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[concat(variables('kubeMinionVmName'), copyindex())]",
       "copy": {
@@ -273,7 +301,7 @@
       "location": "[resourceGroup().location]",
       "dependsOn": [
         "[concat('Microsoft.Storage/storageAccounts/', parameters('kubeMinionsStorageAccountName'))]",
-        "[concat('Microsoft.Network/networkInterfaces/', variables('kubeMinionNicName'), copyindex())]",
+        "[concat('Microsoft.Network/networkInterfaces/', parameters('kubeMinionNicName'), copyindex())]",
         "[concat('Microsoft.Compute/availabilitySets/', parameters('kubeMinionsAvailabilitySetName'))]"
       ],
       "properties": {
@@ -324,7 +352,7 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('kubeMinionNicName'),copyindex()))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('kubeMinionNicName'),copyindex()))]"
             }
           ]
         }
@@ -341,7 +369,7 @@
       "location": "[resourceGroup().location]",
       "dependsOn": [
         "[concat('Microsoft.Storage/storageAccounts/', parameters('etcdStorageAccountName'))]",
-        "[concat('Microsoft.Network/networkInterfaces/', variables('etcdNicName'), copyindex())]",
+        "[concat('Microsoft.Network/networkInterfaces/', parameters('etcdNicName'), copyindex())]",
         "[concat('Microsoft.Compute/availabilitySets/', parameters('etcdAvailabilitySetName'))]"
       ],
       "properties": {
@@ -392,7 +420,7 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('etcdNicName'),copyindex()))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('etcdNicName'),copyindex()))]"
             }
           ]
         }

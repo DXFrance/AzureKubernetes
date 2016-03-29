@@ -29,7 +29,7 @@
     "subnetMinionsRef": "[concat(variables('vnetId'),'/subnets/',variables('subnetMinionsName'))]",
     "subnetEtcdName": "SubnetETCD",
     "subnetEtcdPrefix": "10.0.8.0/24",
-    "subnetEtcdRef": "[concat(variables('vnetId'),'/subnets/',variables('subnetEtcdName'))]",
+    "subnetEtcdRef": "[concat(variables('vnetId'),'/subnets/',variables('subnetEtcdName'))]"
   },
   "resources": [
     {
@@ -70,11 +70,27 @@
           }
         ]
       }
-      }
-    ],
+    }
+  ],
   "outputs": {
+    "subnetMastersRef": {
+      "type": "string",
+      "value": "[variables('subnetMastersRef')]"
+    },
+    "subnetMinionsRef": {
+      "type": "string",
+      "value": "[variables('subnetMinionsRef')]"
+    },
+    "subnetEtcdRef": {
+      "type": "string",
+      "value": "[variables('subnetEtcdRef')]"
+    },
+    "subnetAdminRef": {
+      "type": "string",
+      "value": "[variables('subnetAdminRef')]"
+    },
     "result": {
-      "value": "Network Provisioning achieved",
+      "value": "Load Balancers and IP Provisioning achieved",
       "type": "string"
     }
   }

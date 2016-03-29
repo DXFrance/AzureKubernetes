@@ -8,31 +8,79 @@
         "description": "Schema api version from parent template"
       }
     },
+    "prefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Prefix of the components"
+      }
+    },
+    "numberOfMasters": {
+      "type": "int",
+      "metadata": {
+        "description": "Number of kubernetes Masters nodes to create"
+      }
+    },
+    "numberOfMinions": {
+      "type": "int",
+      "metadata": {
+        "description": "Number of kubernetes Minions nodes to create"
+      }
+    },
+    "numberOfEtcd": {
+      "type": "int",
+      "metadata": {
+        "description": "Number of Etcd nodes to create"
+      }
+    },
     "virtualNetworkName": {
       "type": "string",
       "metadata": {
         "description": "virtual Network Name"
       }
     },
-    "kubemastersLbName": {
+    "ansibleNicName": {
       "type": "string",
       "metadata": {
-        "description": "kubemasters Load Balancer Name"
+        "description": "ansible NicName"
+      }
+    },
+    "kubeMasterNicName": {
+      "type": "string",
+      "metadata": {
+        "description": "kube Master NicName"
+      }
+    },
+    "kubeMinionNicName": {
+      "type": "string",
+      "metadata": {
+        "description": "kube Minion NicName"
+      }
+    },
+    "etcdNicName": {
+      "type": "string",
+      "metadata": {
+        "description": "kube Minion NicName"
       }
     }
+
   },
   "variables": {
-    "ansibleNicName": "[concat(parameters('prefix'),'-nic-ansible')]",
+
+    "kubemastersLbID": "[reference('CreatingPIPandLoadBalancer').outputs.kubemastersLbID.value]",
+    "subnetMastersRef": "[reference('ProvisioningNetwork').outputs.subnetMastersRef.value]",
+    "subnetMinionsRef": "[reference('ProvisioningNetwork').outputs.subnetMinionsRef.value]",
+    "subnetEtcdRef": "[reference('ProvisioningNetwork').outputs.subnetEtcdRef.value]",
+    "subnetAdminRef": "[reference('ProvisioningNetwork').outputs.subnetAdminRef.value]",
+
     "ansibleIPAddressName": "[concat(parameters('prefix'),'-pip-ansible')]",
-    "masterNicName": "[concat(parameters('prefix'),'-nic-master')]",
-    "masterPIPAddressType": "Dynamic",
+    "nicPIPAddressType": "Dynamic",
     "masterNetworkInterfacesCopy": "nicopy-kube-master"
   },
   "resources": [
     {
-      "apiVersion": "[variables('apiVersion')]",
+      "apiVersion": "[parameters('apiVersion')]",
       "type": "Microsoft.Network/networkInterfaces",
-      "name": "[concat(variables('masterNicName'), copyindex())]",
+      "name": "[concat(parameters('kubeMasterNicName'), copyindex())]",
       "location": "[resourceGroup().location]",
       "copy": {
         "name": "[variables('masterNetworkInterfacesCopy')]",
@@ -43,7 +91,7 @@
           {
             "name": "MastersIpConfig",
             "properties": {
-              "privateIPAllocationMethod": "[variables('masterPIPAddressType')]",
+              "privateIPAllocationMethod": "[variables('nicPIPAddressType')]",
               "subnet": {
                 "id": "[variables('subnetMastersRef')]"
               },
@@ -65,14 +113,14 @@
     {
       "apiVersion": "[parameters('apiVersion')]",
       "type": "Microsoft.Network/networkInterfaces",
-      "name": "[concat('minionsNic', copyindex())]",
+      "name": "[concat(parameters('kubeMinionNicName'), copyindex())]",
       "location": "[resourceGroup().location]",
       "copy": {
         "name": "nicLoopMinions",
         "count": "[parameters('numberOfMinions')]"
       },
       "dependsOn": [
-        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
+        "[concat('Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'))]"
       ],
       "properties": {
         "ipConfigurations": [
@@ -89,16 +137,16 @@
       }
     },
     {
-      "apiVersion": "[variables('apiVersion')]",
+      "apiVersion": "[parameters('apiVersion')]",
       "type": "Microsoft.Network/networkInterfaces",
-      "name": "[concat('etcdNic', copyindex())]",
+      "name": "[concat(parameters('etcdNicName'), copyindex())]",
       "location": "[resourceGroup().location]",
       "copy": {
         "name": "nicLoopEtcd",
         "count": "[parameters('numberOfEtcd')]"
       },
       "dependsOn": [
-        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
+        "[concat('Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'))]"
       ],
       "properties": {
         "ipConfigurations": [
@@ -115,12 +163,12 @@
       }
     },
     {
-      "apiVersion": "[variables('apiVersion')]",
+      "apiVersion": "[parameters('apiVersion')]",
       "type": "Microsoft.Network/networkInterfaces",
-      "name": "ansibleNic",
+      "name": "parameters('ansibleNicName')",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
+        "[concat('Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'))]"
       ],
       "properties": {
         "ipConfigurations": [
@@ -129,7 +177,7 @@
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
               "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('ansibleIPAddressName')]"
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('ansibleIPAddressName'))]"
               },
               "subnet": {
                 "id": "[variables('subnetAdminRef')]"
@@ -146,4 +194,4 @@
       "type": "string"
     }
   }
-}}
+}

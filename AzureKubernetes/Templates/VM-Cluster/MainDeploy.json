@@ -230,28 +230,9 @@
     "storageAccountType": "Standard_LRS",
 
     "virtualNetworkName": "[concat(parameters('prefix'),'-vnet')]",
+    "ansibleNicName": "[concat(parameters('prefix'),'-nic-ansible')]",
+    "masterNicName": "[concat(parameters('prefix'),'-nic-master')]",
 
-
-    "kubemastersLbPIPAddressName": "[concat(parameters('prefix'),'-pip-kube-masters')]",
-    "kubemastersLbBackendPool": "[concat(parameters('prefix'),'-bap-kube-masters')]",
-    "kubemastersLbName": "[concat(parameters('prefix'),'-lb-kube-masters')]",
-    "kubemastersDomainName": "[concat(parameters('prefix'),'-kube')]",
-    "ansibleIPAddressName": "[concat(parameters('prefix'),'-pip-ansible')]",
-    "ansibleDomainName": "[concat(parameters('prefix'),'-ansible')]",
-
-
-    "scriptBlobLocation": "scripts/deploy.sh",
-    "scriptBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('scriptBlobLocation'))]",
-
-    "keysBlobLocation": "keys/id_rsa",
-    "keysBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('keysBlobLocation'))]",
-
-    "pubBlobLocation": "keys/id_rsa.pub",
-    "pubBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('pubBlobLocation'))]",
-
-    "assetsStorageAccountId": "[resourceId(parameters('vaultAccountName'),'Microsoft.Storage/storageAccounts', parameters('vaultAccountName'))]",
-
-    "adminPassword": "V3l0C1RaPt0R#"
   },
   "resources": [
     {
@@ -429,7 +410,7 @@
         "properties": {
           "mode": "Incremental",
           "templateLink": {
-            "uri": "[variables('configuration').ProvisioningAvailaibilitySetAndStorage]",
+            "uri": "[variables('configuration').ProvisioningVM]",
             "contentVersion": "1.0.0.0"
           },
           "parameters": {
