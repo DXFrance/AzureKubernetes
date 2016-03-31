@@ -209,7 +209,6 @@
   },
   "variables": {
     "apiVersion": "2015-06-15",
-
     "configuration": {
       "ProvisioningAvailaibilitySetAndStorageTemplateURL": "[concat(parameters('templatesBaseUrl'),'/ProvisioningAvailaibilitySetAndStorage.json')]",
       "CreatingNicTemplateURL": "[concat(parameters('templatesBaseUrl'),'/CreatingNic.json')]",
@@ -231,8 +230,9 @@
 
     "virtualNetworkName": "[concat(parameters('prefix'),'-vnet')]",
     "ansibleNicName": "[concat(parameters('prefix'),'-nic-ansible')]",
-    "masterNicName": "[concat(parameters('prefix'),'-nic-master')]",
-
+    "kubeMasterNicName": "[concat(parameters('prefix'),'-nic-kubemaster')]",
+    "kubeMinionNicName": "[concat(parameters('prefix'),'-nic-kubeminion')]",
+    "etcdNicName": "[concat(parameters('prefix'),'-nic-etcd')]"
   },
   "resources": [
     {
@@ -338,72 +338,41 @@
           "uri": "[variables('configuration').CreatingNic]",
           "contentVersion": "1.0.0.0"
         },
-         "parameters": {
-          "etcdAvailabilitySetName": {
-            "value": "[variables('etcdAvailabilitySetName')]"
+        "parameters": {
+          "apiVersion": {
+            "value": "[variables('apiVersion')]"
           },
-          "kubeMastersAvailabilitySetName": {
-            "value": "[variables('kubeMastersAvailabilitySetName')]"
+          "prefix": {
+            "value": "[parameters('prefix')]"
           },
-          "kubeMinionsAvailabilitySetName": {
-            "value": "[variables('kubeMinionsAvailabilitySetName')]"
+          "numberOfMasters": {
+            "value": "[parameters('numberOfMasters')]"
           },
-          "etcdStorageAccountName": {
-            "value": "[variables('etcdStorageAccountName')]"
+          "numberOfMinions": {
+            "value": "[parameters('numberOfMinions')]"
           },
-          "kubeMastersStorageAccountName": {
-            "value": "[variables('kubeMastersStorageAccountName')]"
+          "numberOfEtcd": {
+            "value": "[parameters('numberOfEtcd')]"
           },
-          "kubeMinionsStorageAccountName": {
-            "value": "[variables('kubeMinionsStorageAccountName')]"
+          "virtualNetworkName": {
+            "value": "[variables('virtualNetworkName')]"
           },
-          "ansibleStorageAccountName": {
-            "value": "[variables('ansibleStorageAccountName')]"
+          "ansibleNicName": {
+            "value": "[variables('ansibleNicName')]"
           },
-          "storageAccountType": {
-            "value": "[variables('storageAccountType')]"
+          "kubeMasterNicName": {
+            "value": "[variables('kubeMasterNicName')]"
+          },
+          "kubeMinionNicName": {
+            "value": "[variables('kubeMinionNicName')]"
+          },
+          "etcdNicName": {
+            "value": "[variables('etcdNicName')]"
           }
         }
       }
     },
     {
-      "apiVersion": "[variables('apiVersion')]",
-      "name": "ProvisioningVM",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('configuration').ProvisioningAvailaibilitySetAndStorage]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "etcdAvailabilitySetName": {
-            "value": "[variables('etcdAvailabilitySetName')]"
-          },
-          "kubeMastersAvailabilitySetName": {
-            "value": "[variables('kubeMastersAvailabilitySetName')]"
-          },
-          "kubeMinionsAvailabilitySetName": {
-            "value": "[variables('kubeMinionsAvailabilitySetName')]"
-          },
-          "etcdStorageAccountName": {
-            "value": "[variables('etcdStorageAccountName')]"
-          },
-          "kubeMastersStorageAccountName": {
-            "value": "[variables('kubeMastersStorageAccountName')]"
-          },
-          "kubeMinionsStorageAccountName": {
-            "value": "[variables('kubeMinionsStorageAccountName')]"
-          },
-          "ansibleStorageAccountName": {
-            "value": "[variables('ansibleStorageAccountName')]"
-          },
-          "storageAccountType": {
-            "value": "[variables('storageAccountType')]"
-          }
-        }
-      },
-      {
         "apiVersion": "[variables('apiVersion')]",
         "name": "ProvisioningVM",
         "type": "Microsoft.Resources/deployments",
@@ -414,6 +383,21 @@
             "contentVersion": "1.0.0.0"
           },
           "parameters": {
+            "apiVersion": {
+              "value": "[variables('apiVersion')]"
+            },
+            "prefix": {
+              "value": "[parameters('prefix')]"
+            },
+            "numberOfMasters": {
+              "value": "[parameters('numberOfMasters')]"
+            },
+            "numberOfMinions": {
+              "value": "[parameters('numberOfMinions')]"
+            },
+            "numberOfEtcd": {
+              "value": "[parameters('numberOfEtcd')]"
+            },
             "etcdAvailabilitySetName": {
               "value": "[variables('etcdAvailabilitySetName')]"
             },
@@ -435,14 +419,44 @@
             "ansibleStorageAccountName": {
               "value": "[variables('ansibleStorageAccountName')]"
             },
-            "storageAccountType": {
-              "value": "[variables('storageAccountType')]"
+            "ansibleNicName": {
+              "value": "[variables('ansibleNicName')]"
+            },
+            "kubeMasterNicName": {
+              "value": "[variables('kubeMasterNicName')]"
+            },
+            "kubeMinionNicName": {
+              "value": "[variables('kubeMinionNicName')]"
+            },
+            "etcdNicName": {
+              "value": "[variables('etcdNicName')]"
+            },
+            "kubernetesVmSize": {
+              "value": "[parameters('kubernetesVmSize')]"
+            },
+            "ansibleVmSize": {
+              "value": "[parameters('ansibleVmSize')]"
+            },
+            "adminUserName": {
+              "value": "[parameters('adminUserName')]"
+            },
+            "adminPassword": {
+              "value": "[parameters('adminPassword')]"
+            },
+            "sshKeyData": {
+              "value": "[parameters('sshKeyData')]"
+            },
+            "centosOSVersion": {
+              "value": "[parameters('centosOSVersion')]"
+            },
+            "vaultAccountName": {
+              "value": "[parameters('vaultAccountName')]"
             }
           }
         }
       },
-
       "outputs": {
+        "name": "Outputs",
         "result": {
           "value": "Main Provisioning achieved",
           "type": "string"

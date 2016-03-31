@@ -100,7 +100,6 @@
         "description": "kube Minion NicName"
       }
     },
-
     "kubernetesVmSize": {
       "type": "string",
       "metadata": {
@@ -135,6 +134,12 @@
       "type": "string",
       "metadata": {
         "description": "The CentOS version for the VM. This will pick a fully patched image of this given CentOS version. Allowed values are: 7.0, 7.1, 7.2"
+      }
+    },
+    "vaultAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "Private storage account name in which you are storing your certificates for ansible and the template bash scripts"
       }
     }
   },
