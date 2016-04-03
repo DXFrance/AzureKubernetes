@@ -24,8 +24,7 @@
   "variables": {
     "kubemastersLbPIPAddressName": "[concat(parameters('prefix'),'-pip-kube-masters')]",
     "kubemastersLbBackendPool": "[concat(parameters('prefix'),'-bap-kube-masters')]",
-    //"kubemastersLbFrontend": "[concat(parameters('prefix'),'-fe-kube-masters')]",
-    "kubemastersLbFrontend": "kubemastersLbFrontend",
+    "kubemastersLbFrontend": "[concat(parameters('prefix'),'-fe-kube-masters')]",
     "kubemastersLbName": "[concat(parameters('prefix'),'-lb-kube-masters')]",
     "kubemastersDomainName": "[concat(parameters('prefix'),'-kube')]",
     "ansibleIPAddressName": "[concat(parameters('prefix'),'-pip-ansible')]",
@@ -50,7 +49,7 @@
       "properties": {
         "frontendIPConfigurations": [
           {
-            "name": "variables('kubemastersLbFrontend')",
+            "name": "[variables('kubemastersLbFrontend')]",
             "properties": {
               "publicIPAddress": {
                 "id": "[variables('kubemastersLbPIPAddressID')]"
