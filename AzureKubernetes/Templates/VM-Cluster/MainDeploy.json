@@ -224,10 +224,10 @@
       "ProvisioningVMTemplateURL": "[concat(parameters('templatesBaseURL'),'/ProvisioningVM.json')]"
     },
 
-    "ansibleStorageAccountName": "[concat(uniquestring(resourceGroup().id), parameters('prefix'), 'ansible')]",
-    "kubeMastersStorageAccountName": "[concat(uniquestring(resourceGroup().id), parameters('prefix'), 'kubemasters')]",
-    "kubeMinionsStorageAccountName": "[concat(uniquestring(resourceGroup().id), parameters('prefix'), 'kubeminions')]",
-    "etcdStorageAccountName": "[concat(uniquestring(resourceGroup().id), parameters('prefix'), 'etcd')]",
+    "ansibleStorageAccountName": "[concat(parameters('prefix'), 'ansible')]",
+    "kubeMastersStorageAccountName": "[concat(parameters('prefix'), 'kubemasters')]",
+    "kubeMinionsStorageAccountName": "[concat(parameters('prefix'), 'kubeminions')]",
+    "etcdStorageAccountName": "[concat(parameters('prefix'), 'etcd')]",
 
     "kubeMastersAvailabilitySetName": "[concat(parameters('prefix'), 'as-kube-masters')]",
     "kubeMinionsAvailabilitySetName": "[concat(parameters('prefix'), 'as-kube-minions')]",

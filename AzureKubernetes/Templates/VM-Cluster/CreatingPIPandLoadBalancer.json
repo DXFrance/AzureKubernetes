@@ -69,7 +69,6 @@
       "name": "[concat(variables('kubemastersLbName'), '/', 'HTTP-80', copyIndex())]",
       "location": "[resourceGroup().location]",
       "copy": {
-        "b": null,
         "name": "[variables('kubemastersLbNatRulesCopy')]",
         "count": "[parameters('numberOfMasters')]"
       },
