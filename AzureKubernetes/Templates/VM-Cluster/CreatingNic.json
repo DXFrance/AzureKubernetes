@@ -148,9 +148,6 @@
         "name": "nicLoopMinions",
         "count": "[parameters('numberOfMinions')]"
       },
-      "dependsOn": [
-        "[concat('Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'))]"
-      ],
       "properties": {
         "ipConfigurations": [
           {
@@ -174,9 +171,6 @@
         "name": "nicLoopEtcd",
         "count": "[parameters('numberOfEtcd')]"
       },
-      "dependsOn": [
-        "[concat('Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'))]"
-      ],
       "properties": {
         "ipConfigurations": [
           {
@@ -196,9 +190,6 @@
       "type": "Microsoft.Network/networkInterfaces",
       "name": "parameters('ansibleNicName')",
       "location": "[resourceGroup().location]",
-      "dependsOn": [
-        "[concat('Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'))]"
-      ],
       "properties": {
         "ipConfigurations": [
           {
