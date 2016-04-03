@@ -16,10 +16,10 @@
       "value": "7.2"
     },
     "numberOfMasters": {
-      "value": 1
+      "value": 3
     },
     "numberOfMinions": {
-      "value": 1
+      "value": 3
     },
     "numberOfEtcd": {
       "value": 1
