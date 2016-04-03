@@ -83,31 +83,31 @@
         "frontendPort": "[copyIndex(80)]",
         "backendPort": 80,
         "enableFloatingIP": false
-      },
-      {
-        "apiVersion": "[parameters('apiVersion')]",
-        "type": "Microsoft.Network/publicIPAddresses",
-        "name": "[variables('ansibleIPAddressName')]",
-        "location": "[resourceGroup().location]",
-        "properties": {
-          "publicIPAllocationMethod": "[variables('ansiblePIPAddressType')]",
-          "dnsSettings": {
-            "domainNameLabel": "[variables('ansibleDomainName')]"
-          }
+      }
+    },
+    {
+      "apiVersion": "[parameters('apiVersion')]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[variables('ansibleIPAddressName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "publicIPAllocationMethod": "[variables('ansiblePIPAddressType')]",
+        "dnsSettings": {
+          "domainNameLabel": "[variables('ansibleDomainName')]"
         }
-      },
-      {
-        "apiVersion": "[parameters('apiVersion')]",
-        "type": "Microsoft.Network/publicIPAddresses",
-        "name": "[variables('kubemastersLbPIPAddressName')]",
-        "location": "[resourceGroup().location]",
-        "properties": {
-          "publicIPAllocationMethod": "[variables('kubemastersLbPIPAddressType')]",
-          "dnsSettings": {
-            "domainNameLabel": "[variables('kubemastersDomainName')]"
-          }
+      }
+    },
+    {
+      "apiVersion": "[parameters('apiVersion')]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[variables('kubemastersLbPIPAddressName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "publicIPAllocationMethod": "[variables('kubemastersLbPIPAddressType')]",
+        "dnsSettings": {
+          "domainNameLabel": "[variables('kubemastersDomainName')]"
         }
-      },
+      }
     }
   ],
   "outputs": {

@@ -325,8 +325,12 @@
     },
     {
       "apiVersion": "[variables('apiVersion')]",
-      "name": "CreatingNic",
+      "name": "CreatingNetworkInterfaces",
       "type": "Microsoft.Resources/deployments",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/ProvisioningNetwork",
+        "Microsoft.Resources/deployments/CreatingPIPandLoadBalancer"
+      ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -386,6 +390,11 @@
       "apiVersion": "[variables('apiVersion')]",
       "name": "ProvisioningVM",
       "type": "Microsoft.Resources/deployments",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/ProvisioningAvailaibilitySetAndStorage",
+        "Microsoft.Resources/deployments/CreatingNetworkInterfaces"
+      ],
+
       "properties": {
         "mode": "Incremental",
         "templateLink": {

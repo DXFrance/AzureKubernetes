@@ -190,11 +190,6 @@
         "count": "[parameters('numberOfMasters')]"
       },
       "location": "[resourceGroup().location]",
-      "dependsOn": [
-        "[concat('Microsoft.Storage/storageAccounts/', parameters('kubeMastersStorageAccountName'))]",
-        "[concat('Microsoft.Network/networkInterfaces/', parameters('kubeMasterNicName'), copyindex())]",
-        "[concat('Microsoft.Compute/availabilitySets/', parameters('kubeMastersAvailabilitySetName'))]"
-      ],
       "properties": {
         "availabilitySet": {
           "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('kubeMastersAvailabilitySetName'))]"
