@@ -32,12 +32,6 @@
         "description": "Number of Etcd nodes to create"
       }
     },
-    "virtualNetworkName": {
-      "type": "string",
-      "metadata": {
-        "description": "virtual Network Name"
-      }
-    },
     "ansibleNicName": {
       "type": "string",
       "metadata": {
@@ -100,7 +94,6 @@
     }
   },
   "variables": {
-
     "ansibleIPAddressName": "[concat(parameters('prefix'),'-pip-ansible')]",
     "nicPIPAddressType": "Dynamic",
     "masterNetworkInterfacesCopy": "nicopy-kube-master"

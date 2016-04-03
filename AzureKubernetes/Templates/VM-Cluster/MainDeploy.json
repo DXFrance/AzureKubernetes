@@ -356,9 +356,6 @@
           "numberOfEtcd": {
             "value": "[parameters('numberOfEtcd')]"
           },
-          "virtualNetworkName": {
-            "value": "[variables('virtualNetworkName')]"
-          },
           "ansibleNicName": {
             "value": "[variables('ansibleNicName')]"
           },
