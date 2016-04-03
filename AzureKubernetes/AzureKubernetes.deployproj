@@ -40,16 +40,17 @@
     <Content Include="Scripts\Deploy-VM-Cluster.ps1" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Scripts\Deploy-AzureResourceGroup.ps1" />
     <None Include="Scripts\Deploy-VM-Cluster-PowerShell.ps1" />
     <None Include="Scripts\Deploy-VM-PowerShell.ps1" />
     <None Include="Scripts\Undeploy-VM-Cluster-PowerShell.ps1" />
-    <None Include="Templates\VM-Cluster\azuredeploy.parameters.json" />
-    <None Include="Templates\VM-Cluster\ProvisioningExtension.json" />
-    <None Include="Templates\VM-Cluster\CreatingPIPandLoadBalancer.json" />
-    <None Include="Templates\VM-Cluster\ProvisioningNetwork.json" />
-    <None Include="Templates\VM-Cluster\ProvisioningAvailaibilitySetAndStorage.json" />
-    <None Include="Templates\VM-Cluster\CreatingNic.json" />
-    <None Include="Templates\VM-Cluster\ProvisioningVM.json" />
+    <Content Include="Templates\VM-Cluster\azuredeploy.parameters.json" />
+    <Content Include="Templates\VM-Cluster\ProvisioningExtension.json" />
+    <Content Include="Templates\VM-Cluster\CreatingPIPandLoadBalancer.json" />
+    <Content Include="Templates\VM-Cluster\ProvisioningNetwork.json" />
+    <Content Include="Templates\VM-Cluster\ProvisioningAvailaibilitySetAndStorage.json" />
+    <Content Include="Templates\VM-Cluster\CreatingNic.json" />
+    <Content Include="Templates\VM-Cluster\ProvisioningVM.json" />
     <None Include="Tools\AzCopy.exe" />
     <None Include="Tools\Microsoft.Data.Edm.dll">
       <Visible>False</Visible>

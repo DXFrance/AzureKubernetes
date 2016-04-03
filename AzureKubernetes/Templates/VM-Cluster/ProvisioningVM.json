@@ -149,12 +149,12 @@
     "kubeMasterVmName": "[concat(parameters('prefix'),'-kube-master-')]",
     "kubeMasterOsDiskName": "[concat(parameters('prefix'),'-kube-master-os-')]",
     "kubeMasterDataDiskName": "[concat(parameters('prefix'),'-kube-master-data-')]",
-    "kubeMinionVmName": "[concat(parameters('prefix'),'-kube-master-')]",
-    "kubeMinionOsDiskName": "[concat(parameters('prefix'),'-kube-master-os-')]",
-    "kubeMinionDataDiskName": "[concat(parameters('prefix'),'-kube-master-data-')]",
-    "etcdVmName": "[concat(parameters('prefix'),'-kube-master-')]",
-    "etcdOsDiskName": "[concat(parameters('prefix'),'-kube-master-os-')]",
-    "etcdDataDiskName": "[concat(parameters('prefix'),'-kube-master-data-')]",
+    "kubeMinionVmName": "[concat(parameters('prefix'),'-kube-minion-')]",
+    "kubeMinionOsDiskName": "[concat(parameters('prefix'),'-kube-minion-os-')]",
+    "kubeMinionDataDiskName": "[concat(parameters('prefix'),'-kube-minion-data-')]",
+    "etcdVmName": "[concat(parameters('prefix'),'-etcd-')]",
+    "etcdOsDiskName": "[concat(parameters('prefix'),'-etcd-os-')]",
+    "etcdDataDiskName": "[concat(parameters('prefix'),'-etcd-data-')]",
 
     "sshKeyPath": "[concat('/home/',parameters('adminUsername'),'/.ssh/authorized_keys')]",
     "imageReference": {

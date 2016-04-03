@@ -61,16 +61,39 @@
       "metadata": {
         "description": "kube Minion NicName"
       }
+    },
+    "kubemastersLbID": {
+      "type": "string",
+      "metadata": {
+        "description": "kube Masters Load Balancer ID"
+      }
+    },
+    "subnetMastersRef": {
+      "type": "string",
+      "metadata": {
+        "description": "subnet Masters"
+      }
+    },
+    "subnetMinionsRef": {
+      "type": "string",
+      "metadata": {
+        "description": "subnet Minions"
+      }
+    },
+    "subnetEtcdRef": {
+      "type": "string",
+      "metadata": {
+        "description": "subnet Etcd"
+      }
+    },
+    "subnetAdminRef": {
+      "type": "string",
+      "metadata": {
+        "description": "subnet Admin"
+      }
     }
-
   },
   "variables": {
-
-    "kubemastersLbID": "[reference('CreatingPIPandLoadBalancer').outputs.kubemastersLbID.value]",
-    "subnetMastersRef": "[reference('ProvisioningNetwork').outputs.subnetMastersRef.value]",
-    "subnetMinionsRef": "[reference('ProvisioningNetwork').outputs.subnetMinionsRef.value]",
-    "subnetEtcdRef": "[reference('ProvisioningNetwork').outputs.subnetEtcdRef.value]",
-    "subnetAdminRef": "[reference('ProvisioningNetwork').outputs.subnetAdminRef.value]",
 
     "ansibleIPAddressName": "[concat(parameters('prefix'),'-pip-ansible')]",
     "nicPIPAddressType": "Dynamic",
@@ -93,16 +116,16 @@
             "properties": {
               "privateIPAllocationMethod": "[variables('nicPIPAddressType')]",
               "subnet": {
-                "id": "[variables('subnetMastersRef')]"
+                "id": "[parameters('subnetMastersRef')]"
               },
               "loadBalancerBackendAddressPools": [
                 {
-                  "id": "[concat(variables('kubemastersLbID'), '/backendAddressPools/LoadBalancerBackend')]"
+                  "id": "[concat(parameters('kubemastersLbID'), '/backendAddressPools/LoadBalancerBackend')]"
                 }
               ],
               "loadBalancerInboundNatRules": [
                 {
-                  "id": "[concat(variables('kubemastersLbID'),'/inboundNatRules/HTTP-80', copyindex())]"
+                  "id": "[concat(parameters('kubemastersLbID'),'/inboundNatRules/HTTP-80', copyindex())]"
                 }
               ]
             }
@@ -129,7 +152,7 @@
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
               "subnet": {
-                "id": "[variables('subnetMinionsRef')]"
+                "id": "[parameters('subnetMinionsRef')]"
               }
             }
           }
@@ -155,7 +178,7 @@
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
               "subnet": {
-                "id": "[variables('subnetEtcdRef')]"
+                "id": "[parameters('subnetEtcdRef')]"
               }
             }
           }
@@ -180,7 +203,7 @@
                 "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('ansibleIPAddressName'))]"
               },
               "subnet": {
-                "id": "[variables('subnetAdminRef')]"
+                "id": "[parameters('subnetAdminRef')]"
               }
             }
           }

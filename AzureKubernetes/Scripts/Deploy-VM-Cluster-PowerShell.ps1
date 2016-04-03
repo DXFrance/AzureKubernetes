@@ -51,7 +51,7 @@ $sshKey = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDhdhD4JCfI50HPBrgg+mQyhhid9CvN3
 
 $sshPathOnLinuxMachine = "/home/$username/.ssh/authorized_keys"
 #endregion credentials
-#Login-AzureRmAccount -SubscriptionId $subscriptionId
+Login-AzureRmAccount -SubscriptionId $subscriptionId
 
 $etcdCustomData = Get-Content $etcdCustomDataFile -Raw 
 $kubeCustomData = Get-Content $kubeCustomDataFile -Raw 
