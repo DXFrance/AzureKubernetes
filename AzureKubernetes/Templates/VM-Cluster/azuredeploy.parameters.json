@@ -4,7 +4,7 @@
   "parameters": {
     "prefix": {
       //"value": "GEN-UNIQUE",
-      "value": "pokubernetesjson"
+      "value": "kujson"
     },
     "ansibleVmSize": {
       "value": "Standard_A0"

@@ -217,7 +217,7 @@
   "variables": {
     "apiVersion": "2015-01-01",
     "configuration": {
-      "ProvisioningASStorageURL": "[concat(parameters('templatesBaseURL'),'/ProvisioningASStorage.json')]",
+      "ProvisioningASStorageTemplateURL": "[concat(parameters('templatesBaseURL'),'/ProvisioningASStorage.json')]",
       "CreatingNicTemplateURL": "[concat(parameters('templatesBaseURL'),'/CreatingNic.json')]",
       "ProvisioningNetworkTemplateURL": "[concat(parameters('templatesBaseURL'),'/ProvisioningNetwork.json')]",
       "CreatingPIPandLoadBalancerTemplateURL": "[concat(parameters('templatesBaseURL'),'/CreatingPIPandLoadBalancer.json')]",
@@ -254,7 +254,7 @@
         },
         "parameters": {
           "apiVersion": {
-            "value": "2016-02-01"
+            "value": "2015-06-15"
           },
           "etcdAvailabilitySetName": {
             "value": "[variables('etcdAvailabilitySetName')]"
