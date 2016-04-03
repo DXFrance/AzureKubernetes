@@ -406,7 +406,7 @@
         },
         "parameters": {
           "apiVersion": {
-            "value": "2016-02-01"
+            "value": "2016-03-30"
           },
           "prefix": {
             "value": "[parameters('prefix')]"
