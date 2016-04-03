@@ -181,7 +181,7 @@
     {
       "apiVersion": "[parameters('apiVersion')]",
       "type": "Microsoft.Network/networkInterfaces",
-      "name": "parameters('ansibleNicName')",
+      "name": "[parameters('ansibleNicName')]",
       "location": "[resourceGroup().location]",
       "properties": {
         "ipConfigurations": [
