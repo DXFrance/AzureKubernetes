@@ -59,7 +59,7 @@
         ],
         "backendAddressPools": [
           {
-            "name": "parameters('kubemastersLbBackendPool')"
+            "name": "[variables('kubemastersLbBackendPool')]"
           }
         ]
       }
