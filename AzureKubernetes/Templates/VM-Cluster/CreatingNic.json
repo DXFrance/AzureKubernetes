@@ -68,6 +68,12 @@
         "description": "kube Masters Load Balancer ID"
       }
     },
+    "kubemastersLbBackendPoolID": {
+      "type": "string",
+      "metadata": {
+        "description": "kube Masters Backend Address Pool ID"
+      }
+    },
     "subnetMastersRef": {
       "type": "string",
       "metadata": {
@@ -120,7 +126,7 @@
               },
               "loadBalancerBackendAddressPools": [
                 {
-                  "id": "[concat(parameters('kubemastersLbID'), '/backendAddressPools/LoadBalancerBackend')]"
+                  "id": "[parameters('kubemastersLbBackendPoolID')]"
                 }
               ],
               "loadBalancerInboundNatRules": [

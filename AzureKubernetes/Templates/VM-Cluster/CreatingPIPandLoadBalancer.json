@@ -112,9 +112,13 @@
     }
   ],
   "outputs": {
-    "kubemastersLbPIPAddressID": {
+    "kubemastersLbID": {
       "type": "string",
-      "value": "[resourceId('Microsoft.Network/publicIPAddresses',variables('kubemastersLbPIPAddressName'))]"
+      "value": "[variables('kubemastersLbID')]"
+    },
+    "kubemastersLbBackendPoolID": {
+      "type": "string",
+      "value": "[concat(variables('kubemastersLbID'), '/backendAddressPools/', variables('kubemastersLbBackendPool'))]"
     },
     "result": {
       "value": "Load Balancers and IP Provisioning achieved",

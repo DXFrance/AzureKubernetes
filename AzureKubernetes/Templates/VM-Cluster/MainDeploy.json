@@ -374,6 +374,9 @@
           "kubemastersLbID": {
             "value": "[reference('CreatingPIPandLoadBalancer').outputs.kubemastersLbID.value]"
           },
+          "kubemastersLbBackendPoolID": {
+            "value": "[reference('CreatingPIPandLoadBalancer').outputs.kubemastersLbBackendPoolID.value]"
+          },
           "subnetMastersRef": {
             "value": "[reference('ProvisioningNetwork').outputs.subnetMastersRef.value]"
           },
