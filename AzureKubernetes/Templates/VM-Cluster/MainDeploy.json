@@ -215,9 +215,9 @@
     }
   },
   "variables": {
-    "apiVersion": "2016-02-01",
+    "apiVersion": "2015-01-01",
     "configuration": {
-      "ProvisioningAvailaibilitySetAndStorageTemplateURL": "[concat(parameters('templatesBaseURL'),'/ProvisioningAvailaibilitySetAndStorage.json')]",
+      "ProvisioningAvailaibilitySetAndStorageTemplateURL": "[concat(parameters('templatesBaseURL'),'/ProvisioningASStorage.json')]",
       "CreatingNicTemplateURL": "[concat(parameters('templatesBaseURL'),'/CreatingNic.json')]",
       "ProvisioningNetworkTemplateURL": "[concat(parameters('templatesBaseURL'),'/ProvisioningNetwork.json')]",
       "CreatingPIPandLoadBalancerTemplateURL": "[concat(parameters('templatesBaseURL'),'/CreatingPIPandLoadBalancer.json')]",
@@ -249,10 +249,13 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('configuration').ProvisioningAvailaibilitySetAndStorageTemplateURL]",
+          "uri": "[variables('configuration').ProvisioningASStorageTemplateURL]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
+          "apiVersion": {
+            "value": "2016-02-01"
+          },
           "etcdAvailabilitySetName": {
             "value": "[variables('etcdAvailabilitySetName')]"
           },
@@ -292,7 +295,7 @@
         },
         "parameters": {
           "apiVersion": {
-            "value": "2015-06-15"
+            "value": "2016-03-30"
           },
           "virtualNetworkName": {
             "value": "[variables('virtualNetworkName')]"
@@ -312,7 +315,7 @@
         },
         "parameters": {
           "apiVersion": {
-            "value": "[variables('apiVersion')]"
+            "value": "2016-03-30"
           },
           "prefix": {
             "value": "[parameters('prefix')]"
@@ -339,7 +342,7 @@
         },
         "parameters": {
           "apiVersion": {
-            "value": "[variables('apiVersion')]"
+            "value": "2016-02-01"
           },
           "prefix": {
             "value": "[parameters('prefix')]"
@@ -403,7 +406,7 @@
         },
         "parameters": {
           "apiVersion": {
-            "value": "[variables('apiVersion')]"
+            "value": "2016-02-01"
           },
           "prefix": {
             "value": "[parameters('prefix')]"

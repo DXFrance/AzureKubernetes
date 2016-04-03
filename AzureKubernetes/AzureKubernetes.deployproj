@@ -48,7 +48,7 @@
     <Content Include="Templates\VM-Cluster\ProvisioningExtension.json" />
     <Content Include="Templates\VM-Cluster\CreatingPIPandLoadBalancer.json" />
     <Content Include="Templates\VM-Cluster\ProvisioningNetwork.json" />
-    <Content Include="Templates\VM-Cluster\ProvisioningAvailaibilitySetAndStorage.json" />
+    <Content Include="Templates\VM-Cluster\ProvisioningASStorage.json" />
     <Content Include="Templates\VM-Cluster\CreatingNic.json" />
     <Content Include="Templates\VM-Cluster\ProvisioningVM.json" />
     <None Include="Tools\AzCopy.exe" />
