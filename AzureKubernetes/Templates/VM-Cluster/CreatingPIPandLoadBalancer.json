@@ -33,7 +33,7 @@
     "kubemastersLbNatRulesCopy": "lbnrcopy-kube-masters",
     "kubemastersLbPIPAddressType": "Dynamic",
     "kubemastersLbID": "[resourceId('Microsoft.Network/loadBalancers',variables('kubemastersLbName'))]",
-    "kubemastersFrontEndIPConfigID": "[concat(variables('kubemastersLbID'),'/frontendIPConfigurations/loadBalancerFrontend')]",
+    "kubemastersFrontEndIPConfigID": "[concat(variables('kubemastersLbID'),'/frontendIPConfigurations/',variables('kubemastersLbFrontend'))]",
     "ansibleIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('ansibleIPAddressName'))]",
     "ansiblePIPAddressType": "Dynamic"
   },
