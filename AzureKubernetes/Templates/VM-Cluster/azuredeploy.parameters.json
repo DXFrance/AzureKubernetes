@@ -4,7 +4,7 @@
   "parameters": {
     "prefix": {
       //"value": "GEN-UNIQUE",
-      "value": "kujson"
+      "value": "kubiscool"
     },
     "ansibleVmSize": {
       "value": "Standard_A0"

@@ -3,8 +3,8 @@
     $subscriptionName = "stephgou - External",
     $subscriptionId = "fb79eb46-411c-4097-86ba-801dca0ff5d5",
     #Paramètres du Azure Ressource Group
-    $resourceGroupName = "stephgou-Kubernetes-VM-Cluster",
-    $resourceGroupDeploymentName = "stephgou-Kubernetes-VM-Cluster-Deployed",
+    $resourceGroupName = "Json-Kubernetes-VM-Cluster",
+    $resourceGroupDeploymentName = "json-Kubernetes-VM-Cluster-Deployed",
     $resourceLocation = "West Europe",
     $templateFile = "azuredeploy.json",
     $templateParameterFile = "azuredeploy.parameters.json",
