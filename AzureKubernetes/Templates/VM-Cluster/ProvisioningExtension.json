@@ -7,22 +7,120 @@
       "metadata": {
         "description": "Schema api version from parent template"
       }
+    },
+    "prefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Prefix of the components"
+      }
+    },
+    "numberOfMasters": {
+      "type": "int",
+      "metadata": {
+        "description": "Number of kubernetes Master nodes to create"
+      }
+    },
+    "numberOfMinions": {
+      "type": "int",
+      "defaultValue": 2,
+      "metadata": {
+        "description": "Number of kubernetes Minion nodes to create"
+      }
+    },
+    "numberOfEtcd": {
+      "type": "int",
+      "defaultValue": 1,
+      "metadata": {
+        "description": "Number of Etcd nodes to create"
+      }
+    },
+    "vaultAccountName": {
+      "type": "string",
+      "defaultValue": "kub8vault",
+      "metadata": {
+        "description": "Private storage account name in which you are storing your certificates for ansible and the template bash scripts"
+      }
+    },
+    "subnetAdminPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "subnet Admin Prefix"
+      }
+    },
+    "subnetMastersPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "subnet Masters Prefix"
+      }
+    },
+    "subnetMinionsPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "subnet Minions Prefix"
+      }
+    },
+    "subnetEtcdPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "subnet Etcd Prefix"
+      }
+    },
+    "ansibleIPAddressName": {
+      "type": "int",
+      "metadata": {
+        "description": "ansible IP Address Name"
+      }
+    },
+    "kubemastersLbPIPAddressName": {
+      "type": "int",
+      "metadata": {
+        "description": "ansible IP Address Name"
+      }
+    },
+    "adminUserName": {
+      "type": "string",
+      "metadata": {
+        "description": "Username for login to the VMs"
+      }
+    },
+    "fileUris": {
+      "type": "string",
+      "defaultValue": "https://raw.githubusercontent.com/DXFrance/AzureKubernetes/master/Kubernetes-Ansible-Centos-Azure/scripts/first-boot.sh",
+      "metadata": {
+        "description": "Deploy/SetUp script url for ansible control vm"
+      }
+    },
+    "commandToExecute": {
+      "type": "string",
+      "defaultValue": "bash first-boot.sh",
+      "metadata": {
+        "description": "The command to execute."
+      }
     }
   },
   "variables": {
+    "ansibleDomainName": "[concat(parameters('prefix'), 'ansible')]",
+    "scriptBlobLocation": "scripts/deploy.sh",
+    "scriptBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('scriptBlobLocation'))]",
+    "keysBlobLocation": "keys/id_rsa",
+    "keysBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('keysBlobLocation'))]",
+    "pubBlobLocation": "keys/id_rsa.pub",
+    "pubBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('pubBlobLocation'))]",
+    "ansibleIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('ansibleIPAddressName'))]",
+    "kubemastersLbPIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('kubemastersLbPIPAddressName'))]",
+    "assetsStorageAccountId": "[resourceId(parameters('vaultAccountName'),'Microsoft.Storage/storageAccounts', parameters('vaultAccountName'))]"
+
+
   },
   "resources": [
     {
-      "apiVersion": "[variables('apiVersion')]",
+      "apiVersion": "[parameters('apiVersion')]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
       "name": "[concat(variables('ansibleDomainName'), '/install_ansible')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
         "[concat('Microsoft.Compute/virtualMachines/', variables('ansibleDomainName'))]",
         "[variables('ansibleDomainName')]",
-        "vmLoopMasters",
-        "vmLoopMinions",
-        "vmLoopEtcd",
         "extensionLoopMasters",
         "extensionLoopMinions",
         "extensionLoopEtcd"
@@ -37,7 +135,7 @@
             "[variables('keysBlobUrl')]",
             "[variables('pubBlobUrl')]"
           ],
-          "commandToExecute": "[concat('bash deploy.sh ',parameters('numberOfMasters'), ' ',parameters('numberOfMinions'), ' ',parameters('numberOfEtcd'), ' ', variables('subnetMastersPrefix'), ' ', variables('subnetMinionsPrefix'), ' ',variables('subnetEtcdPrefix'), ' ',parameters('nameSuffix'), ' ', ' ', reference(variables('ansibleIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn,' ', parameters('adminUsername'), ' ', reference(variables('lbPublicIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn)]"
+          "commandToExecute": "[concat('bash deploy.sh ',parameters('numberOfMasters'), ' ',parameters('numberOfMinions'), ' ',parameters('numberOfEtcd'), ' ', parameters('subnetMastersPrefix'), ' ', parameters('subnetMinionsPrefix'), ' ',parameters('subnetEtcdPrefix'), ' ',parameters('prefix'), ' ', ' ', reference(variables('ansibleIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn,' ', parameters('adminUsername'), ' ', reference(variables('kubemastersLbPIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn)]"
         },
         "protectedSettings": {
           "storageAccountName": "[parameters('vaultAccountName')]",
@@ -46,16 +144,16 @@
       }
     },
     {
+      "apiVersion": "[parameters('apiVersion')]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat('ma', parameters('nameSuffix'),copyIndex(),'/ma', parameters('nameSuffix'))]",
-      "apiVersion": "[variables('apiVersion')]",
+      "name": "[concat(parameters('prefix'),'ma',copyIndex(),'/', parameters('prefix'),'ma')]",
       "location": "[resourceGroup().location]",
       "copy": {
         "name": "extensionLoopMasters",
         "count": "[parameters('numberOfMasters')]"
       },
       "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', 'ma', parameters('nameSuffix'), copyIndex())]"
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('prefix'),'ma', copyIndex())]"
       ],
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
@@ -70,16 +168,16 @@
       }
     },
     {
+      "apiVersion": "[parameters('apiVersion')]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat('mi', parameters('nameSuffix'),copyIndex(),'/mi', parameters('nameSuffix'))]",
-      "apiVersion": "[variables('apiVersion')]",
+      "name": "[concat(parameters('prefix'),'mi',copyIndex(),'/', parameters('prefix'),'mi')]",
       "location": "[resourceGroup().location]",
       "copy": {
         "name": "extensionLoopMinions",
         "count": "[parameters('numberOfMinions')]"
       },
       "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', 'mi', parameters('nameSuffix'), copyIndex())]"
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('prefix'),'mi', copyIndex())]"
       ],
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
@@ -94,16 +192,16 @@
       }
     },
     {
+      "apiVersion": "[parameters('apiVersion')]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat('et', parameters('nameSuffix'),copyIndex(),'/et', parameters('nameSuffix'))]",
-      "apiVersion": "[variables('apiVersion')]",
+      "name": "[concat(parameters('prefix'),'et',copyIndex(),'/', parameters('prefix'),'et')]",
       "location": "[resourceGroup().location]",
       "copy": {
         "name": "extensionLoopEtcd",
         "count": "[parameters('numberOfEtcd')]"
       },
       "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', 'et', parameters('nameSuffix'), copyIndex())]"
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('prefix'), 'et', copyIndex())]"
       ],
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
@@ -120,17 +218,9 @@
 
   ],
   "outputs": {
-    "etcdAvailabilitySetName": {
-      "type": "string",
-      "value": "[resourceId('Microsoft.Compute/availabilitySets',parameters('etcdAvailabilitySetName'))]"
-    },
-    "kubeMastersAvailabilitySetName": {
-      "type": "string",
-      "value": "[resourceId('Microsoft.Compute/availabilitySets',parameters('kubeMastersAvailabilitySetName'))]"
-    },
-    "kubeMinionsAvailabilitySetName": {
-      "type": "string",
-      "value": "[resourceId('Microsoft.Compute/availabilitySets',parameters('kubeMinionsAvailabilitySetName'))]"
+    "result": {
+      "value": "Extension Provisioning achieved",
+      "type": "string"
     }
   }
 }

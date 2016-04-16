@@ -10,7 +10,7 @@
     },
     "prefix": {
       "type": "string",
-       "metadata": {
+      "metadata": {
         "description": "Prefix of the components"
       }
     },
@@ -19,22 +19,32 @@
       "metadata": {
         "description": "Number of kubernetes Masters nodes to create"
       }
+    },
+    "ansibleIPAddressName": {
+      "type": "int",
+      "metadata": {
+        "description": "ansible IP Address Name"
+      }
+    },
+    "kubemastersLbPIPAddressName": {
+      "type": "int",
+      "metadata": {
+        "description": "ansible IP Address Name"
+      }
     }
   },
   "variables": {
-    "kubemastersLbPIPAddressName": "[concat(parameters('prefix'),'-pip-kube-masters')]",
     "kubemastersLbBackendPool": "[concat(parameters('prefix'),'-bap-kube-masters')]",
     "kubemastersLbFrontend": "[concat(parameters('prefix'),'-fe-kube-masters')]",
     "kubemastersLbName": "[concat(parameters('prefix'),'-lb-kube-masters')]",
     "kubemastersDomainName": "[concat(parameters('prefix'),'-kube')]",
-    "ansibleIPAddressName": "[concat(parameters('prefix'),'-pip-ansible')]",
     "ansibleDomainName": "[concat(parameters('prefix'),'-ansible')]",
-    "kubemastersLbPIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('kubemastersLbPIPAddressName'))]",
+    "kubemastersLbPIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('kubemastersLbPIPAddressName'))]",
     "kubemastersLbNatRulesCopy": "lbnrcopy-kube-masters",
     "kubemastersLbPIPAddressType": "Dynamic",
     "kubemastersLbID": "[resourceId('Microsoft.Network/loadBalancers',variables('kubemastersLbName'))]",
     "kubemastersFrontEndIPConfigID": "[concat(variables('kubemastersLbID'),'/frontendIPConfigurations/',variables('kubemastersLbFrontend'))]",
-    "ansibleIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('ansibleIPAddressName'))]",
+    "ansibleIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('ansibleIPAddressName'))]",
     "ansiblePIPAddressType": "Dynamic"
   },
   "resources": [
@@ -89,7 +99,7 @@
     {
       "apiVersion": "[parameters('apiVersion')]",
       "type": "Microsoft.Network/publicIPAddresses",
-      "name": "[variables('ansibleIPAddressName')]",
+      "name": "[parameters('ansibleIPAddressName')]",
       "location": "[resourceGroup().location]",
       "properties": {
         "publicIPAllocationMethod": "[variables('ansiblePIPAddressType')]",

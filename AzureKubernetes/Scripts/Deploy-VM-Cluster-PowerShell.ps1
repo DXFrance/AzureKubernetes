@@ -3,14 +3,14 @@
     $subscriptionName = "stephgou - External",
     $subscriptionId = "fb79eb46-411c-4097-86ba-801dca0ff5d5",
     #Paramètres du Azure Ressource Group
-    $resourceGroupName = "Az-Kubernetes-VM-Cluster",
+    $resourceGroupName = "AzKubernetes",
     $resourceLocation = "West Europe",
     $coreOSImageName = "CoreOs:CoreOS:Beta:899.6.0",
     $publisherName = "CoreOS",
     $offerName = "CoreOS",
     $skuName ="Beta",
     $skuVersion = "899.6.0",
-    $prefix = "pokubernetes",
+    $prefix = "azkubernetes",
     $defaultSubnet = "defaultSubnet",
     $vnetAddressPrefix = "172.16.0.0/12",
     $subnetAddressPrefix = "172.16.0.0/24",
@@ -21,10 +21,10 @@
     # Machines have to be named as in yml custom data (update for generating this yml in powershell
     # from parameters will come later
     # Hostname format should be aligned on "pokubernetes-kube02"
-    $etcdCustomDataFile = "..\..\init-static\custom-data\kubernetes-cluster-etcd-nodes.yml",
-    $kubeCustomDataFile = "..\..\init-static\custom-data\kubernetes-cluster-main-nodes-template.yml",
+    $etcdCustomDataFile = "..\..\init-static\custom-data\azkubernetes-cluster-etcd-nodes.yml",
+    $kubeCustomDataFile = "..\..\init-static\custom-data\azkubernetes-cluster-main-nodes-template.yml",
     $tagName = "Kubernetes_RG",
-    $tagValue = "VM-Cluster"
+    $tagValue = "AzKubernetes"
     )
 
 #region init
@@ -51,7 +51,7 @@ $sshKey = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDhdhD4JCfI50HPBrgg+mQyhhid9CvN3
 
 $sshPathOnLinuxMachine = "/home/$username/.ssh/authorized_keys"
 #endregion credentials
-Login-AzureRmAccount -SubscriptionId $subscriptionId
+#Login-AzureRmAccount -SubscriptionId $subscriptionId
 
 $etcdCustomData = Get-Content $etcdCustomDataFile -Raw 
 $kubeCustomData = Get-Content $kubeCustomDataFile -Raw 

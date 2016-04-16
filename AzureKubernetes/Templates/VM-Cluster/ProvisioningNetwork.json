@@ -13,22 +13,42 @@
       "metadata": {
         "description": "Virtual Network Name"
       }
+    },
+    "subnetAdminPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "subnet Admin Prefix"
+      }
+    },
+    "subnetMastersPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "subnet Masters Prefix"
+      }
+    },
+    "subnetMinionsPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "subnet Minions Prefix"
+      }
+    },
+    "subnetEtcdPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "subnet Etcd Prefix"
+      }
     }
   },
   "variables": {
     "addressPrefix": "10.0.0.0/16",
     "vnetId": "[resourceId('Microsoft.Network/virtualNetworks',parameters('virtualNetworkName'))]",
     "subnetAdminName": "SubnetADMIN",
-    "subnetAdminPrefix": "10.0.2.0/24",
-    "subnetAdminRef": "[concat(variables('vnetId'),'/subnets/',variables('subnetAdminName'))]",
+        "subnetAdminRef": "[concat(variables('vnetId'),'/subnets/',variables('subnetAdminName'))]",
     "subnetMastersName": "SubnetMASTERS",
-    "subnetMastersPrefix": "10.0.4.0/24",
     "subnetMastersRef": "[concat(variables('vnetId'),'/subnets/',variables('subnetMastersName'))]",
     "subnetMinionsName": "SubnetMINIONS",
-    "subnetMinionsPrefix": "10.0.6.0/24",
     "subnetMinionsRef": "[concat(variables('vnetId'),'/subnets/',variables('subnetMinionsName'))]",
     "subnetEtcdName": "SubnetETCD",
-    "subnetEtcdPrefix": "10.0.8.0/24",
     "subnetEtcdRef": "[concat(variables('vnetId'),'/subnets/',variables('subnetEtcdName'))]"
   },
   "resources": [

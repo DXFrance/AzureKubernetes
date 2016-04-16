@@ -4,7 +4,7 @@
   "parameters": {
     "prefix": {
       "type": "string",
-      "defaultValue": "pokube",
+      "defaultValue": "kubiscool",
       "metadata": {
         "description": "Prefix of the components"
       }
@@ -239,7 +239,16 @@
     "ansibleNicName": "[concat(parameters('prefix'),'-nic-ansible')]",
     "kubeMasterNicName": "[concat(parameters('prefix'),'-nic-kubemaster')]",
     "kubeMinionNicName": "[concat(parameters('prefix'),'-nic-kubeminion')]",
-    "etcdNicName": "[concat(parameters('prefix'),'-nic-etcd')]"
+    "etcdNicName": "[concat(parameters('prefix'),'-nic-etcd')]",
+
+    "subnetAdminPrefix": "10.0.2.0/24",
+    "subnetMastersPrefix": "10.0.4.0/24",
+    "subnetMinionsPrefix": "10.0.6.0/24",
+    "subnetEtcdPrefix": "10.0.8.0/24",
+
+    "ansibleIPAddressName": "[concat(parameters('prefix'),'-pip-ansible')]",
+    "kubemastersLbPIPAddressName": "[concat(parameters('prefix'),'-pip-kube-masters')]"
+
   },
   "resources": [
     {
@@ -299,6 +308,18 @@
           },
           "virtualNetworkName": {
             "value": "[variables('virtualNetworkName')]"
+          },
+          "subnetAdminPrefix": {
+            "value": "[variables('subnetAdminPrefix')]"
+          },
+          "subnetMastersPrefix": {
+            "value": "[variables('subnetMastersPrefix')]"
+          },
+          "subnetMinionsPrefix": {
+            "value": "[variables('subnetMinionsPrefix')]"
+          },
+          "subnetEtcdPrefix": {
+            "value": "[variables('subnetEtcdPrefix')]"
           }
         }
       }
@@ -322,6 +343,9 @@
           },
           "numberOfMasters": {
             "value": "[parameters('numberOfMasters')]"
+          },
+          "ansibleIPAddressName": {
+            "value": "[variables('ansibleIPAddressName')]"
           }
         }
       }

@@ -20,6 +20,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "custom-data", "custom-data", "{8AB3EE56-AE24-4B2E-952E-1F3A66BDDD1D}"
 	ProjectSection(SolutionItems) = preProject
+		init-static\custom-data\azkubernetes-cluster-etcd-nodes.yml = init-static\custom-data\azkubernetes-cluster-etcd-nodes.yml
+		init-static\custom-data\azkubernetes-cluster-main-nodes-template.yml = init-static\custom-data\azkubernetes-cluster-main-nodes-template.yml
 		init-static\custom-data\kubernetes-cluster-etcd-nodes.yml = init-static\custom-data\kubernetes-cluster-etcd-nodes.yml
 		init-static\custom-data\kubernetes-cluster-main-nodes-template.yml = init-static\custom-data\kubernetes-cluster-main-nodes-template.yml
 	EndProjectSection
