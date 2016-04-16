@@ -221,7 +221,8 @@
       "CreatingNicTemplateURL": "[concat(parameters('templatesBaseURL'),'/CreatingNic.json')]",
       "ProvisioningNetworkTemplateURL": "[concat(parameters('templatesBaseURL'),'/ProvisioningNetwork.json')]",
       "CreatingPIPandLoadBalancerTemplateURL": "[concat(parameters('templatesBaseURL'),'/CreatingPIPandLoadBalancer.json')]",
-      "ProvisioningVMTemplateURL": "[concat(parameters('templatesBaseURL'),'/ProvisioningVM.json')]"
+      "ProvisioningVMTemplateURL": "[concat(parameters('templatesBaseURL'),'/ProvisioningVM.json')]",
+      "ProvisioningExtensionTemplateURL": "[concat(parameters('templatesBaseURL'),'/ProvisioningExtension.json')]"
     },
 
     "ansibleStorageAccountName": "[concat(parameters('prefix'), 'ansible')]",
@@ -497,6 +498,71 @@
           },
           "vaultAccountName": {
             "value": "[parameters('vaultAccountName')]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "name": "ProvisioningExtension",
+      "type": "Microsoft.Resources/deployments",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/ProvisioningAvailaibilitySetAndStorage",
+        "Microsoft.Resources/deployments/CreatingNetworkInterfaces",
+        "Microsoft.Resources/deployments/ProvisiongingVM"
+      ],
+
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('configuration').ProvisioningExtensionTemplateURL]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "apiVersion": {
+            "value": "2016-03-30"
+          },
+          "prefix": {
+            "value": "[parameters('prefix')]"
+          },
+          "numberOfMasters": {
+            "value": "[parameters('numberOfMasters')]"
+          },
+          "numberOfMinions": {
+            "value": "[parameters('numberOfMinions')]"
+          },
+          "numberOfEtcd": {
+            "value": "[parameters('numberOfEtcd')]"
+          },
+          "vaultAccountName": {
+            "value": "[parameters('vaultAccountName')]"
+          },
+          "subnetAdminPrefix": {
+            "value": "[variables('subnetAdminPrefix')]"
+          },
+          "subnetMastersPrefix": {
+            "value": "[variables('subnetMastersPrefix')]"
+          },
+          "subnetMinionsPrefix": {
+            "value": "[variables('subnetMinionsPrefix')]"
+          },
+          "subnetEtcdPrefix": {
+            "value": "[variables('subnetEtcdPrefix')]"
+          },
+          "ansibleIPAddressName": {
+            "value": "[variables('ansibleIPAddressName')]"
+          },
+          "kubemastersLbPIPAddressName": {
+            "value": "[variables('kubemastersLbPIPAddressName')]"
+          },
+          "adminUserName": {
+            "value": "[parameters('adminUserName')]"
+          },
+          "fileUris": {
+            "value": "[parameters('fileUris')]"
+          },
+          "commandToExecute": {
+            "value": "[parameters('commandToExecute')]"
           }
         }
       }
