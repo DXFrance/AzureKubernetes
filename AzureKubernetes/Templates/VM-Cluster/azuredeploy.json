@@ -347,6 +347,9 @@
           },
           "ansibleIPAddressName": {
             "value": "[variables('ansibleIPAddressName')]"
+          },
+          "kubemastersLbPIPAddressName": {
+            "value": "[variables('kubemastersLbPIPAddressName')]"
           }
         }
       }
