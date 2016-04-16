@@ -67,25 +67,25 @@
           {
             "name": "[variables('subnetMastersName')]",
             "properties": {
-              "addressPrefix": "[variables('subnetMastersPrefix')]"
+              "addressPrefix": "[parameters('subnetMastersPrefix')]"
             }
           },
           {
             "name": "[variables('subnetMinionsName')]",
             "properties": {
-              "addressPrefix": "[variables('subnetMinionsPrefix')]"
+              "addressPrefix": "[parameters('subnetMinionsPrefix')]"
             }
           },
           {
             "name": "[variables('subnetEtcdName')]",
             "properties": {
-              "addressPrefix": "[variables('subnetEtcdPrefix')]"
+              "addressPrefix": "[parameters('subnetEtcdPrefix')]"
             }
           },
           {
             "name": "[variables('subnetAdminName')]",
             "properties": {
-              "addressPrefix": "[variables('subnetAdminPrefix')]"
+              "addressPrefix": "[parameters('subnetAdminPrefix')]"
             }
           }
         ]
