@@ -509,7 +509,7 @@
       "dependsOn": [
         "Microsoft.Resources/deployments/ProvisioningAvailaibilitySetAndStorage",
         "Microsoft.Resources/deployments/CreatingNetworkInterfaces",
-        "Microsoft.Resources/deployments/ProvisiongVM"
+        "Microsoft.Resources/deployments/ProvisioningVM"
       ],
 
       "properties": {
