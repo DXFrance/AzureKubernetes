@@ -117,7 +117,7 @@
     }
   },
   "variables": {
-    "ansibleDomainName": "[concat(parameters('prefix'), 'ansible')]",
+    "ansibleVMName": "[concat(parameters('prefix'), '-ansible')]",
     "scriptBlobLocation": "scripts/deploy.sh",
     "scriptBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('scriptBlobLocation'))]",
     "keysBlobLocation": "keys/id_rsa",
@@ -132,10 +132,10 @@
     {
       "apiVersion": "[parameters('apiVersion')]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(variables('ansibleDomainName'), '/install_ansible')]",
+      "name": "[concat(variables('ansibleVMName'), '/install_ansible')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', variables('ansibleDomainName'))]",
+        "[concat('Microsoft.Compute/virtualMachines/', variables('ansibleVMName'))]",
         "extensionLoopMasters",
         "extensionLoopMinions",
         "extensionLoopEtcd"
