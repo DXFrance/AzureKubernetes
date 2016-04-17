@@ -109,8 +109,6 @@
     "ansibleIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('ansibleIPAddressName'))]",
     "kubemastersLbPIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('kubemastersLbPIPAddressName'))]",
     "assetsStorageAccountId": "[resourceId(parameters('vaultAccountName'),'Microsoft.Storage/storageAccounts', parameters('vaultAccountName'))]"
-
-
   },
   "resources": [
     {
@@ -120,7 +118,6 @@
       "location": "[resourceGroup().location]",
       "dependsOn": [
         "[concat('Microsoft.Compute/virtualMachines/', variables('ansibleDomainName'))]",
-        "[variables('ansibleDomainName')]",
         "extensionLoopMasters",
         "extensionLoopMinions",
         "extensionLoopEtcd"
