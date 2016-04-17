@@ -96,6 +96,24 @@
       "metadata": {
         "description": "The command to execute."
       }
+    },
+    "kubeMasterNicName": {
+      "type": "string",
+      "metadata": {
+        "description": "kube Master NicName"
+      }
+    },
+    "kubeMinionNicName": {
+      "type": "string",
+      "metadata": {
+        "description": "kube Minion NicName"
+      }
+    },
+    "etcdNicName": {
+      "type": "string",
+      "metadata": {
+        "description": "kube Minion NicName"
+      }
     }
   },
   "variables": {
@@ -160,7 +178,7 @@
           "fileUris": [
             "[parameters('fileUris')]"
           ],
-          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(concat('mastersNic', copyindex())).ipConfigurations[0].properties.privateIPAddress,' masters')]"
+          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(concat(parameters('kubeMasterNicName'), copyindex())).ipConfigurations[0].properties.privateIPAddress,' masters')]"
         }
       }
     },
@@ -184,7 +202,7 @@
           "fileUris": [
             "[parameters('fileUris')]"
           ],
-          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(concat('minionsNic', copyindex())).ipConfigurations[0].properties.privateIPAddress,' minions')]"
+          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(concat(parameters('kubeMinionNicName'), copyindex())).ipConfigurations[0].properties.privateIPAddress,' minions')]"
         }
       }
     },
@@ -208,7 +226,7 @@
           "fileUris": [
             "[parameters('fileUris')]"
           ],
-          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(concat('etcdNic', copyindex())).ipConfigurations[0].properties.privateIPAddress,' etcd')]"
+          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(concat(parameters('etcdNicName'), copyindex())).ipConfigurations[0].properties.privateIPAddress,' etcd')]"
         }
       }
     }

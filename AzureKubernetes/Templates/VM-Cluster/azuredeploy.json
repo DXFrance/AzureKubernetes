@@ -566,6 +566,15 @@
           },
           "commandToExecute": {
             "value": "[parameters('commandToExecute')]"
+          },
+          "kubeMasterNicName": {
+            "value": "[variables('kubeMasterNicName')]"
+          },
+          "kubeMinionNicName": {
+            "value": "[variables('kubeMinionNicName')]"
+          },
+          "etcdNicName": {
+            "value": "[variables('etcdNicName')]"
           }
         }
       }
