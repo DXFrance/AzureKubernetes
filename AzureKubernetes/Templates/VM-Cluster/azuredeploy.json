@@ -578,7 +578,7 @@
           "etcdNicName": {
             "value": "[variables('etcdNicName')]"
           },
-          "ansibleVM": {
+          "ansibleVMResourceId": {
             "value": "[resourceId('Microsoft.Compute/virtualMachines', variables('ansibleVMName'))]"
           }
         }
