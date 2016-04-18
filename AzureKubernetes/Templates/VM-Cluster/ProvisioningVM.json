@@ -418,12 +418,6 @@
 
   ],
   "outputs": {
-
-    "masterIpAddress": {
-      "value": "[reference('master-node').outputs.masterip.value]",
-      "type": "string"
-    },
-
     "result": {
       "value": "VM Provisioning achieved",
       "type": "string"
