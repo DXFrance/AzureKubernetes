@@ -129,7 +129,9 @@
     "pubBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('pubBlobLocation'))]",
     "ansibleIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('ansibleIPAddressName'))]",
     "kubemastersLbPIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('kubemastersLbPIPAddressName'))]",
-    "assetsStorageAccountId": "[resourceId(parameters('vaultAccountName'),'Microsoft.Storage/storageAccounts', parameters('vaultAccountName'))]"
+    "assetsStorageAccountId": "[resourceId(parameters('vaultAccountName'),'Microsoft.Storage/storageAccounts', parameters('vaultAccountName'))]",
+    "ansibleVM": "[resourceId('Microsoft.Compute/virtualMachines', variables('ansibleVMName'))]"
+
   },
   "resources": [
     {
@@ -138,7 +140,7 @@
       "name": "[concat(variables('ansibleVMName'), '/install_ansible')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines', variables('ansibleVMName'))]",
+        "[variables('ansibleVM')]",
         "extensionLoopMasters",
         "extensionLoopMinions",
         "extensionLoopEtcd"
