@@ -248,7 +248,9 @@
     "subnetEtcdPrefix": "10.0.8.0/24",
 
     "ansibleIPAddressName": "[concat(parameters('prefix'),'-pip-ansible')]",
-    "kubemastersLbPIPAddressName": "[concat(parameters('prefix'),'-pip-kube-masters')]"
+    "kubemastersLbPIPAddressName": "[concat(parameters('prefix'),'-pip-kube-masters')]",
+    "ansibleVMName": "[concat(parameters('prefix'), '-ansible')]"
+
 
   },
   "resources": [
@@ -575,6 +577,9 @@
           },
           "etcdNicName": {
             "value": "[variables('etcdNicName')]"
+          },
+          "ansibleVM": {
+            "value": "[resourceId('Microsoft.Compute/virtualMachines', variables('ansibleVMName'))]"
           }
         }
       }

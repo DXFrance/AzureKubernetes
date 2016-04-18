@@ -114,6 +114,12 @@
       "metadata": {
         "description": "kube Minion NicName"
       }
+    },
+    "ansibleVMResourceId": {
+      "type": "string",
+      "metadata": {
+        "description": "ansible VM ResourceId"
+      }
     }
   },
   "variables": {
@@ -130,8 +136,6 @@
     "ansibleIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('ansibleIPAddressName'))]",
     "kubemastersLbPIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('kubemastersLbPIPAddressName'))]",
     "assetsStorageAccountId": "[resourceId(parameters('vaultAccountName'),'Microsoft.Storage/storageAccounts', parameters('vaultAccountName'))]",
-    "ansibleVM": "[resourceId('Microsoft.Compute/virtualMachines', variables('ansibleVMName'))]"
-
   },
   "resources": [
     {
@@ -140,7 +144,7 @@
       "name": "[concat(variables('ansibleVMName'), '/install_ansible')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[variables('ansibleVM')]",
+        "[parameters('ansibleVMResourceId')]",
         "extensionLoopMasters",
         "extensionLoopMinions",
         "extensionLoopEtcd"
