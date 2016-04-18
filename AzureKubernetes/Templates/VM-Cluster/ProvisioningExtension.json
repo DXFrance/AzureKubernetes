@@ -202,7 +202,7 @@
           "fileUris": [
             "[parameters('fileUris')]"
           ],
-          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', resourceId('Microsoft.Network/networkInterfaces',concat(parameters('kubeMinionNicName'), copyindex())).ipConfigurations[0].properties.privateIPAddress,' minions')]"
+          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(resourceId('Microsoft.Network/networkInterfaces',concat(parameters('kubeMinionNicName'), copyindex()))).ipConfigurations[0].properties.privateIPAddress,' minions')]"
         }
       }
     },
@@ -225,7 +225,7 @@
           "fileUris": [
             "[parameters('fileUris')]"
           ],
-          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', resourceId('Microsoft.Network/networkInterfaces',concat(parameters('etcdNicName'), copyindex())).ipConfigurations[0].properties.privateIPAddress,' etcd')]"
+          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(resourceId('Microsoft.Network/networkInterfaces',concat(parameters('etcdNicName'), copyindex()))).ipConfigurations[0].properties.privateIPAddress,' etcd')]"
         }
       }
     }
