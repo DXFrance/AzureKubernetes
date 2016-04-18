@@ -579,7 +579,7 @@
             "value": "[variables('etcdNicName')]"
           },
           "ansibleVMResourceId": {
-            "value": "[resourceId('Microsoft.Compute/virtualMachines', variables('ansibleVMName'))]"
+            "value": "[reference('ProvisioningVM').outputs.ansibleVMResourceId.value]"
           }
         }
       }
