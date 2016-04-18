@@ -138,7 +138,7 @@
       "name": "[concat(variables('ansibleVMName'), '/install_ansible')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines/', variables('ansibleVMName'))]",
+        "[resourceId('Microsoft.Compute/virtualMachines', variables('ansibleVMName'))]",
         "extensionLoopMasters",
         "extensionLoopMinions",
         "extensionLoopEtcd"
@@ -171,7 +171,7 @@
         "count": "[parameters('numberOfMasters')]"
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines/', concat(variables('kubeMasterVmName'), copyIndex()))]"
+        "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('kubeMasterVmName'), copyIndex()))]"
       ],
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
@@ -195,7 +195,7 @@
         "count": "[parameters('numberOfMinions')]"
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines/', concat(variables('kubeMinionVmName'), copyIndex()))]"
+        "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('kubeMinionVmName'), copyIndex()))]"
       ],
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
@@ -219,7 +219,7 @@
         "count": "[parameters('numberOfEtcd')]"
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines/', concat(variables('etcdVmName'), copyIndex()))]"
+        "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('etcdVmName'), copyIndex()))]"
       ],
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
