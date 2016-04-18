@@ -135,7 +135,7 @@
     {
       "apiVersion": "[parameters('apiVersion')]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(variables('ansibleVMName'),'/',variables('ansibleVMName'),'install_ansible')]",
+      "name": "[concat(variables('ansibleVMName'),'/ansible')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
         "extensionLoopMasters",
@@ -163,7 +163,7 @@
     {
       "apiVersion": "[parameters('apiVersion')]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(variables('kubeMasterVmName'), copyIndex(),'/', variables('kubeMasterVmName'), copyIndex())]",
+      "name": "[concat(variables('kubeMasterVmName'), copyIndex(),'/master')]",
       "location": "[resourceGroup().location]",
       "copy": {
         "name": "extensionLoopMasters",
@@ -186,7 +186,7 @@
     {
       "apiVersion": "[parameters('apiVersion')]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(variables('kubeMinionVmName'), copyIndex(),'/', variables('kubeMinionVmName'), copyIndex())]",
+      "name": "[concat(variables('kubeMinionVmName'), copyIndex(),'/minion')]",
       "location": "[resourceGroup().location]",
       "copy": {
         "name": "extensionLoopMinions",
@@ -209,7 +209,7 @@
     {
       "apiVersion": "[parameters('apiVersion')]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(variables('etcdVmName'), copyIndex(),'/', variables('etcdVmName'), copyIndex())]",
+      "name": "[concat(variables('etcdVmName'), copyIndex(),'/etcd')]",
       "location": "[resourceGroup().location]",
       "copy": {
         "name": "extensionLoopEtcd",
