@@ -167,7 +167,6 @@
         "count": "[parameters('numberOfMasters')]"
       },
       "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', parameters('prefix'),'ma', copyIndex())]"
       ],
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
@@ -191,7 +190,6 @@
         "count": "[parameters('numberOfMinions')]"
       },
       "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', parameters('prefix'),'mi', copyIndex())]"
       ],
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
@@ -215,7 +213,6 @@
         "count": "[parameters('numberOfEtcd')]"
       },
       "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', parameters('prefix'), 'et', copyIndex())]"
       ],
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
