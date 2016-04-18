@@ -417,10 +417,10 @@
     }
 
   ],
-  "outputs": {
-    "result": {
-      "value": "VM Provisioning achieved",
-      "type": "string"
+    "outputs": {
+      "result": {
+        "value": "VM Provisioning achieved",
+        "type": "string"
+      }
     }
-  }
   }
