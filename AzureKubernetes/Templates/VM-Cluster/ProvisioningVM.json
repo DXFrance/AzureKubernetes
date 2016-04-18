@@ -420,7 +420,7 @@
   "outputs": {
     "ansibleVMResourceId": {
       "type": "string",
-      "value": "[resourceId('Microsoft.Compute/virtualMachines', variables('ansibleVMName'))]"
+      "value": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('ansibleVMName')))]"
     },
     "result": {
       "value": "VM Provisioning achieved",
