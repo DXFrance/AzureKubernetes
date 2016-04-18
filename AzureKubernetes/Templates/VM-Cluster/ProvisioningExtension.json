@@ -177,9 +177,9 @@
         "typeHandlerVersion": "1.2",
         "settings": {
           "fileUris": [
-            "[parameters('fileUris')]"
+            "https://github.com/DXFrance/AzureKubernetes/blob/master/Kubernetes-Ansible-Centos-Azure/scripts/first-boot.sh"
           ],
-          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', resourceId('Microsoft.Network/networkInterfaces',concat(parameters('kubeMasterNicName'), copyindex())).ipConfigurations[0].properties.privateIPAddress,' masters')]"
+          "commandToExecute": "sh first-boot.sh"
         }
       }
     },
