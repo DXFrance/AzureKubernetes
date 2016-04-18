@@ -135,7 +135,6 @@
       "name": "[concat(variables('ansibleVMName'), '/install_ansible')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', variables('ansibleVMName'))]",
         "extensionLoopMasters",
         "extensionLoopMinions",
         "extensionLoopEtcd"
