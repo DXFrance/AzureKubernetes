@@ -114,12 +114,6 @@
       "metadata": {
         "description": "kube Minion NicName"
       }
-    },
-    "ansibleVMResourceId": {
-      "type": "string",
-      "metadata": {
-        "description": "ansible VM ResourceId"
-      }
     }
   },
   "variables": {
@@ -141,10 +135,9 @@
     {
       "apiVersion": "[parameters('apiVersion')]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(variables('ansibleVMName'), '/install_ansible')]",
+      "name": "[concat(variables('ansibleVMName'),'/',variables('ansibleVMName'),'install_ansible')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[parameters('ansibleVMResourceId')]",
         "extensionLoopMasters",
         "extensionLoopMinions",
         "extensionLoopEtcd"
@@ -170,14 +163,13 @@
     {
       "apiVersion": "[parameters('apiVersion')]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(variables('kubeMasterVmName'), copyIndex(),'/', parameters('prefix'),'ma')]",
+      "name": "[concat(variables('kubeMasterVmName'), copyIndex(),'/', variables('kubeMasterVmName'), copyIndex())]",
       "location": "[resourceGroup().location]",
       "copy": {
         "name": "extensionLoopMasters",
         "count": "[parameters('numberOfMasters')]"
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('kubeMasterVmName'), copyIndex()))]"
       ],
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
@@ -194,14 +186,13 @@
     {
       "apiVersion": "[parameters('apiVersion')]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(variables('kubeMinionVmName'), copyIndex(),'/', parameters('prefix'),'mi')]",
+      "name": "[concat(variables('kubeMinionVmName'), copyIndex(),'/', variables('kubeMinionVmName'), copyIndex())]",
       "location": "[resourceGroup().location]",
       "copy": {
         "name": "extensionLoopMinions",
         "count": "[parameters('numberOfMinions')]"
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('kubeMinionVmName'), copyIndex()))]"
       ],
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
@@ -218,14 +209,13 @@
     {
       "apiVersion": "[parameters('apiVersion')]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(variables('etcdVmName'), copyIndex(),'/', parameters('prefix'),'et')]",
+      "name": "[concat(variables('etcdVmName'), copyIndex(),'/', variables('etcdVmName'), copyIndex())]",
       "location": "[resourceGroup().location]",
       "copy": {
         "name": "extensionLoopEtcd",
         "count": "[parameters('numberOfEtcd')]"
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('etcdVmName'), copyIndex()))]"
       ],
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",

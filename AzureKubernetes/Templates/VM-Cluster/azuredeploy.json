@@ -577,9 +577,6 @@
           },
           "etcdNicName": {
             "value": "[variables('etcdNicName')]"
-          },
-          "ansibleVMResourceId": {
-            "value": "[reference('ProvisioningVM').outputs.ansibleVMResourceId.value]"
           }
         }
       }
