@@ -578,7 +578,7 @@
           "etcdNicName": {
             "value": "[variables('etcdNicName')]"
           },
-          "kubemastersLbID": {
+          "etcdPrivateIP": {
             "value": "[reference('CreatingNetworkInterfaces').outputs.etcdPrivateIP.value]"
           }
 
