@@ -577,7 +577,11 @@
           },
           "etcdNicName": {
             "value": "[variables('etcdNicName')]"
+          },
+          "kubemastersLbID": {
+            "value": "[reference('CreatingNetworkInterfaces').outputs.etcdPrivateIP.value]"
           }
+
         }
       }
     }

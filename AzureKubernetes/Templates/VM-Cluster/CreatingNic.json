@@ -202,6 +202,10 @@
     }
   ],
   "outputs": {
+    "etcdPrivateIP": {
+      "value": "[reference(resourceId('Microsoft.Network/networkInterfaces',concat(parameters('etcdNicName'),'0'))).ipConfigurations[0].properties.privateIPAddress]",
+      "type": "string"
+    },
     "result": {
       "value": "Nic Provisioning achieved",
       "type": "string"

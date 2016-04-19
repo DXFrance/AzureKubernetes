@@ -114,6 +114,12 @@
       "metadata": {
         "description": "kube Minion NicName"
       }
+    },
+    "etcdPrivateIP": {
+      "type": "string",
+      "metadata": {
+        "description": "etcdPrivateIP"
+      }
     }
   },
   "variables": {
@@ -225,7 +231,7 @@
           "fileUris": [
             "[parameters('fileUris')]"
           ],
-          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(resourceId('Microsoft.Network/networkInterfaces',concat(parameters('etcdNicName'), copyindex()))).ipConfigurations[0].properties.privateIPAddress,' etcd')]"
+          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', parameters('etcdPrivateIP'),' etcd')]"
         }
       }
     }
