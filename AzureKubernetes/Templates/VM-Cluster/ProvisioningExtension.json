@@ -114,12 +114,6 @@
       "metadata": {
         "description": "kube Minion NicName"
       }
-    },
-    "etcdPrivateIP": {
-      "type": "string",
-      "metadata": {
-        "description": "etcdPrivateIP"
-      }
     }
   },
   "variables": {
@@ -176,6 +170,7 @@
         "count": "[parameters('numberOfMasters')]"
       },
       "dependsOn": [
+        "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('kubeMasterNicName'),copyindex()))]"
       ],
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
@@ -185,7 +180,7 @@
           "fileUris": [
             "[parameters('fileUris')]"
           ],
-          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', parameters('etcdPrivateIP'),' etcd')]"
+          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(resourceId('Microsoft.Network/networkInterfaces',concat(parameters('kubeMasterNicName'), copyindex()))).ipConfigurations[0].properties.privateIPAddress,' masters')]",
         }
       }
     },
@@ -199,6 +194,7 @@
         "count": "[parameters('numberOfMinions')]"
       },
       "dependsOn": [
+        "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('kubeMinionNicName'),copyindex()))]"
       ],
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
@@ -211,7 +207,7 @@
           "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(resourceId('Microsoft.Network/networkInterfaces',concat(parameters('kubeMinionNicName'), copyindex()))).ipConfigurations[0].properties.privateIPAddress,' minions')]"
         }
       }
-    },
+    },    
     {
       "apiVersion": "[parameters('apiVersion')]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
@@ -222,6 +218,7 @@
         "count": "[parameters('numberOfEtcd')]"
       },
       "dependsOn": [
+        "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('etcdNicName'),copyindex()))]"
       ],
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
@@ -231,7 +228,7 @@
           "fileUris": [
             "[parameters('fileUris')]"
           ],
-          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', parameters('etcdPrivateIP'),' etcd')]"
+          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(resourceId('Microsoft.Network/networkInterfaces',concat(parameters('etcdNicName'), copyindex()))).ipConfigurations[0].properties.privateIPAddress,' etcd')]"
         }
       }
     }
