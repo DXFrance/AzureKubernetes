@@ -141,6 +141,80 @@
     {
       "apiVersion": "[parameters('apiVersion')]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(variables('ansibleVMName'),'/ansible')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "extensionLoopMasters",
+        "extensionLoopMinions",
+        "extensionLoopEtcd"
+      ],
+      "properties": {
+        "publisher": "Microsoft.OSTCExtensions",
+        "type": "CustomScriptForLinux",
+        "typeHandlerVersion": "1.2",
+        "settings": {
+          "fileUris": [
+            "[variables('scriptBlobUrl')]",
+            "[variables('keysBlobUrl')]",
+            "[variables('pubBlobUrl')]"
+          ],
+          "commandToExecute": "[concat('bash deploy.sh ',parameters('numberOfMasters'), ' ',parameters('numberOfMinions'), ' ',parameters('numberOfEtcd'), ' ', parameters('subnetMastersPrefix'), ' ', parameters('subnetMinionsPrefix'), ' ',parameters('subnetEtcdPrefix'), ' ',parameters('prefix'), ' ', ' ', reference(variables('ansibleIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn,' ', parameters('adminUsername'), ' ', reference(variables('kubemastersLbPIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn)]"
+        },
+        "protectedSettings": {
+          "storageAccountName": "[parameters('vaultAccountName')]",
+          "storageAccountKey": "[listKeys(variables('assetsStorageAccountId'),'2015-05-01-preview').key1]"
+        }
+      }
+    },
+    {
+      "apiVersion": "[parameters('apiVersion')]",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(variables('kubeMasterVmName'), copyIndex(),'/master')]",
+      "location": "[resourceGroup().location]",
+      "copy": {
+        "name": "extensionLoopMasters",
+        "count": "[parameters('numberOfMasters')]"
+      },
+      "dependsOn": [
+      ],
+      "properties": {
+        "publisher": "Microsoft.OSTCExtensions",
+        "type": "CustomScriptForLinux",
+        "typeHandlerVersion": "1.2",
+        "settings": {
+          "fileUris": [
+            "[parameters('fileUris')]"
+          ],
+          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', parameters('etcdPrivateIP'),' etcd')]"
+        }
+      }
+    },
+    {
+      "apiVersion": "[parameters('apiVersion')]",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(variables('kubeMinionVmName'), copyIndex(),'/minion')]",
+      "location": "[resourceGroup().location]",
+      "copy": {
+        "name": "extensionLoopMinions",
+        "count": "[parameters('numberOfMinions')]"
+      },
+      "dependsOn": [
+      ],
+      "properties": {
+        "publisher": "Microsoft.OSTCExtensions",
+        "type": "CustomScriptForLinux",
+        "typeHandlerVersion": "1.2",
+        "settings": {
+          "fileUris": [
+            "[parameters('fileUris')]"
+          ],
+          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(resourceId('Microsoft.Network/networkInterfaces',concat(parameters('kubeMinionNicName'), copyindex()))).ipConfigurations[0].properties.privateIPAddress,' minions')]"
+        }
+      }
+    },
+    {
+      "apiVersion": "[parameters('apiVersion')]",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
       "name": "[concat(variables('etcdVmName'), copyIndex(),'/etcd')]",
       "location": "[resourceGroup().location]",
       "copy": {

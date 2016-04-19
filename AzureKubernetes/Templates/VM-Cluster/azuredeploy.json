@@ -579,7 +579,8 @@
             "value": "[variables('etcdNicName')]"
           },
           "etcdPrivateIP": {
-            "value": "[reference('CreatingNetworkInterfaces').outputs.etcdPrivateIP.value]"
+            //"value": "[reference('CreatingNetworkInterfaces').outputs.etcdPrivateIP.value]"
+            "value": "[reference(resourceId('Microsoft.Network/networkInterfaces',concat(variables('kubeMasterNicName'),'0'))).ipConfigurations[0].properties.privateIPAddress]"
           }
 
         }
