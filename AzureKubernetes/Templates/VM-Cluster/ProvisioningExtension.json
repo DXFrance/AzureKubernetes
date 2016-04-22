@@ -170,7 +170,10 @@
         "count": "[parameters('numberOfMasters')]"
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('kubeMasterNicName'),copyindex()))]"
+        //"[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('kubeMasterNicName'),copyindex()))]"
+        "[concat('Microsoft.Network/networkInterfaces/',parameters('kubeMasterNicName'), copyIndex())]",
+        "[concat('Microsoft.Compute/virtualMachines/',variables('kubeMasterVmName'),copyIndex())]"
+
       ],
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",

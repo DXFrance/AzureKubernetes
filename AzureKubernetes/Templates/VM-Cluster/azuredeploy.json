@@ -515,7 +515,6 @@
         "Microsoft.Resources/deployments/ProvisioningAvailaibilitySetAndStorage",
         "Microsoft.Resources/deployments/CreatingNetworkInterfaces",
         "Microsoft.Resources/deployments/ProvisioningVM",
-        "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('kubeMasterNicName'),'0'))]"
       ],
 
       "properties": {
