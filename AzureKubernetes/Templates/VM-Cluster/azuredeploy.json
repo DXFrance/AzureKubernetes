@@ -256,7 +256,7 @@
   "resources": [
     {
       "apiVersion": "[variables('apiVersion')]",
-      "name": "ProvisioningAvailaibilitySetAndStorage",
+      "name": "Shared-AvailaibilitySetAndStorage",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
@@ -297,7 +297,7 @@
     },
     {
       "apiVersion": "[variables('apiVersion')]",
-      "name": "ProvisioningNetwork",
+      "name": "Shared-Network",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
@@ -329,7 +329,7 @@
     },
     {
       "apiVersion": "[variables('apiVersion')]",
-      "name": "CreatingPIPandLoadBalancer",
+      "name": "Shared-PIPandLoadBalancer",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
@@ -358,16 +358,17 @@
     },
     {
       "apiVersion": "[variables('apiVersion')]",
-      "name": "CreatingNetworkInterfaces",
+      "name": "KubeMasterNodes",
       "type": "Microsoft.Resources/deployments",
       "dependsOn": [
-        "Microsoft.Resources/deployments/ProvisioningNetwork",
-        "Microsoft.Resources/deployments/CreatingPIPandLoadBalancer"
+        "Microsoft.Resources/deployments/Shared-AvailaibilitySetAndStorage",
+        "Microsoft.Resources/deployments/Shared-Network",
+        "Microsoft.Resources/deployments/PIPandLoadBalancer"
       ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('configuration').CreatingNicTemplateURL]",
+          "uri": "[variables('configuration').KubeMasterNodes]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -419,6 +420,11 @@
         }
       }
     },
+
+
+
+
+
     {
       "apiVersion": "[variables('apiVersion')]",
       "name": "ProvisioningVM",

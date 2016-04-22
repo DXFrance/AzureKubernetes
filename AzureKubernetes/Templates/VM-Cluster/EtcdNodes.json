@@ -1,0 +1,244 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "apiVersion": {
+      "type": "string",
+      "metadata": {
+        "description": "Schema api version from parent template"
+      }
+    },
+    "prefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Prefix of the components"
+      }
+    },
+    "numberOfEtcd": {
+      "type": "int",
+      "metadata": {
+        "description": "Number of Etcd nodes to create"
+      }
+    },
+    "etcdNicName": {
+      "type": "string",
+      "metadata": {
+        "description": "kube Minion NicName"
+      }
+    },
+    "etcdAvailabilitySetName": {
+      "type": "string",
+      "metadata": {
+        "description": "etcd AvailabilitySet Name"
+      }
+    },
+    "etcdStorageAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "etcd StorageAccount Name"
+      }
+    },
+    "etcdVmSize": {
+      "type": "string",
+      "metadata": {
+        "description": "Size of the Ansible virtual machine"
+      }
+    },
+    "subnetEtcdRef": {
+      "type": "string",
+      "metadata": {
+        "description": "subnet Etcd"
+      }
+    },
+    "fileUris": {
+      "type": "string",
+      "defaultValue": "https://raw.githubusercontent.com/DXFrance/AzureKubernetes/master/Kubernetes-Ansible-Centos-Azure/scripts/first-boot.sh",
+      "metadata": {
+        "description": "Deploy/SetUp script url for ansible control vm"
+      }
+    },
+    "commandToExecute": {
+      "type": "string",
+      "defaultValue": "bash first-boot.sh",
+      "metadata": {
+        "description": "The command to execute."
+      }
+    },
+    "adminUserName": {
+      "type": "string",
+      "metadata": {
+        "description": "Username for login to the VMs"
+      }
+    },
+    "adminPassword": {
+      "type": "string",
+      "metadata": {
+        "description": "Password for login to the VMs"
+      }
+    },
+    "sshKeyData": {
+      "type": "string",
+      "metadata": {
+        "description": "Public key for SSH authentication"
+      }
+    },
+    "centosOSVersion": {
+      "type": "string",
+      "metadata": {
+        "description": "The CentOS version for the VM. This will pick a fully patched image of this given CentOS version. Allowed values are: 7.0, 7.1, 7.2"
+      }
+    },
+    "vaultAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "Private storage account name in which you are storing your certificates for ansible and the template bash scripts"
+      }
+    }
+  },
+  "variables": {
+    "nicPIPAddressType": "Dynamic",
+    "etcdVmName": "[concat(parameters('prefix'),'-etcd-')]",
+    "etcdOsDiskName": "[concat(parameters('prefix'),'-etcd-os-')]",
+    "etcdDataDiskName": "[concat(parameters('prefix'),'-etcd-data-')]",
+
+    "sshKeyPath": "[concat('/home/',parameters('adminUsername'),'/.ssh/authorized_keys')]",
+    "imageReference": {
+      "publisher": "OpenLogic",
+      "offer": "CentOS",
+      "sku": "[parameters('centosOSVersion')]",
+      "version": "latest"
+    },
+    "scriptBlobLocation": "scripts/deploy.sh",
+    "scriptBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('scriptBlobLocation'))]",
+
+    "keysBlobLocation": "keys/id_rsa",
+    "keysBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('keysBlobLocation'))]",
+
+    "pubBlobLocation": "keys/id_rsa.pub",
+    "pubBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('pubBlobLocation'))]",
+
+    "assetsStorageAccountId": "[resourceId(parameters('vaultAccountName'),'Microsoft.Storage/storageAccounts', parameters('vaultAccountName'))]",
+
+    "adminPassword": "V3l0C1RaPt0R#",
+    "disablePasswordAuthentication": "true"
+  },
+  "resources": [
+    {
+      "apiVersion": "[parameters('apiVersion')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(parameters('etcdNicName'), copyindex())]",
+      "location": "[resourceGroup().location]",
+      "copy": {
+        "name": "nicLoopEtcd",
+        "count": "[parameters('numberOfEtcd')]"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "EtcdIpConfig",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[parameters('subnetEtcdRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "[parameters('apiVersion')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[concat(variables('etcdVmName'), copyindex())]",
+      "copy": {
+        "name": "vmLoopEtcd",
+        "count": "[parameters('numberOfEtcd')]"
+      },
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('etcdAvailabilitySetName'))]"
+        },
+        "hardwareProfile": {
+          "vmSize": "[parameters('etcdVmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[concat(variables('etcdVMName'), copyindex())]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]",
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": "[variables('disablePasswordAuthentication')]",
+            "ssh": {
+              "publicKeys": [
+                {
+                  "path": "[variables('sshKeyPath')]",
+                  "keyData": "[parameters('sshKeyData')]"
+                }
+              ]
+            }
+          }
+        },
+        "storageProfile": {
+          "imageReference": "[variables('imageReference')]",
+          "osDisk": {
+            "name": "[concat(variables('etcdOsDiskName'), copyindex())]",
+            "vhd": {
+              "uri": "[concat('http://',parameters('etcdStorageAccountName'),'.blob.core.windows.net/vhds/', variables('etcdOsDiskName'), copyindex(),'.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          },
+          "dataDisks": [
+            {
+              "name": "[concat(variables('etcdDataDiskName'), copyindex())]",
+              "diskSizeGB": "1000",
+              "lun": 0,
+              "vhd": {
+                "uri": "[concat('http://', parameters('etcdStorageAccountName'),'.blob.core.windows.net/vhds/', variables('etcdDataDiskName'), copyIndex(), 'datadisk1.vhd')]"
+              },
+              "createOption": "Empty"
+            }
+          ]
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('etcdNicName'),copyindex()))]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "apiVersion": "[parameters('apiVersion')]",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(variables('etcdVmName'), copyIndex(),'/etcd')]",
+      "location": "[resourceGroup().location]",
+      "copy": {
+        "name": "extensionLoopEtcd",
+        "count": "[parameters('numberOfEtcd')]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('etcdNicName'),copyindex()))]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.OSTCExtensions",
+        "type": "CustomScriptForLinux",
+        "typeHandlerVersion": "1.2",
+        "settings": {
+          "fileUris": [
+            "[parameters('fileUris')]"
+          ],
+          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(resourceId('Microsoft.Network/networkInterfaces',concat(parameters('etcdNicName'), copyindex()))).ipConfigurations[0].properties.privateIPAddress,' etcd')]"
+        }
+      }
+    }
+
+  ],
+  "outputs": {
+    "result": {
+      "value": "Etcd Nodes Provisioning achieved",
+      "type": "string"
+    }
+  }
+}

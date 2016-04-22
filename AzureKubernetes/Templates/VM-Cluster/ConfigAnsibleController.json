@@ -1,0 +1,259 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "apiVersion": {
+      "type": "string",
+      "metadata": {
+        "description": "Schema api version from parent template"
+      }
+    },
+    "prefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Prefix of the components"
+      }
+    },
+    "numberOfMasters": {
+      "type": "int",
+      "metadata": {
+        "description": "Number of kubernetes Master nodes to create"
+      }
+    },
+    "numberOfMinions": {
+      "type": "int",
+      "defaultValue": 2,
+      "metadata": {
+        "description": "Number of kubernetes Minion nodes to create"
+      }
+    },
+    "numberOfEtcd": {
+      "type": "int",
+      "defaultValue": 1,
+      "metadata": {
+        "description": "Number of Etcd nodes to create"
+      }
+    },
+    "ansibleNicName": {
+      "type": "string",
+      "metadata": {
+        "description": "ansible NicName"
+      }
+    },
+    "ansibleStorageAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "ansible StorageAccount Name"
+      }
+    },
+    "subnetAdminRef": {
+      "type": "string",
+      "metadata": {
+        "description": "subnet Admin"
+      }
+    },
+    "ansibleVmSize": {
+      "type": "string",
+      "metadata": {
+        "description": "Size of the Ansible virtual machine"
+      }
+    },
+    "subnetAdminPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "subnet Admin Prefix"
+      }
+    },
+    "subnetMastersPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "subnet Masters Prefix"
+      }
+    },
+    "subnetMinionsPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "subnet Minions Prefix"
+      }
+    },
+    "subnetEtcdPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "subnet Etcd Prefix"
+      }
+    },
+    "ansibleIPAddressName": {
+      "type": "string",
+      "metadata": {
+        "description": "ansible IP Address Name"
+      }
+    },
+    "kubemastersLbPIPAddressName": {
+      "type": "string",
+      "metadata": {
+        "description": "ansible IP Address Name"
+      }
+    },
+    "adminUserName": {
+      "type": "string",
+      "metadata": {
+        "description": "Username for login to the VMs"
+      }
+    },
+    "adminPassword": {
+      "type": "string",
+      "metadata": {
+        "description": "Password for login to the VMs"
+      }
+    },
+    "sshKeyData": {
+      "type": "string",
+      "metadata": {
+        "description": "Public key for SSH authentication"
+      }
+    },
+    "centosOSVersion": {
+      "type": "string",
+      "metadata": {
+        "description": "The CentOS version for the VM. This will pick a fully patched image of this given CentOS version. Allowed values are: 7.0, 7.1, 7.2"
+      }
+    },
+    "vaultAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "Private storage account name in which you are storing your certificates for ansible and the template bash scripts"
+      }
+    }
+  },
+  "variables": {
+    "ansibleIPAddressName": "[concat(parameters('prefix'),'-pip-ansible')]",
+    "ansibleVmName": "[concat(parameters('prefix'),'-ansible')]",
+    "ansibleOsDiskName": "[concat(parameters('prefix'),'-ansible-os')]",
+    "nicPIPAddressType": "Dynamic",
+    "sshKeyPath": "[concat('/home/',parameters('adminUsername'),'/.ssh/authorized_keys')]",
+    "imageReference": {
+      "publisher": "OpenLogic",
+      "offer": "CentOS",
+      "sku": "[parameters('centosOSVersion')]",
+      "version": "latest"
+    },
+    "scriptBlobLocation": "scripts/deploy.sh",
+    "scriptBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('scriptBlobLocation'))]",
+
+    "keysBlobLocation": "keys/id_rsa",
+    "keysBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('keysBlobLocation'))]",
+
+    "pubBlobLocation": "keys/id_rsa.pub",
+    "pubBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('pubBlobLocation'))]",
+
+    "assetsStorageAccountId": "[resourceId(parameters('vaultAccountName'),'Microsoft.Storage/storageAccounts', parameters('vaultAccountName'))]",
+    "ansibleIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('ansibleIPAddressName'))]",
+    "kubemastersLbPIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('kubemastersLbPIPAddressName'))]",
+
+    "adminPassword": "V3l0C1RaPt0R#",
+    "disablePasswordAuthentication": "true"
+  },
+  "resources": [
+    {
+      "apiVersion": "[parameters('apiVersion')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[parameters('ansibleNicName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ansibleIpConfig",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('ansibleIPAddressName'))]"
+              },
+              "subnet": {
+                "id": "[parameters('subnetAdminRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "[parameters('apiVersion')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[variables('ansibleVmName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('ansibleVmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[variables('ansibleVmName')]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]",
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": "true",
+            "ssh": {
+              "publicKeys": [
+                {
+                  "path": "[variables('sshKeyPath')]",
+                  "keyData": "[parameters('sshKeyData')]"
+                }
+              ]
+            }
+          }
+        },
+        "storageProfile": {
+          "imageReference": "[variables('imageReference')]",
+          "osDisk": {
+            "name": "osdisk",
+            "vhd": {
+              "uri": "[concat('http://', parameters('ansibleStorageAccountName'), '.blob.core.windows.net/vhds/', variables('ansibleOSDiskName'), '.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',parameters('ansibleNicName'))]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "apiVersion": "[parameters('apiVersion')]",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(variables('ansibleVMName'),'/ansible')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "extensionLoopMasters",
+        "extensionLoopMinions",
+        "extensionLoopEtcd"
+      ],
+      "properties": {
+        "publisher": "Microsoft.OSTCExtensions",
+        "type": "CustomScriptForLinux",
+        "typeHandlerVersion": "1.2",
+        "settings": {
+          "fileUris": [
+            "[variables('scriptBlobUrl')]",
+            "[variables('keysBlobUrl')]",
+            "[variables('pubBlobUrl')]"
+          ],
+          "commandToExecute": "[concat('bash deploy.sh ',parameters('numberOfMasters'), ' ',parameters('numberOfMinions'), ' ',parameters('numberOfEtcd'), ' ', parameters('subnetMastersPrefix'), ' ', parameters('subnetMinionsPrefix'), ' ',parameters('subnetEtcdPrefix'), ' ',parameters('prefix'), ' ', ' ', reference(variables('ansibleIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn,' ', parameters('adminUsername'), ' ', reference(variables('kubemastersLbPIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn)]"
+        },
+        "protectedSettings": {
+          "storageAccountName": "[parameters('vaultAccountName')]",
+          "storageAccountKey": "[listKeys(variables('assetsStorageAccountId'),'2015-05-01-preview').key1]"
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "result": {
+      "value": "Configuration Ansible Controller Provisioning achieved",
+      "type": "string"
+    }
+  }
+}

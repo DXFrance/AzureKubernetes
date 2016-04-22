@@ -45,11 +45,15 @@
     <None Include="Scripts\Undeploy-VM-Cluster-PowerShell.ps1" />
     <Content Include="Templates\VM-Cluster\azuredeploy.parameters.json" />
     <Content Include="Templates\VM-Cluster\ProvisioningExtension.json" />
-    <Content Include="Templates\VM-Cluster\CreatingPIPandLoadBalancer.json" />
-    <Content Include="Templates\VM-Cluster\ProvisioningNetwork.json" />
-    <Content Include="Templates\VM-Cluster\ProvisioningASStorage.json" />
+    <Content Include="Templates\VM-Cluster\Shared-PIPandLoadBalancer.json" />
+    <Content Include="Templates\VM-Cluster\Shared-Network.json" />
+    <Content Include="Templates\VM-Cluster\Shared-ProvisioningASStorage.json" />
     <Content Include="Templates\VM-Cluster\CreatingNic.json" />
     <Content Include="Templates\VM-Cluster\ProvisioningVM.json" />
+    <None Include="Templates\VM-Cluster\ConfigAnsibleController.json" />
+    <None Include="Templates\VM-Cluster\EtcdNodes.json" />
+    <None Include="Templates\VM-Cluster\KubeMasterNodes.json" />
+    <None Include="Templates\VM-Cluster\KubeMinionNodes.json" />
     <None Include="Tools\AzCopy.exe" />
     <None Include="Tools\Microsoft.Data.Edm.dll">
       <Visible>False</Visible>

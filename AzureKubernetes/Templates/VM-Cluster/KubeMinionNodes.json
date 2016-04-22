@@ -1,0 +1,248 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "apiVersion": {
+      "type": "string",
+      "metadata": {
+        "description": "Schema api version from parent template"
+      }
+    },
+    "prefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Prefix of the components"
+      }
+    },
+    "numberOfMinions": {
+      "type": "int",
+      "metadata": {
+        "description": "Number of kubernetes Minions nodes to create"
+      }
+    },
+    "kubeMinionNicName": {
+      "type": "string",
+      "metadata": {
+        "description": "kube Minion NicName"
+      }
+    },
+    "subnetMinionsRef": {
+      "type": "string",
+      "metadata": {
+        "description": "subnet Minions"
+      }
+    },
+    "subnetEtcdRef": {
+      "type": "string",
+      "metadata": {
+        "description": "subnet Etcd"
+      }
+    },
+    "kubeMinionsAvailabilitySetName": {
+      "type": "string",
+      "metadata": {
+        "description": "kube Minions AvailabilitySet Name"
+      }
+    },
+    "kubeMinionsStorageAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "kube StorageAccount Name"
+      }
+    },
+    "adminUserName": {
+      "type": "string",
+      "metadata": {
+        "description": "Username for login to the VMs"
+      }
+    },
+    "adminPassword": {
+      "type": "string",
+      "metadata": {
+        "description": "Password for login to the VMs"
+      }
+    },
+    "sshKeyData": {
+      "type": "string",
+      "metadata": {
+        "description": "Public key for SSH authentication"
+      }
+    },
+    "centosOSVersion": {
+      "type": "string",
+      "metadata": {
+        "description": "The CentOS version for the VM. This will pick a fully patched image of this given CentOS version. Allowed values are: 7.0, 7.1, 7.2"
+      }
+    },
+    "kubernetesVmSize": {
+      "type": "string",
+      "metadata": {
+        "description": "Instance size for Kubernetes VMs"
+      }
+    },
+    "vaultAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "Private storage account name in which you are storing your certificates for ansible and the template bash scripts"
+      }
+    },
+    "fileUris": {
+      "type": "string",
+      "defaultValue": "https://raw.githubusercontent.com/DXFrance/AzureKubernetes/master/Kubernetes-Ansible-Centos-Azure/scripts/first-boot.sh",
+      "metadata": {
+        "description": "Deploy/SetUp script url for ansible control vm"
+      }
+    },
+    "commandToExecute": {
+      "type": "string",
+      "defaultValue": "bash first-boot.sh",
+      "metadata": {
+        "description": "The command to execute."
+      }
+    }
+  },
+  "variables": {
+    "kubeMinionVmName": "[concat(parameters('prefix'),'-kube-minion-')]",
+    "kubeMinionOsDiskName": "[concat(parameters('prefix'),'-kube-minion-os-')]",
+    "kubeMinionDataDiskName": "[concat(parameters('prefix'),'-kube-minion-data-')]",
+    "sshKeyPath": "[concat('/home/',parameters('adminUsername'),'/.ssh/authorized_keys')]",
+    "imageReference": {
+      "publisher": "OpenLogic",
+      "offer": "CentOS",
+      "sku": "[parameters('centosOSVersion')]",
+      "version": "latest"
+    },
+    "scriptBlobLocation": "scripts/deploy.sh",
+    "scriptBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('scriptBlobLocation'))]",
+
+    "keysBlobLocation": "keys/id_rsa",
+    "keysBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('keysBlobLocation'))]",
+
+    "pubBlobLocation": "keys/id_rsa.pub",
+    "pubBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('pubBlobLocation'))]",
+
+    "assetsStorageAccountId": "[resourceId(parameters('vaultAccountName'),'Microsoft.Storage/storageAccounts', parameters('vaultAccountName'))]",
+
+    "adminPassword": "V3l0C1RaPt0R#",
+    "disablePasswordAuthentication": "true"
+
+  },
+  "resources": [
+    {
+      "apiVersion": "[parameters('apiVersion')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(parameters('kubeMinionNicName'), copyindex())]",
+      "location": "[resourceGroup().location]",
+      "copy": {
+        "name": "nicLoopMinions",
+        "count": "[parameters('numberOfMinions')]"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "MinionsIpConfig",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[parameters('subnetMinionsRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "[parameters('apiVersion')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[concat(variables('kubeMinionVmName'), copyindex())]",
+      "copy": {
+        "name": "vmLoopMinions",
+        "count": "[parameters('numberOfMinions')]"
+      },
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('kubeMinionsAvailabilitySetName'))]"
+        },
+        "hardwareProfile": {
+          "vmSize": "[parameters('kubernetesVmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[concat(variables('kubeMinionVMName'), copyindex())]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]",
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": "[variables('disablePasswordAuthentication')]",
+            "ssh": {
+              "publicKeys": [
+                {
+                  "path": "[variables('sshKeyPath')]",
+                  "keyData": "[parameters('sshKeyData')]"
+                }
+              ]
+            }
+          }
+        },
+        "storageProfile": {
+          "imageReference": "[variables('imageReference')]",
+          "osDisk": {
+            "name": "[concat(variables('kubeMinionOsDiskName'), copyindex())]",
+            "vhd": {
+              "uri": "[concat('http://', parameters('kubeMinionsStorageAccountName'),'.blob.core.windows.net/vhds/',variables('kubeMinionOsDiskName'), copyindex(),'.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          },
+          "dataDisks": [
+            {
+              "name": "[concat(variables('kubeMinionDataDiskName'), copyindex())]",
+              "diskSizeGB": "1000",
+              "lun": 0,
+              "vhd": {
+                "uri": "[concat('http://', parameters('kubeMinionsStorageAccountName'),'.blob.core.windows.net/vhds/', variables('kubeMinionDataDiskName'), copyIndex(), '.vhd')]"
+              },
+              "createOption": "Empty"
+            }
+          ]
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('kubeMinionNicName'),copyindex()))]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "apiVersion": "[parameters('apiVersion')]",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(variables('kubeMinionVmName'), copyIndex(),'/minion')]",
+      "location": "[resourceGroup().location]",
+      "copy": {
+        "name": "extensionLoopMinions",
+        "count": "[parameters('numberOfMinions')]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('kubeMinionNicName'),copyindex()))]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.OSTCExtensions",
+        "type": "CustomScriptForLinux",
+        "typeHandlerVersion": "1.2",
+        "settings": {
+          "fileUris": [
+            "[parameters('fileUris')]"
+          ],
+          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(resourceId('Microsoft.Network/networkInterfaces',concat(parameters('kubeMinionNicName'), copyindex()))).ipConfigurations[0].properties.privateIPAddress,' minions')]"
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "result": {
+      "value": "Kubernetes Minion Nodes Provisioning achieved",
+      "type": "string"
+    }
+  }
+}
