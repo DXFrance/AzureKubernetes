@@ -171,8 +171,8 @@
       },
       "dependsOn": [
         //"[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('kubeMasterNicName'),copyindex()))]"
-        "[concat('Microsoft.Network/networkInterfaces/',parameters('kubeMasterNicName'), copyIndex())]",
-        "[concat('Microsoft.Compute/virtualMachines/',variables('kubeMasterVmName'),copyIndex())]"
+        "[concat('Microsoft.Compute/virtualMachines/',variables('kubeMasterVmName'),copyIndex())]",
+        "[concat('Microsoft.Network/networkInterfaces/',parameters('kubeMasterNicName'), copyIndex())]"
 
       ],
       "properties": {
