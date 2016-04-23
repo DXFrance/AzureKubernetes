@@ -364,7 +364,7 @@
       "dependsOn": [
         "Microsoft.Resources/deployments/SharedAvailaibilitySetAndStorage",
         "Microsoft.Resources/deployments/SharedNetwork",
-        "Microsoft.Resources/deployments/PIPandLoadBalancer"
+        "Microsoft.Resources/deployments/SharedPIPandLoadBalancer"
       ],
       "properties": {
         "mode": "Incremental",
@@ -434,7 +434,7 @@
       "dependsOn": [
         "Microsoft.Resources/deployments/SharedAvailaibilitySetAndStorage",
         "Microsoft.Resources/deployments/SharedNetwork",
-        "Microsoft.Resources/deployments/PIPandLoadBalancer"
+        "Microsoft.Resources/deployments/SharedPIPandLoadBalancer"
       ],
       "properties": {
         "mode": "Incremental",
@@ -498,7 +498,7 @@
       "dependsOn": [
         "Microsoft.Resources/deployments/SharedAvailaibilitySetAndStorage",
         "Microsoft.Resources/deployments/SharedNetwork",
-        "Microsoft.Resources/deployments/PIPandLoadBalancer"
+        "Microsoft.Resources/deployments/SharedPIPandLoadBalancer"
       ],
       "properties": {
         "mode": "Incremental",
@@ -562,7 +562,7 @@
       "dependsOn": [
         "Microsoft.Resources/deployments/SharedAvailaibilitySetAndStorage",
         "Microsoft.Resources/deployments/SharedNetwork",
-        "Microsoft.Resources/deployments/PIPandLoadBalancer",
+        "Microsoft.Resources/deployments/SharedPIPandLoadBalancer",
         "Microsoft.Resources/deployments/KubeMasterNodes",
         "Microsoft.Resources/deployments/KubeMinionNodes",
         "Microsoft.Resources/deployments/EtcdNodes"
