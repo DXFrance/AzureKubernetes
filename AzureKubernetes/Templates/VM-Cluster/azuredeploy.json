@@ -392,10 +392,10 @@
             "value": "[variables('kubeMasterNicName')]"
           },
           "kubemastersLbID": {
-            "value": "[reference('CreatingPIPandLoadBalancer').outputs.kubemastersLbID.value]"
+            "value": "[reference('SharedPIPandLoadBalancer').outputs.kubemastersLbID.value]"
           },
           "kubemastersLbBackendPoolID": {
-            "value": "[reference('CreatingPIPandLoadBalancer').outputs.kubemastersLbBackendPoolID.value]"
+            "value": "[reference('SharedPIPandLoadBalancer').outputs.kubemastersLbBackendPoolID.value]"
           },
           "subnetMastersRef": {
             "value": "[reference('ProvisioningNetwork').outputs.subnetMastersRef.value]"
