@@ -21,7 +21,7 @@
     "numberOfMinions": {
       "value": 1
     },
-    "numberOfEtcd": {
+    "numberOfEtcdNodes": {
       "value": 1
     },
     "adminUsername": {

@@ -27,7 +27,7 @@
         "description": "Number of kubernetes Minion nodes to create"
       }
     },
-    "numberOfEtcd": {
+    "numberOfEtcdNodes": {
       "type": "int",
       "defaultValue": 1,
       "metadata": {
@@ -241,7 +241,7 @@
             "[variables('keysBlobUrl')]",
             "[variables('pubBlobUrl')]"
           ],
-          "commandToExecute": "[concat('bash deploy.sh ',parameters('numberOfMasters'), ' ',parameters('numberOfMinions'), ' ',parameters('numberOfEtcd'), ' ', parameters('subnetMastersPrefix'), ' ', parameters('subnetMinionsPrefix'), ' ',parameters('subnetEtcdPrefix'), ' ',parameters('prefix'), ' ', ' ', reference(variables('ansibleIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn,' ', parameters('adminUsername'), ' ', reference(variables('kubemastersLbPIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn)]"
+          "commandToExecute": "[concat('bash deploy.sh ',parameters('numberOfMasters'), ' ',parameters('numberOfMinions'), ' ',parameters('numberOfEtcdNodes'), ' ', parameters('subnetMastersPrefix'), ' ', parameters('subnetMinionsPrefix'), ' ',parameters('subnetEtcdPrefix'), ' ',parameters('prefix'), ' ', ' ', reference(variables('ansibleIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn,' ', parameters('adminUsername'), ' ', reference(variables('kubemastersLbPIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn)]"
         },
         "protectedSettings": {
           "storageAccountName": "[parameters('vaultAccountName')]",

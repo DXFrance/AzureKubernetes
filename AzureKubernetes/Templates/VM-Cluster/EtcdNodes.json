@@ -14,7 +14,7 @@
         "description": "Prefix of the components"
       }
     },
-    "numberOfEtcd": {
+    "numberOfEtcdNodes": {
       "type": "int",
       "metadata": {
         "description": "Number of Etcd nodes to create"
@@ -216,7 +216,7 @@
       "location": "[resourceGroup().location]",
       "copy": {
         "name": "extensionLoopEtcd",
-        "count": "[parameters('numberOfEtcd')]"
+        "count": "[parameters('numberOfEtcdNodes')]"
       },
       "dependsOn": [
         "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('etcdNicName'),copyindex()))]"

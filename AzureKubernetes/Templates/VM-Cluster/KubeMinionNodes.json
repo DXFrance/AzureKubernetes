@@ -32,12 +32,6 @@
         "description": "subnet Minions"
       }
     },
-    "subnetEtcdRef": {
-      "type": "string",
-      "metadata": {
-        "description": "subnet Etcd"
-      }
-    },
     "kubeMinionsAvailabilitySetName": {
       "type": "string",
       "metadata": {
