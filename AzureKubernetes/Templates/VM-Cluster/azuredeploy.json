@@ -526,7 +526,7 @@
             "value": "[variables('etcdNicName')]"
           },
           "subnetEtcdRef": {
-            "value": "[reference('ProvisioningNetwork').outputs.subnetEtcdRef.value]"
+            "value": "[reference('SharedNetwork').outputs.subnetEtcdRef.value]"
           },
           "etcdVmSize": {
             "value": "[parameters('kubernetesVmSize')]"
@@ -596,7 +596,7 @@
             "value": "[variables('ansibleStorageAccountName')]"
           },
           "subnetAdminRef": {
-            "value": "[reference('ProvisioningNetwork').outputs.subnetAdminRef.value]"
+            "value": "[reference('SharedNetwork').outputs.subnetAdminRef.value]"
           },
           "ansibleVmSize": {
             "value": "[parameters('kubernetesVmSize')]"
