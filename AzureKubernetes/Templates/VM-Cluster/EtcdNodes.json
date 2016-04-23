@@ -130,7 +130,7 @@
       "location": "[resourceGroup().location]",
       "copy": {
         "name": "nicLoopEtcd",
-        "count": "[parameters('numberOfEtcd')]"
+        "count": "[parameters('numberOfEtcdNodes')]"
       },
       "properties": {
         "ipConfigurations": [

@@ -398,7 +398,7 @@
             "value": "[reference('SharedPIPandLoadBalancer').outputs.kubemastersLbBackendPoolID.value]"
           },
           "subnetMastersRef": {
-            "value": "[reference('ProvisioningNetwork').outputs.subnetMastersRef.value]"
+            "value": "[reference('SharedNetwork').outputs.subnetMastersRef.value]"
           },
           "kubernetesVmSize": {
             "value": "[parameters('kubernetesVmSize')]"
@@ -453,16 +453,16 @@
             "value": "[parameters('numberOfMasters')]"
           },
           "kubeMinionsAvailabilitySetName": {
-            "value": "[variables('kubeMastersAvailabilitySetName')]"
+            "value": "[variables('kubeMinionsAvailabilitySetName')]"
           },
           "kubeMinionsStorageAccountName": {
-            "value": "[variables('kubeMastersStorageAccountName')]"
+            "value": "[variables('kubeMinionsStorageAccountName')]"
           },
           "kubeMinionNicName": {
-            "value": "[variables('kubeMasterNicName')]"
+            "value": "[variables('kubeMinionNicName')]"
           },
           "subnetMinionRef": {
-            "value": "[reference('ProvisioningNetwork').outputs.subnetMastersRef.value]"
+            "value": "[reference('ProvisioningNetwork').outputs.subnetMinionsRef.value]"
           },
           "kubernetesVmSize": {
             "value": "[parameters('kubernetesVmSize')]"
@@ -517,16 +517,16 @@
             "value": "[parameters('numberOfEtcdNodes')]"
           },
           "etcdAvailabilitySetName": {
-            "value": "[variables('kubeMastersAvailabilitySetName')]"
+            "value": "[variables('etcdAvailabilitySetName')]"
           },
           "etcdStorageAccountName": {
-            "value": "[variables('kubeMastersStorageAccountName')]"
+            "value": "[variables('etcdStorageAccountName')]"
           },
           "etcdNicName": {
-            "value": "[variables('kubeMasterNicName')]"
+            "value": "[variables('etcdNicName')]"
           },
           "subnetEtcdRef": {
-            "value": "[reference('ProvisioningNetwork').outputs.subnetMastersRef.value]"
+            "value": "[reference('ProvisioningNetwork').outputs.subnetEtcdRef.value]"
           },
           "etcdVmSize": {
             "value": "[parameters('kubernetesVmSize')]"
@@ -590,13 +590,13 @@
             "value": "[parameters('numberOfEtcdNodes')]"
           },
           "ansibleNicName": {
-            "value": "[variables('kubeMasterNicName')]"
+            "value": "[variables('ansibleNicName')]"
           },
           "ansibleStorageAccountName": {
-            "value": "[variables('kubeMastersStorageAccountName')]"
+            "value": "[variables('ansibleStorageAccountName')]"
           },
           "subnetAdminRef": {
-            "value": "[reference('ProvisioningNetwork').outputs.subnetMastersRef.value]"
+            "value": "[reference('ProvisioningNetwork').outputs.subnetAdminRef.value]"
           },
           "ansibleVmSize": {
             "value": "[parameters('kubernetesVmSize')]"
