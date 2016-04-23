@@ -362,8 +362,8 @@
       "name": "KubeMasterNodes",
       "type": "Microsoft.Resources/deployments",
       "dependsOn": [
-        "Microsoft.Resources/deployments/Shared-AvailaibilitySetAndStorage",
-        "Microsoft.Resources/deployments/Shared-Network",
+        "Microsoft.Resources/deployments/SharedAvailaibilitySetAndStorage",
+        "Microsoft.Resources/deployments/SharedNetwork",
         "Microsoft.Resources/deployments/PIPandLoadBalancer"
       ],
       "properties": {
@@ -432,8 +432,8 @@
       "name": "KubeMinionNodes",
       "type": "Microsoft.Resources/deployments",
       "dependsOn": [
-        "Microsoft.Resources/deployments/Shared-AvailaibilitySetAndStorage",
-        "Microsoft.Resources/deployments/Shared-Network",
+        "Microsoft.Resources/deployments/SharedAvailaibilitySetAndStorage",
+        "Microsoft.Resources/deployments/SharedNetwork",
         "Microsoft.Resources/deployments/PIPandLoadBalancer"
       ],
       "properties": {
@@ -496,8 +496,8 @@
       "name": "EtcdNodes",
       "type": "Microsoft.Resources/deployments",
       "dependsOn": [
-        "Microsoft.Resources/deployments/Shared-AvailaibilitySetAndStorage",
-        "Microsoft.Resources/deployments/Shared-Network",
+        "Microsoft.Resources/deployments/SharedAvailaibilitySetAndStorage",
+        "Microsoft.Resources/deployments/SharedNetwork",
         "Microsoft.Resources/deployments/PIPandLoadBalancer"
       ],
       "properties": {
@@ -560,8 +560,8 @@
       "name": "ConfigAnsibleController",
       "type": "Microsoft.Resources/deployments",
       "dependsOn": [
-        "Microsoft.Resources/deployments/Shared-AvailaibilitySetAndStorage",
-        "Microsoft.Resources/deployments/Shared-Network",
+        "Microsoft.Resources/deployments/SharedAvailaibilitySetAndStorage",
+        "Microsoft.Resources/deployments/SharedNetwork",
         "Microsoft.Resources/deployments/PIPandLoadBalancer",
         "Microsoft.Resources/deployments/KubeMasterNodes",
         "Microsoft.Resources/deployments/KubeMinionNodes",
