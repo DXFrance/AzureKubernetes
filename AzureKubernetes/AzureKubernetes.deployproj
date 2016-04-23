@@ -45,9 +45,9 @@
     <None Include="Scripts\Undeploy-VM-Cluster-PowerShell.ps1" />
     <Content Include="Templates\VM-Cluster\azuredeploy.parameters.json" />
     <Content Include="Templates\VM-Cluster\ProvisioningExtension.json" />
-    <Content Include="Templates\VM-Cluster\Shared-PIPandLoadBalancer.json" />
-    <Content Include="Templates\VM-Cluster\Shared-Network.json" />
-    <Content Include="Templates\VM-Cluster\Shared-ProvisioningASStorage.json" />
+    <Content Include="Templates\VM-Cluster\SharedPIPandLoadBalancer.json" />
+    <Content Include="Templates\VM-Cluster\SharedNetwork.json" />
+    <Content Include="Templates\VM-Cluster\SharedProvisioningASStorage.json" />
     <Content Include="Templates\VM-Cluster\CreatingNic.json" />
     <Content Include="Templates\VM-Cluster\ProvisioningVM.json" />
     <None Include="Templates\VM-Cluster\ConfigAnsibleController.json" />

@@ -217,9 +217,9 @@
   "variables": {
     "apiVersion": "2015-01-01",
     "configuration": {
-      "Shared-ProvisioningASStorageTemplateURL": "[concat(parameters('templatesBaseURL'),'/Shared-ProvisioningASStorage.json')]",
-      "Shared-NetworkTemplateURL": "[concat(parameters('templatesBaseURL'),'/Shared-Network.json')]",
-      "Shared-PIPandLoadBalancerTemplateURL": "[concat(parameters('templatesBaseURL'),'/Shared-PIPandLoadBalancer.json')]",
+      "SharedProvisioningASStorageTemplateURL": "[concat(parameters('templatesBaseURL'),'/SharedProvisioningASStorage.json')]",
+      "SharedNetworkTemplateURL": "[concat(parameters('templatesBaseURL'),'/SharedNetwork.json')]",
+      "SharedPIPandLoadBalancerTemplateURL": "[concat(parameters('templatesBaseURL'),'/SharedPIPandLoadBalancer.json')]",
       "KubeMasterNodesTemplateURL": "[concat(parameters('templatesBaseURL'),'/KubeMasterNodes.json')]",
       "KubeMinionNodesTemplateURL": "[concat(parameters('templatesBaseURL'),'/KubeMinionNodes.json')]",
       "EtcdNodesTemplateURL": "[concat(parameters('templatesBaseURL'),'/EtcdNodes.json')]",
@@ -262,7 +262,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('configuration').Shared-AvailaibilitySetAndStorageTemplateURL]",
+          "uri": "[variables('configuration').SharedAvailaibilitySetAndStorageTemplateURL]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
