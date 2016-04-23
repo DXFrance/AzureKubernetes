@@ -462,7 +462,7 @@
             "value": "[variables('kubeMinionNicName')]"
           },
           "subnetMinionRef": {
-            "value": "[reference('ProvisioningNetwork').outputs.subnetMinionsRef.value]"
+            "value": "[reference('SharedNetwork').outputs.subnetMinionsRef.value]"
           },
           "kubernetesVmSize": {
             "value": "[parameters('kubernetesVmSize')]"
