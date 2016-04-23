@@ -257,7 +257,7 @@
   "resources": [
     {
       "apiVersion": "[variables('apiVersion')]",
-      "name": "Shared-AvailaibilitySetAndStorage",
+      "name": "SharedAvailaibilitySetAndStorage",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
@@ -298,12 +298,12 @@
     },
     {
       "apiVersion": "[variables('apiVersion')]",
-      "name": "Shared-Network",
+      "name": "SharedNetwork",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('configuration').Shared-NetworkTemplateURL]",
+          "uri": "[variables('configuration').SharedNetworkTemplateURL]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -330,12 +330,12 @@
     },
     {
       "apiVersion": "[variables('apiVersion')]",
-      "name": "Shared-PIPandLoadBalancer",
+      "name": "SharedPIPandLoadBalancer",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[variables('configuration').Shared-PIPandLoadBalancerTemplateURL]",
+          "uri": "[variables('configuration').SharedPIPandLoadBalancerTemplateURL]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
