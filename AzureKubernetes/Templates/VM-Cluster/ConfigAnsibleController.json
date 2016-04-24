@@ -185,6 +185,9 @@
         "hardwareProfile": {
           "vmSize": "[parameters('ansibleVmSize')]"
         },
+        "dependsOn": [
+          "[concat('Microsoft.Network/networkInterfaces/',parameters('ansibleNicName'), copyIndex())]"
+        ],
         "osProfile": {
           "computerName": "[variables('ansibleVmName')]",
           "adminUsername": "[parameters('adminUsername')]",
@@ -227,9 +230,8 @@
       "name": "[concat(variables('ansibleVMName'),'/ansible')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "extensionLoopMasters",
-        "extensionLoopMinions",
-        "extensionLoopEtcd"
+        "[resourceId('Microsoft.Compute/virtualMachines/',concat(variables('ansibleVmName'),copyIndex()))]",
+        "[concat('Microsoft.Network/networkInterfaces/',parameters('ansibleNicName'), copyIndex())]"
       ],
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
