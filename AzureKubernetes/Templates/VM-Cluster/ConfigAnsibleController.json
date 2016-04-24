@@ -91,7 +91,7 @@
     "kubemastersLbPIPAddressName": {
       "type": "string",
       "metadata": {
-        "description": "ansible IP Address Name"
+        "description": "kubemastersLbPIPAddressName IP Address Name"
       }
     },
     "adminUserName": {
@@ -181,13 +181,13 @@
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[variables('ansibleVmName')]",
       "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkInterfaces/',parameters('ansibleNicName'))]"
+      ],
       "properties": {
         "hardwareProfile": {
           "vmSize": "[parameters('ansibleVmSize')]"
         },
-        "dependsOn": [
-          "[concat('Microsoft.Network/networkInterfaces/',parameters('ansibleNicName'))]"
-        ],
         "osProfile": {
           "computerName": "[variables('ansibleVmName')]",
           "adminUsername": "[parameters('adminUsername')]",
