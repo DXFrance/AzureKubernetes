@@ -32,7 +32,7 @@
         "description": "kube StorageAccount Name"
       }
     },
-    "kubeMasterNicName": {
+    "kubeMastersNicName": {
       "type": "string",
       "metadata": {
         "description": "kube Master NicName"
@@ -139,7 +139,7 @@
     {
       "apiVersion": "[parameters('apiVersion')]",
       "type": "Microsoft.Network/networkInterfaces",
-      "name": "[concat(parameters('kubeMasterNicName'), copyindex())]",
+      "name": "[concat(parameters('kubeMastersNicName'), copyindex())]",
       "location": "[resourceGroup().location]",
       "copy": {
         "name": "[variables('masterNetworkInterfacesCopy')]",
@@ -226,7 +226,7 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('kubeMasterNicName'),copyindex()))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('kubeMastersNicName'),copyindex()))]"
             }
           ]
         }
@@ -243,7 +243,7 @@
       },
       "dependsOn": [
         "[resourceId('Microsoft.Compute/virtualMachines/',concat(variables('kubeMasterVmName'),copyIndex()))]",
-        "[concat('Microsoft.Network/networkInterfaces/',parameters('kubeMasterNicName'), copyIndex())]"
+        "[concat('Microsoft.Network/networkInterfaces/',parameters('kubeMastersNicName'), copyIndex())]"
       ],
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
@@ -253,7 +253,7 @@
           "fileUris": [
             "[parameters('fileUris')]"
           ],
-          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(resourceId('Microsoft.Network/networkInterfaces',concat(parameters('kubeMasterNicName'), copyindex()))).ipConfigurations[0].properties.privateIPAddress,' masters')]",
+          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(resourceId('Microsoft.Network/networkInterfaces',concat(parameters('kubeMastersNicName'), copyindex()))).ipConfigurations[0].properties.privateIPAddress,' masters')]"
         }
       }
     }

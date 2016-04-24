@@ -20,7 +20,7 @@
         "description": "Number of kubernetes Minions nodes to create"
       }
     },
-    "kubeMinionNicName": {
+    "kubeMinionsNicName": {
       "type": "string",
       "metadata": {
         "description": "kube Minion NicName"
@@ -125,7 +125,7 @@
     {
       "apiVersion": "[parameters('apiVersion')]",
       "type": "Microsoft.Network/networkInterfaces",
-      "name": "[concat(parameters('kubeMinionNicName'), copyindex())]",
+      "name": "[concat(parameters('kubeMinionsNicName'), copyindex())]",
       "location": "[resourceGroup().location]",
       "copy": {
         "name": "nicLoopMinions",
@@ -202,7 +202,7 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('kubeMinionNicName'),copyindex()))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('kubeMinionsNicName'),copyindex()))]"
             }
           ]
         }
@@ -218,7 +218,7 @@
         "count": "[parameters('numberOfMinions')]"
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('kubeMinionNicName'),copyindex()))]"
+        "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('kubeMinionsNicName'),copyindex()))]"
       ],
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
@@ -228,7 +228,7 @@
           "fileUris": [
             "[parameters('fileUris')]"
           ],
-          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(resourceId('Microsoft.Network/networkInterfaces',concat(parameters('kubeMinionNicName'), copyindex()))).ipConfigurations[0].properties.privateIPAddress,' minions')]"
+          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(resourceId('Microsoft.Network/networkInterfaces',concat(parameters('kubeMinionsNicName'), copyindex()))).ipConfigurations[0].properties.privateIPAddress,' minions')]"
         }
       }
     }

@@ -239,8 +239,8 @@
 
     "virtualNetworkName": "[concat(parameters('prefix'),'-vnet')]",
     "ansibleNicName": "[concat(parameters('prefix'),'-nic-ansible')]",
-    "kubeMasterNicName": "[concat(parameters('prefix'),'-nic-kubemaster')]",
-    "kubeMinionNicName": "[concat(parameters('prefix'),'-nic-kubeminion')]",
+    "kubeMastersNicName": "[concat(parameters('prefix'),'-nic-kubemaster')]",
+    "kubeMinionsNicName": "[concat(parameters('prefix'),'-nic-kubeminion')]",
     "etcdNicName": "[concat(parameters('prefix'),'-nic-etcd')]",
 
     "subnetAdminPrefix": "10.0.2.0/24",
@@ -388,8 +388,8 @@
           "kubeMastersStorageAccountName": {
             "value": "[variables('kubeMastersStorageAccountName')]"
           },
-          "kubeMasterNicName": {
-            "value": "[variables('kubeMasterNicName')]"
+          "kubeMastersNicName": {
+            "value": "[variables('kubeMastersNicName')]"
           },
           "kubemastersLbID": {
             "value": "[reference('SharedPIPandLoadBalancer').outputs.kubemastersLbID.value]"
@@ -458,10 +458,10 @@
           "kubeMinionsStorageAccountName": {
             "value": "[variables('kubeMinionsStorageAccountName')]"
           },
-          "kubeMinionNicName": {
-            "value": "[variables('kubeMinionNicName')]"
+          "kubeMinionsNicName": {
+            "value": "[variables('kubeMinionsNicName')]"
           },
-          "subnetMinionRef": {
+          "subnetMinionsRef": {
             "value": "[reference('SharedNetwork').outputs.subnetMinionsRef.value]"
           },
           "kubernetesVmSize": {
