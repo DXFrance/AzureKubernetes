@@ -186,7 +186,7 @@
           "vmSize": "[parameters('ansibleVmSize')]"
         },
         "dependsOn": [
-          "[concat('Microsoft.Network/networkInterfaces/',parameters('ansibleNicName'), copyIndex())]"
+          "[concat('Microsoft.Network/networkInterfaces/',parameters('ansibleNicName'))]"
         ],
         "osProfile": {
           "computerName": "[variables('ansibleVmName')]",
@@ -230,8 +230,8 @@
       "name": "[concat(variables('ansibleVMName'),'/ansible')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines/',concat(variables('ansibleVmName'),copyIndex()))]",
-        "[concat('Microsoft.Network/networkInterfaces/',parameters('ansibleNicName'), copyIndex())]"
+        "[resourceId('Microsoft.Compute/virtualMachines/',concat(variables('ansibleVmName')))]",
+        "[concat('Microsoft.Network/networkInterfaces/',parameters('ansibleNicName'))]"
       ],
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
