@@ -154,6 +154,9 @@
         "name": "vmLoopEtcd",
         "count": "[parameters('numberOfEtcdNodes')]"
       },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('etcdNicName'),copyindex()))]"
+      ],
       "location": "[resourceGroup().location]",
       "properties": {
         "availabilitySet": {
@@ -219,7 +222,8 @@
         "count": "[parameters('numberOfEtcdNodes')]"
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('etcdNicName'),copyindex()))]"
+        "[resourceId('Microsoft.Compute/virtualMachines/',concat(variables('etcdVmName'),copyIndex()))]",
+        "[concat('Microsoft.Network/networkInterfaces/',parameters('etcdNicName'), copyIndex())]"
       ],
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",

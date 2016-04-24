@@ -110,9 +110,9 @@
   "variables": {
     "nicPIPAddressType": "Dynamic",
     "masterNetworkInterfacesCopy": "nicopy-kube-master",
-    "kubeMasterVmName": "[concat(parameters('prefix'),'-kube-master-')]",
-    "kubeMasterOsDiskName": "[concat(parameters('prefix'),'-kube-master-os-')]",
-    "kubeMasterDataDiskName": "[concat(parameters('prefix'),'-kube-master-data-')]",
+    "kubeMastersVmName": "[concat(parameters('prefix'),'-kube-master-')]",
+    "kubeMastersOsDiskName": "[concat(parameters('prefix'),'-kube-master-os-')]",
+    "kubeMastersDataDiskName": "[concat(parameters('prefix'),'-kube-master-data-')]",
 
     "sshKeyPath": "[concat('/home/',parameters('adminUsername'),'/.ssh/authorized_keys')]",
     "imageReference": {
@@ -172,11 +172,14 @@
     {
       "apiVersion": "[parameters('apiVersion')]",
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[concat(variables('kubeMasterVmName'), copyindex())]",
+      "name": "[concat(variables('kubeMastersVmName'), copyindex())]",
       "copy": {
         "name": "vmLoopMasters",
         "count": "[parameters('numberOfMasters')]"
       },
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkInterfaces/',parameters('kubeMastersNicName'), copyIndex())]"
+      ],
       "location": "[resourceGroup().location]",
       "properties": {
         "availabilitySet": {
@@ -186,7 +189,7 @@
           "vmSize": "[parameters('kubernetesvmSize')]"
         },
         "osProfile": {
-          "computerName": "[concat(variables('kubeMasterVmName'), copyindex())]",
+          "computerName": "[concat(variables('kubeMastersVmName'), copyindex())]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]",
           "linuxConfiguration": {
@@ -204,16 +207,16 @@
         "storageProfile": {
           "imageReference": "[variables('imageReference')]",
           "osDisk": {
-            "name": "[concat(variables('kubeMasterOsDiskName'), copyindex())]",
+            "name": "[concat(variables('kubeMastersOsDiskName'), copyindex())]",
             "vhd": {
-              "uri": "[concat('http://',parameters('kubeMastersStorageAccountName'),'.blob.core.windows.net/vhds/', variables('kubemasterOsDiskName'), copyindex(),'.vhd')]"
+              "uri": "[concat('http://',parameters('kubeMastersStorageAccountName'),'.blob.core.windows.net/vhds/', variables('kubemastersOsDiskName'), copyindex(),'.vhd')]"
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
           },
           "dataDisks": [
             {
-              "name": "[concat(variables('kubeMasterDataDiskName'), copyindex())]",
+              "name": "[concat(variables('kubeMastersDataDiskName'), copyindex())]",
               "diskSizeGB": "1000",
               "lun": 0,
               "vhd": {
@@ -235,14 +238,14 @@
     {
       "apiVersion": "[parameters('apiVersion')]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(variables('kubeMasterVmName'), copyIndex(),'/master')]",
+      "name": "[concat(variables('kubeMastersVmName'), copyIndex(),'/master')]",
       "location": "[resourceGroup().location]",
       "copy": {
         "name": "extensionLoopMasters",
         "count": "[parameters('numberOfMasters')]"
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines/',concat(variables('kubeMasterVmName'),copyIndex()))]",
+        "[resourceId('Microsoft.Compute/virtualMachines/',concat(variables('kubeMastersVmName'),copyIndex()))]",
         "[concat('Microsoft.Network/networkInterfaces/',parameters('kubeMastersNicName'), copyIndex())]"
       ],
       "properties": {

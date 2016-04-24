@@ -96,9 +96,9 @@
     }
   },
   "variables": {
-    "kubeMinionVmName": "[concat(parameters('prefix'),'-kube-minion-')]",
-    "kubeMinionOsDiskName": "[concat(parameters('prefix'),'-kube-minion-os-')]",
-    "kubeMinionDataDiskName": "[concat(parameters('prefix'),'-kube-minion-data-')]",
+    "kubeMinionsVmName": "[concat(parameters('prefix'),'-kube-minion-')]",
+    "kubeMinionsOsDiskName": "[concat(parameters('prefix'),'-kube-minion-os-')]",
+    "kubeMinionsDataDiskName": "[concat(parameters('prefix'),'-kube-minion-data-')]",
     "sshKeyPath": "[concat('/home/',parameters('adminUsername'),'/.ssh/authorized_keys')]",
     "imageReference": {
       "publisher": "OpenLogic",
@@ -148,11 +148,14 @@
     {
       "apiVersion": "[parameters('apiVersion')]",
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[concat(variables('kubeMinionVmName'), copyindex())]",
+      "name": "[concat(variables('kubeMinionsVmName'), copyindex())]",
       "copy": {
         "name": "vmLoopMinions",
         "count": "[parameters('numberOfMinions')]"
       },
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkInterfaces/',parameters('kubeMinionsNicName'), copyIndex())]"
+      ],
       "location": "[resourceGroup().location]",
       "properties": {
         "availabilitySet": {
@@ -162,7 +165,7 @@
           "vmSize": "[parameters('kubernetesVmSize')]"
         },
         "osProfile": {
-          "computerName": "[concat(variables('kubeMinionVMName'), copyindex())]",
+          "computerName": "[concat(variables('kubeMinionsVMName'), copyindex())]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]",
           "linuxConfiguration": {
@@ -180,20 +183,20 @@
         "storageProfile": {
           "imageReference": "[variables('imageReference')]",
           "osDisk": {
-            "name": "[concat(variables('kubeMinionOsDiskName'), copyindex())]",
+            "name": "[concat(variables('kubeMinionsOsDiskName'), copyindex())]",
             "vhd": {
-              "uri": "[concat('http://', parameters('kubeMinionsStorageAccountName'),'.blob.core.windows.net/vhds/',variables('kubeMinionOsDiskName'), copyindex(),'.vhd')]"
+              "uri": "[concat('http://', parameters('kubeMinionsStorageAccountName'),'.blob.core.windows.net/vhds/',variables('kubeMinionsOsDiskName'), copyindex(),'.vhd')]"
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
           },
           "dataDisks": [
             {
-              "name": "[concat(variables('kubeMinionDataDiskName'), copyindex())]",
+              "name": "[concat(variables('kubeMinionsDataDiskName'), copyindex())]",
               "diskSizeGB": "1000",
               "lun": 0,
               "vhd": {
-                "uri": "[concat('http://', parameters('kubeMinionsStorageAccountName'),'.blob.core.windows.net/vhds/', variables('kubeMinionDataDiskName'), copyIndex(), '.vhd')]"
+                "uri": "[concat('http://', parameters('kubeMinionsStorageAccountName'),'.blob.core.windows.net/vhds/', variables('kubeMinionsDataDiskName'), copyIndex(), '.vhd')]"
               },
               "createOption": "Empty"
             }
@@ -211,15 +214,17 @@
     {
       "apiVersion": "[parameters('apiVersion')]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(variables('kubeMinionVmName'), copyIndex(),'/minion')]",
+      "name": "[concat(variables('kubeMinionsVmName'), copyIndex(),'/minion')]",
       "location": "[resourceGroup().location]",
       "copy": {
         "name": "extensionLoopMinions",
         "count": "[parameters('numberOfMinions')]"
       },
       "dependsOn": [
+        "[resourceId('Microsoft.Compute/virtualMachines/',concat(variables('kubeMinionsVmName'),copyIndex()))]",
         "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('kubeMinionsNicName'),copyindex()))]"
       ],
+
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
         "type": "CustomScriptForLinux",
