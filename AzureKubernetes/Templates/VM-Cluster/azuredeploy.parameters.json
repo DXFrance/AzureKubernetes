@@ -40,7 +40,7 @@
       "value": "bash deploy.sh"
     },
     "vaultAccountName": {
-      "value": "kub8vault"
+      "value": "stephgouvault"
     },
     "templatesBaseURL": {
       "value": "https://raw.githubusercontent.com/DXFrance/AzureKubernetes/master/AzureKubernetes/Templates/VM-Cluster"

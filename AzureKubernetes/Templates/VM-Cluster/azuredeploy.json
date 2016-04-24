@@ -415,9 +415,6 @@
           "centosOSVersion": {
             "value": "[parameters('centosOSVersion')]"
           },
-          "vaultAccountName": {
-            "value": "[parameters('vaultAccountName')]"
-          },
           "fileUris": {
             "value": "[parameters('fileUris')]"
           },
@@ -479,9 +476,6 @@
           "centosOSVersion": {
             "value": "[parameters('centosOSVersion')]"
           },
-          "vaultAccountName": {
-            "value": "[parameters('vaultAccountName')]"
-          },
           "fileUris": {
             "value": "[parameters('fileUris')]"
           },
@@ -542,9 +536,6 @@
           },
           "centosOSVersion": {
             "value": "[parameters('centosOSVersion')]"
-          },
-          "vaultAccountName": {
-            "value": "[parameters('vaultAccountName')]"
           },
           "fileUris": {
             "value": "[parameters('fileUris')]"

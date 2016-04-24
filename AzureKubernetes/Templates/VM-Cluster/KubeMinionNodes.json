@@ -74,12 +74,6 @@
         "description": "Instance size for Kubernetes VMs"
       }
     },
-    "vaultAccountName": {
-      "type": "string",
-      "metadata": {
-        "description": "Private storage account name in which you are storing your certificates for ansible and the template bash scripts"
-      }
-    },
     "fileUris": {
       "type": "string",
       "defaultValue": "https://raw.githubusercontent.com/DXFrance/AzureKubernetes/master/Kubernetes-Ansible-Centos-Azure/scripts/first-boot.sh",
@@ -106,16 +100,6 @@
       "sku": "[parameters('centosOSVersion')]",
       "version": "latest"
     },
-    "scriptBlobLocation": "scripts/deploy.sh",
-    "scriptBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('scriptBlobLocation'))]",
-
-    "keysBlobLocation": "keys/id_rsa",
-    "keysBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('keysBlobLocation'))]",
-
-    "pubBlobLocation": "keys/id_rsa.pub",
-    "pubBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('pubBlobLocation'))]",
-
-    "assetsStorageAccountId": "[resourceId(parameters('vaultAccountName'),'Microsoft.Storage/storageAccounts', parameters('vaultAccountName'))]",
 
     "adminPassword": "V3l0C1RaPt0R#",
     "disablePasswordAuthentication": "true"
