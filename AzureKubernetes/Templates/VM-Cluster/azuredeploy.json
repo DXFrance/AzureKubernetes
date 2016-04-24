@@ -217,7 +217,7 @@
   "variables": {
     "apiVersion": "2015-01-01",
     "configuration": {
-      "SharedProvisioningASStorageTemplateURL": "[concat(parameters('templatesBaseURL'),'/SharedProvisioningASStorage.json')]",
+      "SharedAvailaibilitySetAndStorageTemplateURL": "[concat(parameters('templatesBaseURL'),'/SharedAvailaibilitySetAndStorage.json')]",
       "SharedNetworkTemplateURL": "[concat(parameters('templatesBaseURL'),'/SharedNetwork.json')]",
       "SharedPIPandLoadBalancerTemplateURL": "[concat(parameters('templatesBaseURL'),'/SharedPIPandLoadBalancer.json')]",
       "KubeMasterNodesTemplateURL": "[concat(parameters('templatesBaseURL'),'/KubeMasterNodes.json')]",
