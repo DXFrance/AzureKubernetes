@@ -73,6 +73,3 @@ azure group deployment create kuber8grp kuber8cluster --template-uri https://raw
 <a href="http://armviz.io/#/?load=https://raw.githubusercontent.com/DXFrance/AzureKubernetes/master/Kubernetes-Ansible-Centos-Azure/azuredeploy.json" target="_blank">
     <img src="http://armviz.io/visualizebutton.png"/>
 </a>
-<a href="http://armviz.io/#/?load=https://raw.githubusercontent.com/DXFrance/AzureKubernetes/master/AzureKubernetes/Templates/VM-Cluster/azuredeploy.json" target="_blank">
-    <img src="http://armviz.io/visualizebutton.png"/>
-</a>
