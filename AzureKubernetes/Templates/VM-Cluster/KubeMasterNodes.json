@@ -220,7 +220,7 @@
               "diskSizeGB": "1000",
               "lun": 0,
               "vhd": {
-                "uri": "[concat('http://', parameters('kubeMastersStorageAccountName'),'.blob.core.windows.net/vhds/', variables('kubemasterDataDiskName'), copyIndex(), '.vhd')]"
+                "uri": "[concat('http://', parameters('kubeMastersStorageAccountName'),'.blob.core.windows.net/vhds/', variables('kubemastersDataDiskName'), copyIndex(), '.vhd')]"
               },
               "createOption": "Empty"
             }
