@@ -43,7 +43,7 @@
     "addressPrefix": "10.0.0.0/16",
     "vnetId": "[resourceId('Microsoft.Network/virtualNetworks',parameters('virtualNetworkName'))]",
     "subnetAdminName": "SubnetADMIN",
-        "subnetAdminRef": "[concat(variables('vnetId'),'/subnets/',variables('subnetAdminName'))]",
+    "subnetAdminRef": "[concat(variables('vnetId'),'/subnets/',variables('subnetAdminName'))]",
     "subnetMastersName": "SubnetMASTERS",
     "subnetMastersRef": "[concat(variables('vnetId'),'/subnets/',variables('subnetMastersName'))]",
     "subnetMinionsName": "SubnetMINIONS",
