@@ -314,7 +314,7 @@ FACTS="/etc/ansible/facts"
 ANSIBLE_HOST_FILE="/etc/ansible/hosts"
 ANSIBLE_CONFIG_FILE="/etc/ansible/ansible.cfg"
 GIT_KUB8_URL="https://github.com/herveleclerc/ansible-kubernetes-centos.git"
-EPEL_REPO="http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm"
+EPEL_REPO="http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-6.noarch.rpm"
 
 local_kub8="kub8"
 
