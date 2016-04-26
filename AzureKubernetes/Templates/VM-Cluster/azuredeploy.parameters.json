@@ -37,7 +37,7 @@
       "value": "https://raw.githubusercontent.com/DXFrance/AzureKubernetes/master/Kubernetes-Ansible-Centos-Azure/scripts/first-boot.sh"
     },
     "commandToExecute": {
-      "value": "bash deploy.sh"
+      "value": "bash first-boot.sh"
     },
     "vaultAccountName": {
       "value": "stephgouvault"
