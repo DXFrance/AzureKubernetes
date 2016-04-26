@@ -145,7 +145,10 @@
               ],
               "loadBalancerInboundNatRules": [
                 {
-                  "id": "[concat(parameters('kubemastersLbID'),'/inboundNatRules/HTTP-80', copyindex())]"
+                  "id": "[concat(parameters('kubemastersLbID'),'/inboundNatRules/HTTP-8', copyindex())]"
+                },
+                {
+                  "id": "[concat(parameters('kubemastersLbID'),'/inboundNatRules/SSH-', copyindex())]"
                 }
               ]
             }
