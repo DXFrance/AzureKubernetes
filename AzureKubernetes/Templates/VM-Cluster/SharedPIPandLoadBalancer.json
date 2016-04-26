@@ -125,7 +125,7 @@
         },
         "protocol": "tcp",
         "frontendPort": "[copyIndex(22)]",
-        "backendPort": 80,
+        "backendPort": 22,
         "enableFloatingIP": false
       }
     },
