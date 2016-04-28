@@ -1,6 +1,9 @@
 # AzureKubernetes
 Kubernetes provisioning template
 
+Kubernetes is an open-source orchestration platform for automating deployment, operations, and scaling of applications across multiple hosts. It targets applications composed of multiple Docker containers, such as distributed micro-services and provides ways for containers to find and communicate with each other. It enables users to ask a cluster to run a set of containers with an automatic scheduling and choice of the hosts to run those containers on. It regroups containers that make up an application into logical units for easy management with self-healing mechanisms (auto-restarting, re-scheduling, and replicating containers) and discovery. Kubernetes has been created by Google but contributors to this project now include IBM, Microsoft, Red Hat, CoreOS, Mesosphere, and others… 
+
+
                           ┌───────────────────────────────┐
                           │                            ┌─┐│
                           │                            │1││
