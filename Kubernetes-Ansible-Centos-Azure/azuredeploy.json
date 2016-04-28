@@ -4,7 +4,7 @@
   "parameters": {
     "nameSuffix": {
       "type": "string",
-      "defaultValue": "mskub8",
+      "defaultValue": "mskubx",
       "metadata": {
         "description": "Prefix of the components"
       }
@@ -60,7 +60,7 @@
     },
     "numberOfMinions": {
       "type": "int",
-      "defaultValue": 2,
+      "defaultValue": 1,
       "metadata": {
         "description": "Number of kubernetes Minions nodes to create"
       }
@@ -81,7 +81,7 @@
     },
     "sshKeyData": {
       "type": "string",
-      "defaultValue": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDLWadgtcq8rg0HMWlv1/1HQfRayLzGKmHg2ISmAJx+LQCa8SWCwBFGS0vKKwgdwhpMMCl0wI2/eURmxbpOF4Tp10jRikSIlSZyua7FU9VmlLWtYAmRQ42eWvmsCCI/IpgJ4LGODe8xDQtcXOtp3yUhkX5g9HHNwwR35Nnzum1VGMk4ftTA9CC3gfqWcIIKqQ+xE1BzqUNmGpJHghCgG/g8Oh7/sR05CXwASMoGTYuLpPHp2sEfGNm91CmnMa21ifaz4RMAcD2SwqReLgMmi0tZGUGQqLnzX/6ibJvpYSU5iZ/7qEzgDy83dBqaHbI0LEA4H0q59TJ2DWXYu+dloITz hleclerc@HeL.local",
+      "defaultvalue": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDhdhD4JCfI50HPBrgg+mQyhhid9CvN3oqpSBiCMp9FsCkAeVwsROXxvgz4UTdStcWd3p/Qa/vkMy6hQvAPdMs+LS8ltsbt6qIgUTxRbNxi+y2heL5a6VqHVPpcqDOncT3NsyqqNXdEVjZGaSSkD5MDSGkxMuwFakG5XJ4PtKfWHAwBtQuesBIFM3wYGS6Ty5PfsFZqPkd96Nx/oPdCoLCjqzlTy1xi2Uhn8tv5nehWC7MXKzJbAxjfI15kIx7A9VfBL1qjQoZKKKBB2wbPMEMxbZGRxKVPgf807v6CyplpJ2DTPnZCQIxNqZF/APUUtdqGTWyJ+Wq3aisIjxnnZQKecu4YdbjNsIBlVkzaQCdPggxMn0d/MWcep4xKqp+xCrVrDrVzUmp2vrHzTMg1JOozRMB8vom05NczsNT8reB3IWe4S4iS527+zjwDM7TZWxrUb+xxEC0uKpQuJ+8va95VSIbhm7tJrdl4EjBiGuoK243/bgPVbkLxa1yHIq8OKgezGHdSb1KJzv2yFJZwQm/57gxfsSxsfqpVWoPlLmGLQFIT1NNUQtkuoJIxCLW/1OwAMkbclmDPXyaW5smAem9+MSM25wN8kU5OytzRcLyG58bdnZyuUuBbGeKDWZwhBuYJ3ib7vHFbetCEmAQhHDmFGnUQf0Kd+0R6BE5en8dswQ== stephgou@X1CARBONW10TP",
       "metadata": {
         "description": "Public key for SSH authentication"
       }
@@ -102,7 +102,7 @@
     },
     "vaultAccountName": {
       "type": "string",
-      "defaultValue": "kub8vault",
+      "defaultValue": "stephgouvault",
       "metadata": {
         "description": "Private storage account name in which you are storing your certificates for ansible and the template bash scripts"
       }
