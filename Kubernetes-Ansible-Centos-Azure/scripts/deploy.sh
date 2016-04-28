@@ -23,7 +23,8 @@ function log()
   fi
   mess="$(date) - $(hostname): $1 $x"
 
-  url="https://rocket.alterway.fr/hooks/44vAPspqqtD7Jtmtv/k4Tw89EoXiT5GpniG/HaxMfijFFi5v1YTEN68DOe5fzFBBxB4YeTQz6w3khFE%3D"
+  url="https://hooks.slack.com/services/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"
+  #url="https://rocket.alterway.fr/hooks/44vAPspqqtD7Jtmtv/k4Tw89EoXiT5GpniG/HaxMfijFFi5v1YTEN68DOe5fzFBBxB4YeTQz6w3khFE%3D"
   payload="payload={\"icon_emoji\":\":cloud:\",\"text\":\"$mess\"}"
   curl -s -X POST --data-urlencode "$payload" "$url" > /dev/null 2>&1
     
