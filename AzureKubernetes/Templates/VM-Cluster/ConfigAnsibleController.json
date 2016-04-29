@@ -130,7 +130,7 @@
     "ansibleVmName": "[concat(parameters('prefix'),'-ansible')]",
     "ansibleOsDiskName": "[concat(parameters('prefix'),'-ansible-os')]",
     "nicPIPAddressType": "Dynamic",
-    "sshKeyPath": "[concat('/home/',parameters('adminUsername'),'/.ssh/authorized_keys')]",
+    "sshKeyPath": "[concat('/home/',parameters('adminUserName'),'/.ssh/authorized_keys')]",
     "imageReference": {
       "publisher": "OpenLogic",
       "offer": "CentOS",
@@ -190,7 +190,7 @@
         },
         "osProfile": {
           "computerName": "[variables('ansibleVmName')]",
-          "adminUsername": "[parameters('adminUsername')]",
+          "adminUserName": "[parameters('adminUserName')]",
           "adminPassword": "[parameters('adminPassword')]",
           "linuxConfiguration": {
             "disablePasswordAuthentication": "true",
@@ -243,7 +243,7 @@
             "[variables('keysBlobUrl')]",
             "[variables('pubBlobUrl')]"
           ],
-          "commandToExecute": "[concat('bash deploy.sh ',parameters('numberOfMasters'), ' ',parameters('numberOfMinions'), ' ',parameters('numberOfEtcdNodes'), ' ', parameters('subnetMastersPrefix'), ' ', parameters('subnetMinionsPrefix'), ' ',parameters('subnetEtcdPrefix'), ' ',parameters('prefix'), ' ', ' ', reference(variables('ansibleIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn,' ', parameters('adminUsername'), ' ', reference(variables('kubemastersLbPIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn)]"
+          "commandToExecute": "[concat('bash deploy.sh ',parameters('numberOfMasters'), ' ',parameters('numberOfMinions'), ' ',parameters('numberOfEtcdNodes'), ' ', parameters('subnetMastersPrefix'), ' ', parameters('subnetMinionsPrefix'), ' ',parameters('subnetEtcdPrefix'), ' ',parameters('prefix'), ' ', ' ', reference(variables('ansibleIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn,' ', parameters('adminUserName'), ' ', reference(variables('kubemastersLbPIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn)]"
         },
         "protectedSettings": {
           "storageAccountName": "[parameters('vaultAccountName')]",
