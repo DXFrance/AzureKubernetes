@@ -190,7 +190,7 @@ function install_required_packages()
 {
 
   log "Install ansible required packages..." "0"
-  until yum install -y git python2-devel python-pip
+  until yum install -y git python2-devel python-pip libffi-devel libssl-dev openssl-devel
   do
     log "Lock detected on VM init Try again..." "0"
     sleep 2
@@ -291,9 +291,10 @@ function deploy()
   cd "$CWD" || error_log "unable to back with cd $CWD"  
   cd "$local_kub8" || error_log "unable to back with cd $local_kub8"  
   log "Playing playbook" "0"
-  ansible-playbook -i "${ANSIBLE_HOST_FILE}" integrated-deploy.yml 
-  error_log "playbook crate had errors"
- 
+  ansible-playbook -i "${ANSIBLE_HOST_FILE}" integrated-deploy.yml | tee -a /tmp/deploy-"${LOG_DATE}".log
+  error_log "playbook kubernetes integrated-deploy.yml had errors"
+
+  log "END Installation on Azure parameters : numberOfMasters=$numberOfMasters -  numberOfMinions=$numberOfMinions - numberOfEtcd=$numberOfEtcd" "0" 
 }
 
 ### PARAMETERS
@@ -311,6 +312,7 @@ ansiblefqdn="${8}"
 sshu="${9}"
 viplb="${10}"
 
+LOG_DATE=$(date +%s)
 FACTS="/etc/ansible/facts"
 ANSIBLE_HOST_FILE="/etc/ansible/hosts"
 ANSIBLE_CONFIG_FILE="/etc/ansible/ansible.cfg"
@@ -354,3 +356,13 @@ test_ansible
 create_inventory
 get_kube_playbook
 deploy
+
+
+
+
+
+
+
+
+
+
