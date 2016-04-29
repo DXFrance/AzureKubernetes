@@ -4,7 +4,7 @@
   "parameters": {
     "nameSuffix": {
       "type": "string",
-      "defaultValue": "mskubx",
+      "defaultValue": "kub8ms",
       "metadata": {
         "description": "Prefix of the components"
       }
@@ -142,7 +142,7 @@
     
     "storageAccountType": "Standard_LRS",
     
-    "sshKeyPath": "[concat('/home/',parameters('adminUsername'),'/.ssh/authorized_keys')]",
+    "sshKeyPath": "[concat('/home/',parameters('adminUserName'),'/.ssh/authorized_keys')]",
     "ansibleIPAddressName": "ansiblePip",
     "ansibleIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('ansibleIPAddressName'))]",
     
@@ -458,7 +458,7 @@
         },
         "osProfile": {
           "computerName": "[variables('ansibleDomainName')]",
-          "adminUsername": "[parameters('adminUsername')]",
+          "adminUsername": "[parameters('adminUserName')]",
           "adminPassword": "[variables('adminPassword')]",
           "linuxConfiguration": {
             "disablePasswordAuthentication": "true",
@@ -511,11 +511,11 @@
           "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetMasters'))]"
         },
         "hardwareProfile": {
-          "vmSize": "[parameters('kubernetesvmSize')]"
+          "vmSize": "[parameters('kubernetesVmSize')]"
         },
         "osProfile": {
           "computerName": "[concat('ma-', parameters('nameSuffix'), copyindex())]",
-          "adminUsername": "[parameters('adminUsername')]",
+          "adminUsername": "[parameters('adminUserName')]",
           "adminPassword": "[variables('adminPassword')]",
           "linuxConfiguration": {
             "disablePasswordAuthentication": "[variables('disablePasswordAuthentication')]",
@@ -579,11 +579,11 @@
           "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetMinions'))]"
         },
         "hardwareProfile": {
-          "vmSize": "[parameters('kubernetesvmSize')]"
+          "vmSize": "[parameters('kubernetesVmSize')]"
         },
         "osProfile": {
           "computerName": "[concat('mi-', parameters('nameSuffix'), copyindex())]",
-          "adminUsername": "[parameters('adminUsername')]",
+          "adminUsername": "[parameters('adminUserName')]",
           "adminPassword": "[variables('adminPassword')]",
           "linuxConfiguration": {
             "disablePasswordAuthentication": "[variables('disablePasswordAuthentication')]",
@@ -647,11 +647,11 @@
           "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetEtcd'))]"
         },
         "hardwareProfile": {
-          "vmSize": "[parameters('kubernetesvmSize')]"
+          "vmSize": "[parameters('kubernetesVmSize')]"
         },
         "osProfile": {
           "computerName": "[concat('et-', parameters('nameSuffix'), copyindex())]",
-          "adminUsername": "[parameters('adminUsername')]",
+          "adminUsername": "[parameters('adminUserName')]",
           "adminPassword": "[variables('adminPassword')]",
           "linuxConfiguration": {
             "disablePasswordAuthentication": "[variables('disablePasswordAuthentication')]",
@@ -721,7 +721,7 @@
             "[variables('keysBlobUrl')]",
             "[variables('pubBlobUrl')]"
           ],
-          "commandToExecute": "[concat('bash deploy.sh ',parameters('numberOfMasters'), ' ',parameters('numberOfMinions'), ' ',parameters('numberOfEtcd'), ' ', variables('subnetMastersPrefix'), ' ', variables('subnetMinionsPrefix'), ' ',variables('subnetEtcdPrefix'), ' ',parameters('nameSuffix'), ' ', ' ', reference(variables('ansibleIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn,' ', parameters('adminUsername'), ' ', reference(variables('lbPublicIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn)]"
+          "commandToExecute": "[concat('bash deploy.sh ',parameters('numberOfMasters'), ' ',parameters('numberOfMinions'), ' ',parameters('numberOfEtcd'), ' ', variables('subnetMastersPrefix'), ' ', variables('subnetMinionsPrefix'), ' ',variables('subnetEtcdPrefix'), ' ',parameters('nameSuffix'), ' ', ' ', reference(variables('ansibleIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn,' ', parameters('adminUserName'), ' ', reference(variables('lbPublicIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn,' > /tmp/deploy.log 2>&1') ]"
         },
         "protectedSettings": {
           "storageAccountName": "[parameters('vaultAccountName')]",
