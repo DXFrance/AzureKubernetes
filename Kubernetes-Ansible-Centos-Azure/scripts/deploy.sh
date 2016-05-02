@@ -175,6 +175,18 @@ function install_epel_repo()
    rpm -iUvh "${EPEL_REPO}"
 }
 
+function update_centos_distribution()
+{
+log "Update Centos distribution..." "0"
+until yum -y update
+do
+log "Lock detected on VM init Try again..." "0"
+sleep 2
+done
+error_log "unable to update system"
+}
+
+
 function install_required_groups()
 {
   log "Install ansible required groups..." "0"
@@ -235,7 +247,7 @@ function configure_ansible()
   cp examples/hosts /etc/ansible/.
   error_log "unable to copy hosts file to /etc/ansible"
 
-  printf "[localhost]\n127.0.0.1\n\n"                      >> "${ANSIBLE_HOST_FILE}"
+  #printf "[localhost]\n127.0.0.1\n\n"                      >> "${ANSIBLE_HOST_FILE}"
   printf "[defaults]\ndeprecation_warnings=False\n\n"      >> "${ANSIBLE_CONFIG_FILE}"
   
   # Accept ssh keys by default    
@@ -350,6 +362,7 @@ install_epel_repo
 install_curl
 ssh_config
 get_private_ip
+update_centos_distribution
 install_required_groups
 install_required_packages
 install_python_modules
