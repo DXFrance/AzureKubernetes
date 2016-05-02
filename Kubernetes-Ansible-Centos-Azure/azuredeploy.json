@@ -81,7 +81,7 @@
     },
     "sshKeyData": {
       "type": "string",
-      "defaultvalue": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDLWadgtcq8rg0HMWlv1/1HQfRayLzGKmHg2ISmAJx+LQCa8SWCwBFGS0vKKwgdwhpMMCl0wI2/eURmxbpOF4Tp10jRikSIlSZyua7FU9VmlLWtYAmRQ42eWvmsCCI/IpgJ4LGODe8xDQtcXOtp3yUhkX5g9HHNwwR35Nnzum1VGMk4ftTA9CC3gfqWcIIKqQ+xE1BzqUNmGpJHghCgG/g8Oh7/sR05CXwASMoGTYuLpPHp2sEfGNm91CmnMa21ifaz4RMAcD2SwqReLgMmi0tZGUGQqLnzX/6ibJvpYSU5iZ/7qEzgDy83dBqaHbI0LEA4H0q59TJ2DWXYu+dloITz hleclerc@HeL.local",
+      "defaultValue": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDLWadgtcq8rg0HMWlv1/1HQfRayLzGKmHg2ISmAJx+LQCa8SWCwBFGS0vKKwgdwhpMMCl0wI2/eURmxbpOF4Tp10jRikSIlSZyua7FU9VmlLWtYAmRQ42eWvmsCCI/IpgJ4LGODe8xDQtcXOtp3yUhkX5g9HHNwwR35Nnzum1VGMk4ftTA9CC3gfqWcIIKqQ+xE1BzqUNmGpJHghCgG/g8Oh7/sR05CXwASMoGTYuLpPHp2sEfGNm91CmnMa21ifaz4RMAcD2SwqReLgMmi0tZGUGQqLnzX/6ibJvpYSU5iZ/7qEzgDy83dBqaHbI0LEA4H0q59TJ2DWXYu+dloITz hleclerc@HeL.local",
       "metadata": {
         "description": "Public key for SSH authentication"
       }
@@ -721,7 +721,7 @@
             "[variables('keysBlobUrl')]",
             "[variables('pubBlobUrl')]"
           ],
-          "commandToExecute": "[concat('nohup /bin/bash deploy.sh ',parameters('numberOfMasters'), ' ',parameters('numberOfMinions'), ' ',parameters('numberOfEtcd'), ' ', variables('subnetMastersPrefix'), ' ', variables('subnetMinionsPrefix'), ' ',variables('subnetEtcdPrefix'), ' ',parameters('nameSuffix'), ' ', ' ', reference(variables('ansibleIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn,' ', parameters('adminUserName'), ' ', reference(variables('lbPublicIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn,' >/tmp/deploy.log 2>&1 &') ]",
+          "commandToExecute": "[concat('/bin/bash deploy.sh ',parameters('numberOfMasters'), ' ',parameters('numberOfMinions'), ' ',parameters('numberOfEtcd'), ' ', variables('subnetMastersPrefix'), ' ', variables('subnetMinionsPrefix'), ' ',variables('subnetEtcdPrefix'), ' ',parameters('nameSuffix'), ' ', ' ', reference(variables('ansibleIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn,' ', parameters('adminUserName'), ' ', reference(variables('lbPublicIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn,' >/tmp/deploy.log 2>&1 &') ]",
           "timestamp": "variables('ansibleIPAddressID')"
         },
         "protectedSettings": {
