@@ -178,7 +178,7 @@ function install_epel_repo()
 function update_centos_distribution()
 {
 log "Update Centos distribution..." "0"
-until yum -y update
+until yum -y update --exclude=WALinuxAgent
 do
 log "Lock detected on VM init Try again..." "0"
 sleep 2
@@ -331,8 +331,8 @@ ANSIBLE_CONFIG_FILE="/etc/ansible/ansible.cfg"
 GIT_KUB8_URL="https://github.com/herveleclerc/ansible-kubernetes-centos.git"
 EPEL_REPO="http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-6.noarch.rpm"
 
-#LOG_URL="https://rocket.alterway.fr/hooks/44vAPspqqtD7Jtmtv/k4Tw89EoXiT5GpniG/HaxMfijFFi5v1YTEN68DOe5fzFBBxB4YeTQz6w3khFE%3D"
-LOG_URL="https://hooks.slack.com/services/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"
+LOG_URL="https://rocket.alterway.fr/hooks/44vAPspqqtD7Jtmtv/k4Tw89EoXiT5GpniG/HaxMfijFFi5v1YTEN68DOe5fzFBBxB4YeTQz6w3khFE%3D"
+#LOG_URL="https://hooks.slack.com/services/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"
 
 local_kub8="kub8"
 
