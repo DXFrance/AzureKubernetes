@@ -25,7 +25,7 @@ function log()
 
 
   payload="payload={\"icon_emoji\":\":cloud:\",\"text\":\"$mess\"}"
-  curl -s -X POST --data-urlencode "$payload" "$LOG_URL » > /dev/null 2>&1
+  curl -s -X POST --data-urlencode "$payload" "$LOG_URL" > /dev/null 2>&1
     
   echo "$(date) : $1"
 }
