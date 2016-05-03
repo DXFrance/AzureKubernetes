@@ -341,7 +341,7 @@ LOG_URL="https://rocket.alterway.fr/hooks/44vAPspqqtD7Jtmtv/k4Tw89EoXiT5GpniG/Ha
 #LOG_URL="https://hooks.slack.com/services/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"
 
 local_kub8="kub8"
-repo_name"ansible-kubernetes-centos"
+repo_name="ansible-kubernetes-centos"
 
 ansible_hostname=$(echo "$ansiblefqdn" | cut -f1 -d.)
 tld=$(echo "$ansiblefqdn"  | sed "s?${ansible_hostname}\.??")
