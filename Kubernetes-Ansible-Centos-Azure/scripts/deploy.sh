@@ -380,6 +380,7 @@ subnetMinions3=$(echo "${subnetMinions}"| cut -f1,2,3 -d.)
 subnetEtcd3=$(echo "${subnetEtcd}"| cut -f1,2,3 -d.)
 
 
+
 ### It begins here
 
 log "Begin Installation on Azure parameters : numberOfMasters=$numberOfMasters -  numberOfMinions=$numberOfMinions - numberOfEtcd=$numberOfEtcd" "0"
