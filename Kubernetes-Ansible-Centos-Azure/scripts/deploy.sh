@@ -223,7 +223,7 @@ function install_ansible()
   rm -rf ansible
   error_log "Unable to remove ansible directory"
 
-  git clone https://github.com/ansible/ansible.git
+  git clone https://github.com/ansible/ansible.git --depth 1
   error_log "Unable to clone ansible repo"
 
   cd ansible || error_log "Unable to cd to ansible directory"
@@ -260,6 +260,17 @@ function test_ansible()
 {
   mess=$(ansible cluster -m ping)
   log "$mess" "0"
+}
+
+function install_slack_callback()
+{
+
+  mkdir -p "/usr/share/ansible_plugins/callback_plugins"
+  error_log "Unable to create callback plugin"
+  cd "$CWD" || error_log "unable to back with cd .."
+  cd "$local_kub8/$slack_repo" || error_log "unable to back with cd $local_kub8/$slack_repo"
+  pip install -r requirements.txt
+  cp slack-logger.py /usr/share/ansible_plugins/callback_plugins/slack-logger.py
 }
 
 
@@ -327,21 +338,32 @@ ansiblefqdn="${8}"
 sshu="${9}"
 viplb="${10}"
 
+
+# Variables
 LOG_DATE=$(date +%s)
 FACTS="/etc/ansible/facts"
 ANSIBLE_HOST_FILE="/etc/ansible/hosts"
 ANSIBLE_CONFIG_FILE="/etc/ansible/ansible.cfg"
 
-GIT_KUB8_URL="https://github.com/herveleclerc/ansible-kubernetes-centos.git"
+#GIT_KUB8_URL="https://github.com/herveleclerc/ansible-kubernetes-centos.git"
 GIT_KUB8_URL="https://github.com/DXFrance/AzureKubernetes.git"
 
 EPEL_REPO="http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-6.noarch.rpm"
 
-LOG_URL="https://rocket.alterway.fr/hooks/44vAPspqqtD7Jtmtv/k4Tw89EoXiT5GpniG/HaxMfijFFi5v1YTEN68DOe5fzFBBxB4YeTQz6w3khFE%3D"
-#LOG_URL="https://hooks.slack.com/services/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"
+#LOG_URL="https://rocket.alterway.fr/hooks/44vAPspqqtD7Jtmtv/k4Tw89EoXiT5GpniG/HaxMfijFFi5v1YTEN68DOe5fzFBBxB4YeTQz6w3khFE%3D"
+LOG_URL="https://hooks.slack.com/services/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"
 
+
+# Notification vers slack de l'output azure
+
+export SLACK_TOKEN="xoxp-26116078132-26117788772-39720236486-a187136c5a"
+export SLACK_CHANNEL="ansible"
+
+
+## Variables pour les dépots
 local_kub8="kub8"
 repo_name="ansible-kubernetes-centos"
+slack_repo="slack-ansible-plugin"
 
 ansible_hostname=$(echo "$ansiblefqdn" | cut -f1 -d.)
 tld=$(echo "$ansiblefqdn"  | sed "s?${ansible_hostname}\.??")
@@ -375,6 +397,7 @@ install_required_packages
 install_python_modules
 install_ansible
 configure_ansible
+install_slack_callback
 test_ansible
 create_inventory
 get_kube_playbook
