@@ -1,0 +1,3 @@
+[submodule "ansible-kubernetes-centos"]
+	path = ansible-kubernetes-centos
+	url = https://github.com/herveleclerc/ansible-kubernetes-centos.git
