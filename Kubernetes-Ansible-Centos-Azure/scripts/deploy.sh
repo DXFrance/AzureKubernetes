@@ -380,7 +380,6 @@ subnetMinions3=$(echo "${subnetMinions}"| cut -f1,2,3 -d.)
 subnetEtcd3=$(echo "${subnetEtcd}"| cut -f1,2,3 -d.)
 
 
-
 ### It begins here
 
 log "Begin Installation on Azure parameters : numberOfMasters=$numberOfMasters -  numberOfMinions=$numberOfMinions - numberOfEtcd=$numberOfEtcd" "0"
@@ -398,8 +397,8 @@ install_required_packages
 install_python_modules
 install_ansible
 configure_ansible
-install_slack_callback
 test_ansible
 create_inventory
 get_kube_playbook
+install_slack_callback
 deploy
