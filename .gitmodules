@@ -1,3 +1,6 @@
 [submodule "ansible-kubernetes-centos"]
 	path = ansible-kubernetes-centos
 	url = https://github.com/herveleclerc/ansible-kubernetes-centos.git
+[submodule "slack-ansible-plugin"]
+	path = slack-ansible-plugin
+	url = https://github.com/stephgou/slack-ansible-plugin
