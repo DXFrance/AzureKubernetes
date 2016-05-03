@@ -50,7 +50,7 @@ function install_curl()
 function ssh_config()
 {
   # log "tld is ${tld}"
-  log "configure ssh..." "0"
+  log "Configure ssh..." "0"
   
   mkdir -p ~/.ssh
 
@@ -64,22 +64,22 @@ Host *
     StrictHostKeyChecking no
 EOF
 
-  error_log "unable to create ssh config file for root"
+  error_log "Unable to create ssh config file for root"
 
   cp id_rsa ~/.ssh/id_rsa
-  error_log "unable to copy id_rsa key to root .ssh directory"
+  error_log "Unable to copy id_rsa key to root .ssh directory"
 
   cp id_rsa.pub ~/.ssh/id_rsa.pub
-  error_log "unable to copy id_rsa.pub key to root .ssh directory"
+  error_log "Unable to copy id_rsa.pub key to root .ssh directory"
 
   chmod 700 ~/.ssh
-  error_log "unable to chmod root .ssh directory"
+  error_log "Unable to chmod root .ssh directory"
 
   chmod 400 ~/.ssh/id_rsa
-  error_log "unable to chmod root id_rsa file"
+  error_log "Unable to chmod root id_rsa file"
 
   chmod 644 ~/.ssh/id_rsa.pub
-  error_log "unable to chmod root id_rsa.pub file"
+  error_log "Unable to chmod root id_rsa.pub file"
 
   ## Devops User
   # No host Checking for sshu 
@@ -91,25 +91,25 @@ Host *
     StrictHostKeyChecking no
 EOF
 
-  error_log "unable to create ssh config file for user ${sshu}"
+  error_log "Unable to create ssh config file for user ${sshu}"
 
   cp id_rsa "/home/${sshu}/.ssh/id_rsa"
-  error_log "unable to copy id_rsa key to $sshu .ssh directory"
+  error_log "Unable to copy id_rsa key to $sshu .ssh directory"
 
   cp id_rsa.pub "/home/${sshu}/.ssh/id_rsa.pub"
-  error_log "unable to copy id_rsa.pub key to $sshu .ssh directory"
+  error_log "Unable to copy id_rsa.pub key to $sshu .ssh directory"
 
   chmod 700 "/home/${sshu}/.ssh"
-  error_log "unable to chmod $sshu .ssh directory"
+  error_log "Unable to chmod $sshu .ssh directory"
 
   chown -R "${sshu}:" "/home/${sshu}/.ssh"
-  error_log "unable to chown to $sshu .ssh directory"
+  error_log "Unable to chown to $sshu .ssh directory"
 
   chmod 400 "/home/${sshu}/.ssh/id_rsa"
-  error_log "unable to chmod $sshu id_rsa file"
+  error_log "Unable to chmod $sshu id_rsa file"
 
   chmod 644 "/home/${sshu}/.ssh/id_rsa.pub"
-  error_log "unable to chmod $sshu id_rsa.pub file"
+  error_log "Unable to chmod $sshu id_rsa.pub file"
   
   # remove when debugging
   # rm id_rsa id_rsa.pub 
@@ -207,45 +207,45 @@ function install_required_packages()
     log "Lock detected on VM init Try again..." "0"
     sleep 2
   done
-  error_log "unable to get system packages"
+  error_log "Unable to get system packages"
 }
 
 function install_python_modules()
 {
   log "Install ansible required python modules..." "0"
   pip install PyYAML jinja2 paramiko
-  error_log "unable to install python packages via pip"
+  error_log "Unable to install python packages via pip"
 }
 
 function install_ansible()
 {
   log "Clone ansible repo..." "0"
   rm -rf ansible
-  error_log "unable to remove ansible directory"
+  error_log "Unable to remove ansible directory"
 
   git clone https://github.com/ansible/ansible.git
-  error_log "unable to clone ansible repo"
+  error_log "Unable to clone ansible repo"
 
-  cd ansible || error_log "unable to cd to ansible directory"
+  cd ansible || error_log "Unable to cd to ansible directory"
 
   log "Clone ansible submodules..." "0"
   git submodule update --init --recursive
-  error_log "unable to clone ansible submodules"
+  error_log "Unable to clone ansible submodules"
 
   log "Install ansible..." "0"
   make install
-  error_log "unable to install ansible"
+  error_log "Unable to install ansible"
 }
 function configure_ansible()
 {
   log "Generate ansible files..." "0"
   rm -rf /etc/ansible
-  error_log "unable to remove /etc/ansible directory"
+  error_log "Unable to remove /etc/ansible directory"
   mkdir -p /etc/ansible
-  error_log "unable to create /etc/ansible directory"
+  error_log "Unable to create /etc/ansible directory"
 
   cp examples/hosts /etc/ansible/.
-  error_log "unable to copy hosts file to /etc/ansible"
+  error_log "Unable to copy hosts file to /etc/ansible"
 
   #printf "[localhost]\n127.0.0.1\n\n"                      >> "${ANSIBLE_HOST_FILE}"
   printf "[defaults]\ndeprecation_warnings=False\n\n"      >> "${ANSIBLE_CONFIG_FILE}"
@@ -296,12 +296,15 @@ function get_kube_playbook()
   cd "$CWD" || error_log "unable to back with cd .."  
   rm -f kub8
   git clone "${GIT_KUB8_URL}" "$local_kub8"
+  cd "$local_kub8" || error_log "unable to change to directory $local_kub8"
+  git submodule update --init --recursive
+  error_log "Error fetching submodules"
 }
 
 function deploy()
 {
   cd "$CWD" || error_log "unable to back with cd $CWD"  
-  cd "$local_kub8" || error_log "unable to back with cd $local_kub8"  
+  cd "$local_kub8/$repo_name" || error_log "unable to back with cd $local_kub8/$repo_name"
   log "Playing playbook" "0"
   ansible-playbook -i "${ANSIBLE_HOST_FILE}" integrated-deploy.yml | tee -a /tmp/deploy-"${LOG_DATE}".log
   error_log "playbook kubernetes integrated-deploy.yml had errors"
@@ -328,13 +331,17 @@ LOG_DATE=$(date +%s)
 FACTS="/etc/ansible/facts"
 ANSIBLE_HOST_FILE="/etc/ansible/hosts"
 ANSIBLE_CONFIG_FILE="/etc/ansible/ansible.cfg"
+
 GIT_KUB8_URL="https://github.com/herveleclerc/ansible-kubernetes-centos.git"
+GIT_KUB8_URL="https://github.com/DXFrance/AzureKubernetes.git"
+
 EPEL_REPO="http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-6.noarch.rpm"
 
-#LOG_URL="https://rocket.alterway.fr/hooks/44vAPspqqtD7Jtmtv/k4Tw89EoXiT5GpniG/HaxMfijFFi5v1YTEN68DOe5fzFBBxB4YeTQz6w3khFE%3D"
-LOG_URL="https://hooks.slack.com/services/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"
+LOG_URL="https://rocket.alterway.fr/hooks/44vAPspqqtD7Jtmtv/k4Tw89EoXiT5GpniG/HaxMfijFFi5v1YTEN68DOe5fzFBBxB4YeTQz6w3khFE%3D"
+#LOG_URL="https://hooks.slack.com/services/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"
 
 local_kub8="kub8"
+repo_name"ansible-kubernetes-centos"
 
 ansible_hostname=$(echo "$ansiblefqdn" | cut -f1 -d.)
 tld=$(echo "$ansiblefqdn"  | sed "s?${ansible_hostname}\.??")
