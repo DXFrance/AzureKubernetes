@@ -155,7 +155,10 @@
     
     "pubBlobLocation": "keys/id_rsa.pub",
     "pubBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('pubBlobLocation'))]",
- 
+    
+    "tokenBlobLocation": "keys/slack-token.tok",
+    "tokenBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('tokenBlobLocation'))]",
+    
     "assetsStorageAccountId": "[resourceId(parameters('vaultAccountName'),'Microsoft.Storage/storageAccounts', parameters('vaultAccountName'))]",
     
     "imageReference": {
@@ -719,7 +722,8 @@
           "fileUris": [
             "[variables('scriptBlobUrl')]",
             "[variables('keysBlobUrl')]",
-            "[variables('pubBlobUrl')]"
+            "[variables('pubBlobUrl')]",
+            "[variables('tokenBlobUrl')]"
           ],
           "commandToExecute": "[concat('/bin/bash deploy.sh ',parameters('numberOfMasters'), ' ',parameters('numberOfMinions'), ' ',parameters('numberOfEtcd'), ' ', variables('subnetMastersPrefix'), ' ', variables('subnetMinionsPrefix'), ' ',variables('subnetEtcdPrefix'), ' ',parameters('nameSuffix'), ' ', ' ', reference(variables('ansibleIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn,' ', parameters('adminUserName'), ' ', reference(variables('lbPublicIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn,' >/tmp/deploy.log 2>&1 &') ]",
           "timestamp": "variables('ansibleIPAddressID')"
