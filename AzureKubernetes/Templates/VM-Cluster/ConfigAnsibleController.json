@@ -146,6 +146,9 @@
     "pubBlobLocation": "keys/id_rsa.pub",
     "pubBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('pubBlobLocation'))]",
 
+    "tokenBlobLocation": "keys/slack-token.tok",
+    "tokenBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('tokenBlobLocation'))]",
+
     "assetsStorageAccountId": "[resourceId(parameters('vaultAccountName'),'Microsoft.Storage/storageAccounts', parameters('vaultAccountName'))]",
     "ansibleIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('ansibleIPAddressName'))]",
     "kubemastersLbPIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('kubemastersLbPIPAddressName'))]",
@@ -241,9 +244,11 @@
           "fileUris": [
             "[variables('scriptBlobUrl')]",
             "[variables('keysBlobUrl')]",
-            "[variables('pubBlobUrl')]"
+            "[variables('pubBlobUrl')]",
+            "[variables('tokenBlobUrl')]"
           ],
-          "commandToExecute": "[concat('bash deploy.sh ',parameters('numberOfMasters'), ' ',parameters('numberOfMinions'), ' ',parameters('numberOfEtcdNodes'), ' ', parameters('subnetMastersPrefix'), ' ', parameters('subnetMinionsPrefix'), ' ',parameters('subnetEtcdPrefix'), ' ',parameters('prefix'), ' ', ' ', reference(variables('ansibleIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn,' ', parameters('adminUserName'), ' ', reference(variables('kubemastersLbPIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn)]"
+          "commandToExecute": "[concat('/bin/bash deploy.sh ',parameters('numberOfMasters'), ' ',parameters('numberOfMinions'), ' ',parameters('numberOfEtcd'), ' ', variables('subnetMastersPrefix'), ' ', variables('subnetMinionsPrefix'), ' ',variables('subnetEtcdPrefix'), ' ',parameters('nameSuffix'), ' ', ' ', reference(variables('ansibleIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn,' ', parameters('adminUserName'), ' ', reference(variables('lbPublicIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn,' >/tmp/deploy.log 2>&1 &') ]",
+          "timestamp": "variables('ansibleIPAddressID')"
         },
         "protectedSettings": {
           "storageAccountName": "[parameters('vaultAccountName')]",

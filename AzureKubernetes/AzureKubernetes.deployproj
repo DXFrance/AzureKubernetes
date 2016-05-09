@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\Deploy-AzureResourceGroup.ps1" />
+    <None Include="Scripts\Deploy-KeyVault.ps1" />
     <None Include="Scripts\Deploy-VM-Cluster-PowerShell.ps1" />
     <None Include="Scripts\Deploy-VM-PowerShell.ps1" />
     <None Include="Scripts\Undeploy-VM-Cluster-PowerShell.ps1" />

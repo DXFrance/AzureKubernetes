@@ -19,7 +19,11 @@ function log()
   fi
 
   if [ "$2" != "0" ]; then
-    x=":hankey:"
+    if [ "$2" = "N" ]; then
+       x=""
+    else
+       x=":hankey:"
+    fi
   fi
   mess="$(date) - $(hostname): $1 $x"
 
@@ -258,7 +262,11 @@ function configure_ansible()
 
 function test_ansible()
 {
-  mess=$(ansible cluster -m ping)
+  mess=$(ansible masters -m ping)
+  log "$mess" "0"
+  mess=$(ansible minions -m ping)
+  log "$mess" "0"
+  mess=$(ansible etcd -m ping)
   log "$mess" "0"
 }
 
@@ -312,6 +320,12 @@ function get_kube_playbook()
   error_log "Error fetching submodules"
 }
 
+function get_slack_token()
+{
+  token=$(grep "token:" slack-token.tok | cut -f2 -d:)
+  echo "$token"
+}
+
 function deploy()
 {
   cd "$CWD" || error_log "unable to back with cd $CWD"  
@@ -320,8 +334,9 @@ function deploy()
   ansible-playbook -i "${ANSIBLE_HOST_FILE}" integrated-deploy.yml | tee -a /tmp/deploy-"${LOG_DATE}".log
   error_log "playbook kubernetes integrated-deploy.yml had errors"
 
-  log "END Installation on Azure parameters : numberOfMasters=$numberOfMasters -  numberOfMinions=$numberOfMinions - numberOfEtcd=$numberOfEtcd" "0" 
+  log "*END* Installation Kubernetes Cluster on Azure" "0"
 }
+
 
 ### PARAMETERS
 
@@ -339,7 +354,6 @@ sshu="${9}"
 viplb="${10}"
 
 
-# Variables
 LOG_DATE=$(date +%s)
 FACTS="/etc/ansible/facts"
 ANSIBLE_HOST_FILE="/etc/ansible/hosts"
@@ -354,13 +368,15 @@ EPEL_REPO="http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-6.noar
 LOG_URL="https://hooks.slack.com/services/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"
 
 
-# Notification vers slack de l'output azure
+# Slack notification
+SLACK_TOKEN="$(get_slack_token)"
+SLACK_CHANNEL="ansible"
 
-export SLACK_TOKEN="xoxp-26116078132-26117788772-39720236486-a187136c5a"
-export SLACK_CHANNEL="ansible"
+export SLACK_TOKEN SLACK_CHANNEL
 
 
-## Variables pour les dépots
+
+## Repos Variables
 local_kub8="kub8"
 repo_name="ansible-kubernetes-centos"
 slack_repo="slack-ansible-plugin"
@@ -382,9 +398,18 @@ subnetEtcd3=$(echo "${subnetEtcd}"| cut -f1,2,3 -d.)
 
 ### It begins here
 
-log "Begin Installation on Azure parameters : numberOfMasters=$numberOfMasters -  numberOfMinions=$numberOfMinions - numberOfEtcd=$numberOfEtcd" "0"
-log ">>>subnetMasters=$subnetMasters - subnetMinions=$subnetMinions - numberOfEtcd=$numberOfEtcd" "0"
-log ">>>vmNamePrefix=$vmNamePrefix ansiblefqdn=$ansiblefqdn sshu=$sshu viplb=$viplb" "0"
+log "*BEGIN* Installation Kubernetes Cluster on Azure" "N"
+log "  Parameters : " "N"
+log "    - Number Of Masters  $numberOfMasters" "N"
+log "    - Number Of Minions  $numberOfMinions" "N"
+log "    - Number Of Etcd     $numberOfEtcd" "N"
+log "    - Masters Subnet is  $subnetMasters" "N"
+log "    - Minions Subnet is  $subnetMinions" "N"
+log "    - Etcd Subnet    is  $subnetEtcd" "N"
+log "    - VM Suffix          $vmNamePrefix" "N"
+log "    - Ansible Jumpbox VM $ansiblefqdn" "N"
+log "    - VIP LB             $viplb" "N"
+log "    - SSH User           $sshu" "N"
 
 
 install_epel_repo
@@ -397,8 +422,8 @@ install_required_packages
 install_python_modules
 install_ansible
 configure_ansible
-test_ansible
 create_inventory
+test_ansible
 get_kube_playbook
 install_slack_callback
 deploy
