@@ -33,6 +33,10 @@
     <Content Include="Scripts\Undeploy-VM-Cluster.ps1" />
     <Content Include="Scripts\Deploy-VM-ScaleSet-Cluster.ps1" />
     <Content Include="Templates\VM-Cluster\azuredeploy.json" />
+    <None Include="ConfigScripts\config-ansible.sh" />
+    <None Include="ConfigScripts\config-node.sh" />
+    <None Include="ConfigScripts\GetSSHFromPrivateStorage.py" />
+    <None Include="ConfigScripts\WriteSSHToPrivateStorage.py" />
     <None Include="Deployment.targets">
       <Visible>False</Visible>
     </None>
