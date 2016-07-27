@@ -503,12 +503,6 @@
           "centosOSVersion": {
             "value": "[parameters('centosOSVersion')]"
           },
-          "fileUris": {
-            "value": "[parameters('fileUris')]"
-          },
-          "commandToExecute": {
-            "value": "[parameters('commandToExecute')]"
-          },
           "keyStorageAccountName": {
             "value": "[variables('keyStorageAccountName')]"
           },
@@ -570,12 +564,6 @@
           "centosOSVersion": {
             "value": "[parameters('centosOSVersion')]"
           },
-          "fileUris": {
-            "value": "[parameters('fileUris')]"
-          },
-          "commandToExecute": {
-            "value": "[parameters('commandToExecute')]"
-          },
           "keyStorageAccountName": {
             "value": "[variables('keyStorageAccountName')]"
           },
@@ -636,12 +624,6 @@
           },
           "centosOSVersion": {
             "value": "[parameters('centosOSVersion')]"
-          },
-          "fileUris": {
-            "value": "[parameters('fileUris')]"
-          },
-          "commandToExecute": {
-            "value": "[parameters('commandToExecute')]"
           },
           "keyStorageAccountName": {
             "value": "[variables('keyStorageAccountName')]"

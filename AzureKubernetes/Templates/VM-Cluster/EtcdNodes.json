@@ -102,9 +102,9 @@
       "version": "latest"
     },
     "customScriptDeployFile": "config_node.sh",
-    "customScriptDeployURL": "[concat(parameters('configScriptsBaseURL'),variables('customScriptDeployFile'))]",
+    "customScriptDeployURL": "[concat(parameters('configScriptsBaseURL'),'/',variables('customScriptDeployFile'))]",
     "customScriptNodeCommand": "[concat('bash ',variables('customScriptDeployFile'))]",
-    "pythonAzureScriptURL": "[concat(parameters('configScriptsBaseURL'),'GetSSHFromPrivateStorage.py')]",
+    "pythonAzureScriptURL": "[concat(parameters('configScriptsBaseURL'),'/','GetSSHFromPrivateStorage.py')]",
     "kubernetesRole": "etcd",
 
     "adminPassword": "V3l0C1RaPt0R#",
@@ -219,8 +219,8 @@
         "typeHandlerVersion": "1.4",
         "settings": {
           "fileUris": [
-            "[variables('customScriptDeployUrl')]",
-            "[variables('pythonAzureScriptUrl')]"
+            "[variables('customScriptDeployURL')]",
+            "[variables('pythonAzureScriptURL')]"
           ]
         },
         "protectedSettings": {

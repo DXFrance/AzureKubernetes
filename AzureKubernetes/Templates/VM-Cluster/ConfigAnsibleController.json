@@ -160,9 +160,9 @@
     "pubBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('pubBlobLocation'))]",
 
     "customScriptDeployFile": "config_ansible.sh",
-    "customScriptDeployURL": "[concat(parameters('configScriptsBaseURL'),variables('customScriptDeployFile'))]",
+    "customScriptDeployURL": "[concat(parameters('configScriptsBaseURL'),'/',variables('customScriptDeployFile'))]",
     "customScriptAnsibleCommand": "[concat('bash ',variables('customScriptDeployFile'))]",
-    "pythonAzureScriptURL": "[concat(parameters('configScriptsBaseURL'),'WriteSSHToPrivateStorage.py')]",
+    "pythonAzureScriptURL": "[concat(parameters('configScriptsBaseURL'),'/','WriteSSHToPrivateStorage.py')]",
 
     "tokenBlobLocation": "keys/slack-token.tok",
     "tokenBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('tokenBlobLocation'))]",
@@ -266,7 +266,7 @@
           "timestamp": "variables('ansibleIPAddressID')"
         },
         "protectedSettings": {
-          "commandToExecute": "[concat(variables('customScriptAnsibleCommand'), ' \"', parameters('numberOfMasters'), '\" \"', parameters('numberOfMinions'), '\" \"', parameters('numberOfEtcdNodes'),'\" \"', parameters('subnetMastersPrefix'),'\" \"', parameters('subnetMinionsPrefix'),'\" \"', parameters('subnetEtcdPrefix'), '\" \"', parameters('prefix'), '\" \"', reference(variables('ansibleIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn, '\" \"', parameters('adminUserName'), '\" \"', reference(variables('kubemastersLbPIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn, '\" \"', parameters('keyStorageAccountName'), '\" \"', listKeys(concat('Microsoft.Storage/storageAccounts/',parameters('keyStorageAccountName')),'2015-05-01-preview').key, '\"')]"
+          "commandToExecute": "[concat(variables('customScriptAnsibleCommand'), ' \"', parameters('numberOfMasters'), '\" \"', parameters('numberOfMinions'), '\" \"', parameters('numberOfEtcdNodes'),'\" \"', parameters('subnetMastersPrefix'),'\" \"', parameters('subnetMinionsPrefix'),'\" \"', parameters('subnetEtcdPrefix'), '\" \"', parameters('prefix'), '\" \"', reference(variables('ansibleIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn, '\" \"', parameters('adminUserName'), '\" \"', reference(variables('kubemastersLbPIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn, '\" \"', parameters('keyStorageAccountName'), '\" \"', listKeys(concat('Microsoft.Storage/storageAccounts/',parameters('keyStorageAccountName')),'2015-05-01-preview').key1, '\"')]"
         }
       }
     }
