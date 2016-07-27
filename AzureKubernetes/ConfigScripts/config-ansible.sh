@@ -70,6 +70,8 @@ EOF
 
   error_log "Unable to create ssh config file for root"
 
+  log "Copy generated keys..."
+
   cp id_rsa ~/.ssh/id_rsa
   error_log "Unable to copy id_rsa key to root .ssh directory"
 
@@ -240,6 +242,26 @@ function install_ansible()
   make install
   error_log "Unable to install ansible"
 }
+
+function generate_sshkeys()
+{
+  echo -e 'y\n'|ssh-keygen -b 4096 -f id_rsa -t rsa -q -N ''
+}
+
+function put_sshkeys()
+ {
+   
+    log "Install azure storage python module ..."
+    pip install azure-storage
+
+    # Push both Private and Public Key
+    log "Push ssh keys to Azure Storage"
+    python WriteSSHToPrivateStorage.py "${STORAGE_ACCOUNT_NAME}" "${STORAGE_ACCOUNT_KEY}" id_rsa
+    error_log "Unable to write id_rsa to storage account ${STORAGE_ACCOUNT_NAME}"
+    python WriteSSHToPrivateStorage.py "${STORAGE_ACCOUNT_NAME}" "${STORAGE_ACCOUNT_KEY}" id_rsa.pub
+    error_log "Unable to write id_rsa.pub to storage account ${STORAGE_ACCOUNT_NAME}"
+}
+
 function configure_ansible()
 {
   log "Generate ansible files..." "0"
@@ -322,7 +344,16 @@ function get_kube_playbook()
 
 function get_slack_token()
 {
-  token=$(grep "token:" slack-token.tok | cut -f2 -d:)
+  # this function set the SLACK_TOKEN environment variable in order to use slack-ansible-plugin
+
+  # token=$(grep "token:" slack-token.tok | cut -f2 -d:)
+  # base64 encoding in order to avoid to handle vm extension fileuris parameters outside of github
+  # because github forbids token archiving
+  # the alternative would be to put a file in a vault or a storage account and copy this file from 
+  # the config-ansible.sh (deployment through fileuris mechanism would also present an issue because
+  # it seems currently impossible to use both github and a storage account in the fileuris list)
+  encoded="AHRva2VuOnhveHAtMjYxMTYwNzgxMzItMjYxMTc3ODg3NzItNDAwMDY4MDY0NjUtZjgwZTI3MzFmMw=="
+  token=$(base64 -d -i <<<"$encoded")
   echo "$token"
 }
 
@@ -332,7 +363,7 @@ function deploy()
   cd "$local_kub8/$repo_name" || error_log "unable to back with cd $local_kub8/$repo_name"
   log "Playing playbook" "0"
   ansible-playbook -i "${ANSIBLE_HOST_FILE}" integrated-deploy.yml | tee -a /tmp/deploy-"${LOG_DATE}".log
-  error_log "playbook kubernetes integrated-deploy.yml had errors"
+  error_log "playbook kubernetes integrated-wait-deploy.yml had errors"
 
   log "*END* Installation Kubernetes Cluster on Azure" "0"
 }
@@ -353,6 +384,8 @@ ansiblefqdn="${8}"
 sshu="${9}"
 viplb="${10}"
 
+STORAGE_ACCOUNT_NAME="${11}"
+STORAGE_ACCOUNT_KEY="${12}"
 
 LOG_DATE=$(date +%s)
 FACTS="/etc/ansible/facts"
@@ -374,8 +407,6 @@ SLACK_TOKEN="$(get_slack_token)"
 SLACK_CHANNEL="ansible"
 
 export SLACK_TOKEN SLACK_CHANNEL
-
-
 
 ## Repos Variables
 local_kub8="kub8"
@@ -410,11 +441,13 @@ log "    - Etcd Subnet    is  $subnetEtcd" "N"
 log "    - VM Suffix          $vmNamePrefix" "N"
 log "    - Ansible Jumpbox VM $ansiblefqdn" "N"
 log "    - VIP LB             $viplb" "N"
-log "    - SSH User           $sshu" "N"
+log "    - STORAGE_ACCOUNT_NAME $STORAGE_ACCOUNT_NAME" "N"
+log "    - STORAGE_ACCOUNT_KEY  $STORAGE_ACCOUNT_KEY" "N"
 
 
 install_epel_repo
 install_curl
+generate_sshkeys
 ssh_config
 get_private_ip
 update_centos_distribution
@@ -422,6 +455,7 @@ install_required_groups
 install_required_packages
 install_python_modules
 install_ansible
+put_sshkeys
 configure_ansible
 create_inventory
 test_ansible

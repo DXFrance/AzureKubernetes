@@ -50,6 +50,12 @@
         "description": "kube StorageAccount Name"
       }
     },
+    "keyStorageAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "key StorageAccount Name"
+      }
+    },
     "storageAccountType": {
       "type": "string",
       "metadata": {
@@ -123,6 +129,15 @@
       "apiVersion": "[parameters('apiVersion')]",
       "type": "Microsoft.Storage/storageAccounts",
       "name": "[parameters('ansibleStorageAccountName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "accountType": "[parameters('storageAccountType')]"
+      }
+    },
+    {
+      "apiVersion": "[parameters('apiVersion')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[parameters('keyStorageAccountName')]",
       "location": "[resourceGroup().location]",
       "properties": {
         "accountType": "[parameters('storageAccountType')]"

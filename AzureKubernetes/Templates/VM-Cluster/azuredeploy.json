@@ -185,13 +185,6 @@
         "description": "Public key for SSH authentication"
       }
     },
-    "fileUris": {
-      "type": "string",
-      "defaultValue": "https://raw.githubusercontent.com/DXFrance/AzureKubernetes/master/Kubernetes-Ansible-Centos-Azure/scripts/first-boot.sh",
-      "metadata": {
-        "description": "Deploy/SetUp script url for ansible control vm"
-      }
-    },
     "commandToExecute": {
       "type": "string",
       "defaultValue": "bash first-boot.sh",
@@ -212,6 +205,13 @@
         "description": "Templates base url"
       },
       "defaultValue": ""
+    },
+    "configScriptsBaseURL": {
+      "type": "string",
+      "metadata": {
+        "description": "Config scripts base url"
+      },
+      "defaultValue": "https://github.com/DXFrance/AzureKubernetes/tree/master/AzureKubernetes/ConfigScripts"
     }
   },
   "variables": {
@@ -250,8 +250,8 @@
 
     "ansibleIPAddressName": "[concat(parameters('prefix'),'-pip-ansible')]",
     "kubemastersLbPIPAddressName": "[concat(parameters('prefix'),'-pip-kube-masters')]",
-    "ansibleVMName": "[concat(parameters('prefix'), '-ansible')]"
-
+    "ansibleVMName": "[concat(parameters('prefix'), '-ansible')]",
+    "keyStorageAccountName": "[concat('key', uniquestring(resourceGroup().id, deployment().name))]"
 
   },
   "resources": [
@@ -289,6 +289,9 @@
           },
           "ansibleStorageAccountName": {
             "value": "[variables('ansibleStorageAccountName')]"
+          },
+          "keyStorageAccountName": {
+            "value": "[variables('keyStorageAccountName')]"
           },
           "storageAccountType": {
             "value": "[variables('storageAccountType')]"
@@ -359,204 +362,12 @@
     },
     {
       "apiVersion": "[variables('apiVersion')]",
-      "name": "KubeMasterNodes",
-      "type": "Microsoft.Resources/deployments",
-      "dependsOn": [
-        "Microsoft.Resources/deployments/SharedAvailaibilitySetAndStorage",
-        "Microsoft.Resources/deployments/SharedNetwork",
-        "Microsoft.Resources/deployments/SharedPIPandLoadBalancer"
-      ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('configuration').KubeMasterNodesTemplateURL]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "apiVersion": {
-            "value": "2016-03-30"
-          },
-          "prefix": {
-            "value": "[parameters('prefix')]"
-          },
-          "numberOfMasters": {
-            "value": "[parameters('numberOfMasters')]"
-          },
-          "kubeMastersAvailabilitySetName": {
-            "value": "[variables('kubeMastersAvailabilitySetName')]"
-          },
-          "kubeMastersStorageAccountName": {
-            "value": "[variables('kubeMastersStorageAccountName')]"
-          },
-          "kubeMastersNicName": {
-            "value": "[variables('kubeMastersNicName')]"
-          },
-          "kubemastersLbID": {
-            "value": "[reference('SharedPIPandLoadBalancer').outputs.kubemastersLbID.value]"
-          },
-          "kubemastersLbBackendPoolID": {
-            "value": "[reference('SharedPIPandLoadBalancer').outputs.kubemastersLbBackendPoolID.value]"
-          },
-          "subnetMastersRef": {
-            "value": "[reference('SharedNetwork').outputs.subnetMastersRef.value]"
-          },
-          "kubernetesVmSize": {
-            "value": "[parameters('kubernetesVmSize')]"
-          },
-          "adminUserName": {
-            "value": "[parameters('adminUserName')]"
-          },
-          "adminPassword": {
-            "value": "[parameters('adminPassword')]"
-          },
-          "sshKeyData": {
-            "value": "[parameters('sshKeyData')]"
-          },
-          "centosOSVersion": {
-            "value": "[parameters('centosOSVersion')]"
-          },
-          "fileUris": {
-            "value": "[parameters('fileUris')]"
-          },
-          "commandToExecute": {
-            "value": "[parameters('commandToExecute')]"
-          }
-        }
-      }
-    },
-    {
-      "apiVersion": "[variables('apiVersion')]",
-      "name": "KubeMinionNodes",
-      "type": "Microsoft.Resources/deployments",
-      "dependsOn": [
-        "Microsoft.Resources/deployments/SharedAvailaibilitySetAndStorage",
-        "Microsoft.Resources/deployments/SharedNetwork",
-        "Microsoft.Resources/deployments/SharedPIPandLoadBalancer"
-      ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('configuration').KubeMinionNodesTemplateURL]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "apiVersion": {
-            "value": "2016-03-30"
-          },
-          "prefix": {
-            "value": "[parameters('prefix')]"
-          },
-          "numberOfMinions": {
-            "value": "[parameters('numberOfMasters')]"
-          },
-          "kubeMinionsAvailabilitySetName": {
-            "value": "[variables('kubeMinionsAvailabilitySetName')]"
-          },
-          "kubeMinionsStorageAccountName": {
-            "value": "[variables('kubeMinionsStorageAccountName')]"
-          },
-          "kubeMinionsNicName": {
-            "value": "[variables('kubeMinionsNicName')]"
-          },
-          "subnetMinionsRef": {
-            "value": "[reference('SharedNetwork').outputs.subnetMinionsRef.value]"
-          },
-          "kubernetesVmSize": {
-            "value": "[parameters('kubernetesVmSize')]"
-          },
-          "adminUserName": {
-            "value": "[parameters('adminUserName')]"
-          },
-          "adminPassword": {
-            "value": "[parameters('adminPassword')]"
-          },
-          "sshKeyData": {
-            "value": "[parameters('sshKeyData')]"
-          },
-          "centosOSVersion": {
-            "value": "[parameters('centosOSVersion')]"
-          },
-          "fileUris": {
-            "value": "[parameters('fileUris')]"
-          },
-          "commandToExecute": {
-            "value": "[parameters('commandToExecute')]"
-          }
-        }
-      }
-    },
-    {
-      "apiVersion": "[variables('apiVersion')]",
-      "name": "EtcdNodes",
-      "type": "Microsoft.Resources/deployments",
-      "dependsOn": [
-        "Microsoft.Resources/deployments/SharedAvailaibilitySetAndStorage",
-        "Microsoft.Resources/deployments/SharedNetwork",
-        "Microsoft.Resources/deployments/SharedPIPandLoadBalancer"
-      ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('configuration').EtcdNodesTemplateURL]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "apiVersion": {
-            "value": "2016-03-30"
-          },
-          "prefix": {
-            "value": "[parameters('prefix')]"
-          },
-          "numberOfEtcdNodes": {
-            "value": "[parameters('numberOfEtcdNodes')]"
-          },
-          "etcdAvailabilitySetName": {
-            "value": "[variables('etcdAvailabilitySetName')]"
-          },
-          "etcdStorageAccountName": {
-            "value": "[variables('etcdStorageAccountName')]"
-          },
-          "etcdNicName": {
-            "value": "[variables('etcdNicName')]"
-          },
-          "subnetEtcdRef": {
-            "value": "[reference('SharedNetwork').outputs.subnetEtcdRef.value]"
-          },
-          "etcdVmSize": {
-            "value": "[parameters('kubernetesVmSize')]"
-          },
-          "adminUserName": {
-            "value": "[parameters('adminUserName')]"
-          },
-          "adminPassword": {
-            "value": "[parameters('adminPassword')]"
-          },
-          "sshKeyData": {
-            "value": "[parameters('sshKeyData')]"
-          },
-          "centosOSVersion": {
-            "value": "[parameters('centosOSVersion')]"
-          },
-          "fileUris": {
-            "value": "[parameters('fileUris')]"
-          },
-          "commandToExecute": {
-            "value": "[parameters('commandToExecute')]"
-          }
-        }
-      }
-    },
-    {
-      "apiVersion": "[variables('apiVersion')]",
       "name": "ConfigAnsibleController",
       "type": "Microsoft.Resources/deployments",
       "dependsOn": [
         "Microsoft.Resources/deployments/SharedAvailaibilitySetAndStorage",
         "Microsoft.Resources/deployments/SharedNetwork",
-        "Microsoft.Resources/deployments/SharedPIPandLoadBalancer",
-        "Microsoft.Resources/deployments/KubeMasterNodes",
-        "Microsoft.Resources/deployments/KubeMinionNodes",
-        "Microsoft.Resources/deployments/EtcdNodes"
+        "Microsoft.Resources/deployments/SharedPIPandLoadBalancer"
       ],
       "properties": {
         "mode": "Incremental",
@@ -624,6 +435,219 @@
           },
           "vaultAccountName": {
             "value": "[parameters('vaultAccountName')]"
+          },
+          "keyStorageAccountName": {
+            "value": "[variables('keyStorageAccountName')]"
+          },
+          "configScriptsBaseURL": {
+            "value": "[parameters('configScriptsBaseURL')]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "name": "KubeMasterNodes",
+      "type": "Microsoft.Resources/deployments",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/SharedAvailaibilitySetAndStorage",
+        "Microsoft.Resources/deployments/SharedNetwork",
+        "Microsoft.Resources/deployments/SharedPIPandLoadBalancer"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('configuration').KubeMasterNodesTemplateURL]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "apiVersion": {
+            "value": "2016-03-30"
+          },
+          "prefix": {
+            "value": "[parameters('prefix')]"
+          },
+          "numberOfMasters": {
+            "value": "[parameters('numberOfMasters')]"
+          },
+          "kubeMastersAvailabilitySetName": {
+            "value": "[variables('kubeMastersAvailabilitySetName')]"
+          },
+          "kubeMastersStorageAccountName": {
+            "value": "[variables('kubeMastersStorageAccountName')]"
+          },
+          "kubeMastersNicName": {
+            "value": "[variables('kubeMastersNicName')]"
+          },
+          "kubemastersLbID": {
+            "value": "[reference('SharedPIPandLoadBalancer').outputs.kubemastersLbID.value]"
+          },
+          "kubemastersLbBackendPoolID": {
+            "value": "[reference('SharedPIPandLoadBalancer').outputs.kubemastersLbBackendPoolID.value]"
+          },
+          "subnetMastersRef": {
+            "value": "[reference('SharedNetwork').outputs.subnetMastersRef.value]"
+          },
+          "kubernetesVmSize": {
+            "value": "[parameters('kubernetesVmSize')]"
+          },
+          "adminUserName": {
+            "value": "[parameters('adminUserName')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "sshKeyData": {
+            "value": "[parameters('sshKeyData')]"
+          },
+          "centosOSVersion": {
+            "value": "[parameters('centosOSVersion')]"
+          },
+          "fileUris": {
+            "value": "[parameters('fileUris')]"
+          },
+          "commandToExecute": {
+            "value": "[parameters('commandToExecute')]"
+          },
+          "keyStorageAccountName": {
+            "value": "[variables('keyStorageAccountName')]"
+          },
+          "configScriptsBaseURL": {
+            "value": "[parameters('configScriptsBaseURL')]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "name": "KubeMinionNodes",
+      "type": "Microsoft.Resources/deployments",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/SharedAvailaibilitySetAndStorage",
+        "Microsoft.Resources/deployments/SharedNetwork",
+        "Microsoft.Resources/deployments/SharedPIPandLoadBalancer"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('configuration').KubeMinionNodesTemplateURL]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "apiVersion": {
+            "value": "2016-03-30"
+          },
+          "prefix": {
+            "value": "[parameters('prefix')]"
+          },
+          "numberOfMinions": {
+            "value": "[parameters('numberOfMasters')]"
+          },
+          "kubeMinionsAvailabilitySetName": {
+            "value": "[variables('kubeMinionsAvailabilitySetName')]"
+          },
+          "kubeMinionsStorageAccountName": {
+            "value": "[variables('kubeMinionsStorageAccountName')]"
+          },
+          "kubeMinionsNicName": {
+            "value": "[variables('kubeMinionsNicName')]"
+          },
+          "subnetMinionsRef": {
+            "value": "[reference('SharedNetwork').outputs.subnetMinionsRef.value]"
+          },
+          "kubernetesVmSize": {
+            "value": "[parameters('kubernetesVmSize')]"
+          },
+          "adminUserName": {
+            "value": "[parameters('adminUserName')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "sshKeyData": {
+            "value": "[parameters('sshKeyData')]"
+          },
+          "centosOSVersion": {
+            "value": "[parameters('centosOSVersion')]"
+          },
+          "fileUris": {
+            "value": "[parameters('fileUris')]"
+          },
+          "commandToExecute": {
+            "value": "[parameters('commandToExecute')]"
+          },
+          "keyStorageAccountName": {
+            "value": "[variables('keyStorageAccountName')]"
+          },
+          "configScriptsBaseURL": {
+            "value": "[parameters('configScriptsBaseURL')]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "name": "EtcdNodes",
+      "type": "Microsoft.Resources/deployments",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/SharedAvailaibilitySetAndStorage",
+        "Microsoft.Resources/deployments/SharedNetwork",
+        "Microsoft.Resources/deployments/SharedPIPandLoadBalancer"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('configuration').EtcdNodesTemplateURL]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "apiVersion": {
+            "value": "2016-03-30"
+          },
+          "prefix": {
+            "value": "[parameters('prefix')]"
+          },
+          "numberOfEtcdNodes": {
+            "value": "[parameters('numberOfEtcdNodes')]"
+          },
+          "etcdAvailabilitySetName": {
+            "value": "[variables('etcdAvailabilitySetName')]"
+          },
+          "etcdStorageAccountName": {
+            "value": "[variables('etcdStorageAccountName')]"
+          },
+          "etcdNicName": {
+            "value": "[variables('etcdNicName')]"
+          },
+          "subnetEtcdRef": {
+            "value": "[reference('SharedNetwork').outputs.subnetEtcdRef.value]"
+          },
+          "etcdVmSize": {
+            "value": "[parameters('kubernetesVmSize')]"
+          },
+          "adminUserName": {
+            "value": "[parameters('adminUserName')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "sshKeyData": {
+            "value": "[parameters('sshKeyData')]"
+          },
+          "centosOSVersion": {
+            "value": "[parameters('centosOSVersion')]"
+          },
+          "fileUris": {
+            "value": "[parameters('fileUris')]"
+          },
+          "commandToExecute": {
+            "value": "[parameters('commandToExecute')]"
+          },
+          "keyStorageAccountName": {
+            "value": "[variables('keyStorageAccountName')]"
+          },
+          "configScriptsBaseURL": {
+            "value": "[parameters('configScriptsBaseURL')]"
           }
         }
       }

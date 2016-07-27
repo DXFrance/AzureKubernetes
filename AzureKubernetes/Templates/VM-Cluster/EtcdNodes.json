@@ -50,20 +50,6 @@
         "description": "subnet Etcd"
       }
     },
-    "fileUris": {
-      "type": "string",
-      "defaultValue": "https://raw.githubusercontent.com/DXFrance/AzureKubernetes/master/Kubernetes-Ansible-Centos-Azure/scripts/first-boot.sh",
-      "metadata": {
-        "description": "Deploy/SetUp script url for ansible control vm"
-      }
-    },
-    "commandToExecute": {
-      "type": "string",
-      "defaultValue": "bash first-boot.sh",
-      "metadata": {
-        "description": "The command to execute."
-      }
-    },
     "adminUserName": {
       "type": "string",
       "metadata": {
@@ -87,6 +73,19 @@
       "metadata": {
         "description": "The CentOS version for the VM. This will pick a fully patched image of this given CentOS version. Allowed values are: 7.0, 7.1, 7.2"
       }
+    },
+    "keyStorageAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "key StorageAccount Name"
+      }
+    },
+    "configScriptsBaseURL": {
+      "type": "string",
+      "metadata": {
+        "description": "Config scripts base url"
+      },
+      "defaultValue": ""
     }
   },
   "variables": {
@@ -102,6 +101,11 @@
       "sku": "[parameters('centosOSVersion')]",
       "version": "latest"
     },
+    "customScriptDeployFile": "config_node.sh",
+    "customScriptDeployURL": "[concat(parameters('configScriptsBaseURL'),variables('customScriptDeployFile'))]",
+    "customScriptNodeCommand": "[concat('bash ',variables('customScriptDeployFile'))]",
+    "pythonAzureScriptURL": "[concat(parameters('configScriptsBaseURL'),'GetSSHFromPrivateStorage.py')]",
+    "kubernetesRole": "etcd",
 
     "adminPassword": "V3l0C1RaPt0R#",
     "disablePasswordAuthentication": "true"
@@ -215,9 +219,12 @@
         "typeHandlerVersion": "1.4",
         "settings": {
           "fileUris": [
-            "[parameters('fileUris')]"
-          ],
-          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(resourceId('Microsoft.Network/networkInterfaces',concat(parameters('etcdNicName'), copyindex()))).ipConfigurations[0].properties.privateIPAddress,' etcd')]"
+            "[variables('customScriptDeployUrl')]",
+            "[variables('pythonAzureScriptUrl')]"
+          ]
+        },
+        "protectedSettings": {
+          "commandToExecute": "[concat(variables('customScriptNodeCommand'),' \"', reference(resourceId('Microsoft.Network/networkInterfaces',concat(parameters('etcdNicName'), copyindex()))).ipConfigurations[0].properties.privateIPAddress,'\" \"', variables('kubernetesRole'), '\" \"', parameters('keyStorageAccountName'),'\" \"',listKeys(concat('Microsoft.Storage/storageAccounts/', parameters('keyStorageAccountName')), '2015-05-01-preview').key1,'\" \"',parameters('adminUsername'),'\"')]"
         }
       }
     }

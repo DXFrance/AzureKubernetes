@@ -123,6 +123,19 @@
       "metadata": {
         "description": "Private storage account name in which you are storing your certificates for ansible and the template bash scripts"
       }
+    },
+    "keyStorageAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "key StorageAccount Name"
+      }
+    },
+    "configScriptsBaseURL": {
+      "type": "string",
+      "metadata": {
+        "description": "Config scripts base url"
+      },
+      "defaultValue": ""
     }
   },
   "variables": {
@@ -137,7 +150,7 @@
       "sku": "[parameters('centosOSVersion')]",
       "version": "latest"
     },
-    "scriptBlobLocation": "scripts/deploy.sh",
+    "scriptBlobLocation": "scripts/config-ansible.sh",
     "scriptBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('scriptBlobLocation'))]",
 
     "keysBlobLocation": "keys/id_rsa",
@@ -145,6 +158,11 @@
 
     "pubBlobLocation": "keys/id_rsa.pub",
     "pubBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('pubBlobLocation'))]",
+
+    "customScriptDeployFile": "config_ansible.sh",
+    "customScriptDeployURL": "[concat(parameters('configScriptsBaseURL'),variables('customScriptDeployFile'))]",
+    "customScriptAnsibleCommand": "[concat('bash ',variables('customScriptDeployFile'))]",
+    "pythonAzureScriptURL": "[concat(parameters('configScriptsBaseURL'),'WriteSSHToPrivateStorage.py')]",
 
     "tokenBlobLocation": "keys/slack-token.tok",
     "tokenBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('tokenBlobLocation'))]",
@@ -242,17 +260,13 @@
         "typeHandlerVersion": "1.4",
         "settings": {
           "fileUris": [
-            "[variables('scriptBlobUrl')]",
-            "[variables('keysBlobUrl')]",
-            "[variables('pubBlobUrl')]",
-            "[variables('tokenBlobUrl')]"
+            "[variables('customScriptDeployUrl')]",
+            "[variables('pythonAzureScriptURL')]"
           ],
-          "commandToExecute": "[concat('bash deploy.sh ',parameters('numberOfMasters'), ' ',parameters('numberOfMinions'), ' ',parameters('numberOfEtcdNodes'), ' ', parameters('subnetMastersPrefix'), ' ', parameters('subnetMinionsPrefix'), ' ',parameters('subnetEtcdPrefix'), ' ',parameters('prefix'), ' ', ' ', reference(variables('ansibleIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn,' ', parameters('adminUserName'), ' ', reference(variables('kubemastersLbPIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn,' >/tmp/deploy.log 2>&1 &')]",
           "timestamp": "variables('ansibleIPAddressID')"
         },
         "protectedSettings": {
-          "storageAccountName": "[parameters('vaultAccountName')]",
-          "storageAccountKey": "[listKeys(variables('assetsStorageAccountId'),'2015-05-01-preview').key1]"
+          "commandToExecute": "[concat(variables('customScriptAnsibleCommand'), ' \"', parameters('numberOfMasters'), '\" \"', parameters('numberOfMinions'), '\" \"', parameters('numberOfEtcdNodes'),'\" \"', parameters('subnetMastersPrefix'),'\" \"', parameters('subnetMinionsPrefix'),'\" \"', parameters('subnetEtcdPrefix'), '\" \"', parameters('prefix'), '\" \"', reference(variables('ansibleIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn, '\" \"', parameters('adminUserName'), '\" \"', reference(variables('kubemastersLbPIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn, '\" \"', parameters('keyStorageAccountName'), '\" \"', listKeys(concat('Microsoft.Storage/storageAccounts/',parameters('keyStorageAccountName')),'2015-05-01-preview').key, '\"')]"
         }
       }
     }

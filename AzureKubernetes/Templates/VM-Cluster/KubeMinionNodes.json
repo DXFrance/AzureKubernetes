@@ -74,19 +74,18 @@
         "description": "Instance size for Kubernetes VMs"
       }
     },
-    "fileUris": {
+    "keyStorageAccountName": {
       "type": "string",
-      "defaultValue": "https://raw.githubusercontent.com/DXFrance/AzureKubernetes/master/Kubernetes-Ansible-Centos-Azure/scripts/first-boot.sh",
       "metadata": {
-        "description": "Deploy/SetUp script url for ansible control vm"
+        "description": "key StorageAccount Name"
       }
     },
-    "commandToExecute": {
+    "configScriptsBaseURL": {
       "type": "string",
-      "defaultValue": "bash first-boot.sh",
       "metadata": {
-        "description": "The command to execute."
-      }
+        "description": "Config scripts base url"
+      },
+      "defaultValue": ""
     }
   },
   "variables": {
@@ -100,6 +99,12 @@
       "sku": "[parameters('centosOSVersion')]",
       "version": "latest"
     },
+
+    "customScriptDeployFile": "config_node.sh",
+    "customScriptDeployURL": "[concat(parameters('configScriptsBaseURL'),variables('customScriptDeployFile'))]",
+    "customScriptNodeCommand": "[concat('bash ',variables('customScriptDeployFile'))]",
+    "pythonAzureScriptURL": "[concat(parameters('configScriptsBaseURL'),'GetSSHFromPrivateStorage.py')]",
+    "kubernetesRole": "minions",
 
     "adminPassword": "V3l0C1RaPt0R#",
     "disablePasswordAuthentication": "true"
@@ -215,9 +220,12 @@
         "typeHandlerVersion": "1.4",
         "settings": {
           "fileUris": [
-            "[parameters('fileUris')]"
-          ],
-          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(resourceId('Microsoft.Network/networkInterfaces',concat(parameters('kubeMinionsNicName'), copyindex()))).ipConfigurations[0].properties.privateIPAddress,' minions')]"
+            "[variables('customScriptDeployUrl')]",
+            "[variables('pythonAzureScriptURL')]"
+          ]
+        },
+        "protectedSettings": {
+          "commandToExecute": "[concat(variables('customScriptNodeCommand'),' \"', reference(resourceId('Microsoft.Network/networkInterfaces',concat(parameters('kubeMinionsNicName'), copyindex()))).ipConfigurations[0].properties.privateIPAddress,'\" \"', variables('kubernetesRole'), '\" \"', parameters('keyStorageAccountName'),'\" \"',listKeys(concat('Microsoft.Storage/storageAccounts/', parameters('keyStorageAccountName')), '2015-05-01-preview').key1,'\" \"',parameters('adminUsername'),'\"')]"
         }
       }
     }
