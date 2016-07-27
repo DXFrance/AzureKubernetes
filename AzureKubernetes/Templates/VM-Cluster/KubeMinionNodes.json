@@ -100,7 +100,7 @@
       "version": "latest"
     },
 
-    "customScriptDeployFile": "config_node.sh",
+    "customScriptDeployFile": "config-node.sh",
     "customScriptDeployURL": "[concat(parameters('configScriptsBaseURL'),'/',variables('customScriptDeployFile'))]",
     "customScriptNodeCommand": "[concat('bash ',variables('customScriptDeployFile'))]",
     "pythonAzureScriptURL": "[concat(parameters('configScriptsBaseURL'),'/','GetSSHFromPrivateStorage.py')]",

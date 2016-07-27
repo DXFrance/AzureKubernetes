@@ -40,7 +40,7 @@
       "value": "https://raw.githubusercontent.com/DXFrance/AzureKubernetes/master/AzureKubernetes/Templates/VM-Cluster"
     },
     "configScriptsBaseURL": {
-      "value": "https://github.com/DXFrance/AzureKubernetes/tree/master/AzureKubernetes/ConfigScripts"
+      "value": "https://raw.githubusercontent.com/DXFrance/AzureKubernetes/master/AzureKubernetes/ConfigScripts"
     }
   }
 }

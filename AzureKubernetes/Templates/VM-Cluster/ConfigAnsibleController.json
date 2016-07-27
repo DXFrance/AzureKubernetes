@@ -159,7 +159,7 @@
     "pubBlobLocation": "keys/id_rsa.pub",
     "pubBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('pubBlobLocation'))]",
 
-    "customScriptDeployFile": "config_ansible.sh",
+    "customScriptDeployFile": "config-ansible.sh",
     "customScriptDeployURL": "[concat(parameters('configScriptsBaseURL'),'/',variables('customScriptDeployFile'))]",
     "customScriptAnsibleCommand": "[concat('bash ',variables('customScriptDeployFile'))]",
     "pythonAzureScriptURL": "[concat(parameters('configScriptsBaseURL'),'/','WriteSSHToPrivateStorage.py')]",
