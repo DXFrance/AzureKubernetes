@@ -230,6 +230,7 @@
     "kubeMastersStorageAccountName": "[concat(parameters('prefix'), 'kubemasters')]",
     "kubeMinionsStorageAccountName": "[concat(parameters('prefix'), 'kubeminions')]",
     "etcdStorageAccountName": "[concat(parameters('prefix'), 'etcd')]",
+    "keyStorageAccountName": "[concat(parameters('prefix'), 'key')]",
 
     "kubeMastersAvailabilitySetName": "[concat(parameters('prefix'), 'as-kube-masters')]",
     "kubeMinionsAvailabilitySetName": "[concat(parameters('prefix'), 'as-kube-minions')]",
@@ -250,8 +251,7 @@
 
     "ansibleIPAddressName": "[concat(parameters('prefix'),'-pip-ansible')]",
     "kubemastersLbPIPAddressName": "[concat(parameters('prefix'),'-pip-kube-masters')]",
-    "ansibleVMName": "[concat(parameters('prefix'), '-ansible')]",
-    "keyStorageAccountName": "[concat('key', uniquestring(resourceGroup().id, deployment().name))]"
+    "ansibleVMName": "[concat(parameters('prefix'), '-ansible')]"
 
   },
   "resources": [

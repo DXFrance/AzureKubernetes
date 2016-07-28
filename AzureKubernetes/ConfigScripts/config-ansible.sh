@@ -1,6 +1,14 @@
 #!/bin/bash
 
-error_log()
+function usage()
+ {
+    echo "INFO:"
+    echo "Usage: config-ansible.sh [number of Masters] [number of Minions] [number of Etdc Nodes]"
+	echo "       [Masters subnet] [Minions subnet] [Etcd Subnet] [vm prefix] [fqdn of ansible control vm]"
+	echo "       [ansible user] [Key storage account name] [Key storage account key]"
+}
+
+function error_log()
 {
     if [ "$?" != "0" ]; then
         log "$1" "1"
@@ -27,20 +35,16 @@ function log()
   fi
   mess="$(date) - $(hostname): $1 $x"
 
-
   payload="payload={\"icon_emoji\":\":cloud:\",\"text\":\"$mess\"}"
   curl -s -X POST --data-urlencode "$payload" "$LOG_URL" > /dev/null 2>&1
     
   echo "$(date) : $1"
 }
 
-
-function usage()
- {
-    echo "INFO:"
-    echo "Usage: deploy.sh [number of nodes] [prefix des vm] [fqdn of ansible control vm] [ansible user]"
+function install_epel_repo()
+{
+   rpm -iUvh "${EPEL_REPO}"
 }
-
 
 function install_curl()
 {
@@ -51,6 +55,12 @@ function install_curl()
     sleep 2
   done
 }
+
+function generate_sshkeys()
+{
+  echo -e 'y\n'|ssh-keygen -b 4096 -f idgen_rsa -t rsa -q -N ''
+}
+
 function ssh_config()
 {
   # log "tld is ${tld}"
@@ -72,20 +82,20 @@ EOF
 
   log "Copy generated keys..."
 
-  cp id_rsa ~/.ssh/id_rsa
-  error_log "Unable to copy id_rsa key to root .ssh directory"
+  cp idgen_rsa ~/.ssh/idgen_rsa
+  error_log "Unable to copy idgen_rsa key to root .ssh directory"
 
-  cp id_rsa.pub ~/.ssh/id_rsa.pub
-  error_log "Unable to copy id_rsa.pub key to root .ssh directory"
+  cp idgen_rsa.pub ~/.ssh/idgen_rsa.pub
+  error_log "Unable to copy idgen_rsa.pub key to root .ssh directory"
 
   chmod 700 ~/.ssh
   error_log "Unable to chmod root .ssh directory"
 
-  chmod 400 ~/.ssh/id_rsa
-  error_log "Unable to chmod root id_rsa file"
+  chmod 400 ~/.ssh/idgen_rsa
+  error_log "Unable to chmod root idgen_rsa file"
 
-  chmod 644 ~/.ssh/id_rsa.pub
-  error_log "Unable to chmod root id_rsa.pub file"
+  chmod 644 ~/.ssh/idgen_rsa.pub
+  error_log "Unable to chmod root idgen_rsa.pub file"
 
   ## Devops User
   # No host Checking for sshu 
@@ -99,11 +109,11 @@ EOF
 
   error_log "Unable to create ssh config file for user ${sshu}"
 
-  cp id_rsa "/home/${sshu}/.ssh/id_rsa"
-  error_log "Unable to copy id_rsa key to $sshu .ssh directory"
+  cp idgen_rsa "/home/${sshu}/.ssh/idgen_rsa"
+  error_log "Unable to copy idgen_rsa key to $sshu .ssh directory"
 
-  cp id_rsa.pub "/home/${sshu}/.ssh/id_rsa.pub"
-  error_log "Unable to copy id_rsa.pub key to $sshu .ssh directory"
+  cp idgen_rsa.pub "/home/${sshu}/.ssh/idgen_rsa.pub"
+  error_log "Unable to copy idgen_rsa.pub key to $sshu .ssh directory"
 
   chmod 700 "/home/${sshu}/.ssh"
   error_log "Unable to chmod $sshu .ssh directory"
@@ -111,14 +121,14 @@ EOF
   chown -R "${sshu}:" "/home/${sshu}/.ssh"
   error_log "Unable to chown to $sshu .ssh directory"
 
-  chmod 400 "/home/${sshu}/.ssh/id_rsa"
-  error_log "Unable to chmod $sshu id_rsa file"
+  chmod 400 "/home/${sshu}/.ssh/idgen_rsa"
+  error_log "Unable to chmod $sshu idgen_rsa file"
 
-  chmod 644 "/home/${sshu}/.ssh/id_rsa.pub"
-  error_log "Unable to chmod $sshu id_rsa.pub file"
+  chmod 644 "/home/${sshu}/.ssh/idgen_rsa.pub"
+  error_log "Unable to chmod $sshu idgen_rsa.pub file"
   
   # remove when debugging
-  # rm id_rsa id_rsa.pub 
+  # rm idgen_rsa idgen_rsa.pub 
 }
 
 
@@ -134,12 +144,12 @@ function get_private_ip()
     let j=4+$i
   	su - "${sshu}" -c "ssh -l ${sshu} ${subnetMasters3}.${j} cat $FACTS/private-ip-role.fact" >> /tmp/hosts.inv 
     error_log "unable to ssh -l ${sshu} ${subnetMasters3}.${j}"
-    su - "${sshu}" -c "scp /home/${sshu}/.ssh/id_rsa ${sshu}@${subnetMasters3}.${j}:/home/${sshu}/.ssh/id_rsa"
-    error_log "unable to scp id_rsa to ${subnetMasters3}.${j}"
-    su - "${sshu}" -c "scp /home/${sshu}/.ssh/id_rsa.pub ${sshu}@${subnetMasters3}.${j}:/home/${sshu}/.ssh/id_rsa.pub"
-    error_log "unable to scp id_rsa.pub to ${subnetMasters3}.${j}"
-    su - "${sshu}" -c "ssh -l ${sshu} ${subnetMasters3}.${j} chmod 400 /home/${sshu}/.ssh/id_rsa"
-    error_log "unable to chmod id_rsa to ${subnetMasters3}.${j}"
+    su - "${sshu}" -c "scp /home/${sshu}/.ssh/idgen_rsa ${sshu}@${subnetMasters3}.${j}:/home/${sshu}/.ssh/idgen_rsa"
+    error_log "unable to scp idgen_rsa to ${subnetMasters3}.${j}"
+    su - "${sshu}" -c "scp /home/${sshu}/.ssh/idgen_rsa.pub ${sshu}@${subnetMasters3}.${j}:/home/${sshu}/.ssh/idgen_rsa.pub"
+    error_log "unable to scp idgen_rsa.pub to ${subnetMasters3}.${j}"
+    su - "${sshu}" -c "ssh -l ${sshu} ${subnetMasters3}.${j} chmod 400 /home/${sshu}/.ssh/idgen_rsa"
+    error_log "unable to chmod idgen_rsa to ${subnetMasters3}.${j}"
   done
 
   # Minions
@@ -150,12 +160,12 @@ function get_private_ip()
     let j=4+$i
   	su - "${sshu}" -c "ssh -l ${sshu} ${subnetMinions3}.${j} cat $FACTS/private-ip-role.fact" >> /tmp/hosts.inv 
     error_log "unable to ssh -l ${sshu} ${subnetMinions3}.${j}"
-    su - "${sshu}" -c "scp /home/${sshu}/.ssh/id_rsa ${sshu}@${subnetMinions3}.${j}:/home/${sshu}/.ssh/id_rsa"
-    error_log "unable to scp id_rsa to ${subnetMinions3}.${j}"
-    su - "${sshu}" -c "scp /home/${sshu}/.ssh/id_rsa.pub ${sshu}@${subnetMinions3}.${j}:/home/${sshu}/.ssh/id_rsa.pub"
-    error_log "unable to scp id_rsa.pub to ${subnetMinions3}.${j}"
-    su - "${sshu}" -c "ssh -l ${sshu} ${subnetMinions3}.${j} chmod 400 /home/${sshu}/.ssh/id_rsa"
-    error_log "unable to chmod id_rsa to ${subnetMinions3}.${j}"
+    su - "${sshu}" -c "scp /home/${sshu}/.ssh/idgen_rsa ${sshu}@${subnetMinions3}.${j}:/home/${sshu}/.ssh/idgen_rsa"
+    error_log "unable to scp idgen_rsa to ${subnetMinions3}.${j}"
+    su - "${sshu}" -c "scp /home/${sshu}/.ssh/idgen_rsa.pub ${sshu}@${subnetMinions3}.${j}:/home/${sshu}/.ssh/idgen_rsa.pub"
+    error_log "unable to scp idgen_rsa.pub to ${subnetMinions3}.${j}"
+    su - "${sshu}" -c "ssh -l ${sshu} ${subnetMinions3}.${j} chmod 400 /home/${sshu}/.ssh/idgen_rsa"
+    error_log "unable to chmod idgen_rsa to ${subnetMinions3}.${j}"
   done
 
   # Etcd
@@ -166,19 +176,14 @@ function get_private_ip()
     let j=4+$i
   	su - "${sshu}" -c "ssh -l ${sshu} ${subnetEtcd3}.${j} cat $FACTS/private-ip-role.fact" >> /tmp/hosts.inv 
     error_log "unable to ssh -l ${sshu} ${subnetEtcd3}.${j}"
-    su - "${sshu}" -c "scp /home/${sshu}/.ssh/id_rsa ${sshu}@${subnetEtcd3}.${j}:/home/${sshu}/.ssh/id_rsa"
-    error_log "unable to scp id_rsa to ${subnetEtcd3}.${j}"
-    su - "${sshu}" -c "scp /home/${sshu}/.ssh/id_rsa.pub ${sshu}@${subnetEtcd3}.${j}:/home/${sshu}/.ssh/id_rsa.pub"
-    error_log "unable to scp id_rsa.pub to ${subnetEtcd3}.${j}"
-    su - "${sshu}" -c "ssh -l ${sshu} ${subnetEtcd3}.${j} chmod 400 /home/${sshu}/.ssh/id_rsa"
-    error_log "unable to chmod id_rsa to ${subnetEtcd3}.${j}"
+    su - "${sshu}" -c "scp /home/${sshu}/.ssh/idgen_rsa ${sshu}@${subnetEtcd3}.${j}:/home/${sshu}/.ssh/idgen_rsa"
+    error_log "unable to scp idgen_rsa to ${subnetEtcd3}.${j}"
+    su - "${sshu}" -c "scp /home/${sshu}/.ssh/idgen_rsa.pub ${sshu}@${subnetEtcd3}.${j}:/home/${sshu}/.ssh/idgen_rsa.pub"
+    error_log "unable to scp idgen_rsa.pub to ${subnetEtcd3}.${j}"
+    su - "${sshu}" -c "ssh -l ${sshu} ${subnetEtcd3}.${j} chmod 400 /home/${sshu}/.ssh/idgen_rsa"
+    error_log "unable to chmod idgen_rsa to ${subnetEtcd3}.${j}"
   done
   
-}
-
-function install_epel_repo()
-{
-   rpm -iUvh "${EPEL_REPO}"
 }
 
 function update_centos_distribution()
@@ -243,11 +248,6 @@ function install_ansible()
   error_log "Unable to install ansible"
 }
 
-function generate_sshkeys()
-{
-  echo -e 'y\n'|ssh-keygen -b 4096 -f id_rsa -t rsa -q -N ''
-}
-
 function put_sshkeys()
  {
    
@@ -256,10 +256,10 @@ function put_sshkeys()
 
     # Push both Private and Public Key
     log "Push ssh keys to Azure Storage"
-    python WriteSSHToPrivateStorage.py "${STORAGE_ACCOUNT_NAME}" "${STORAGE_ACCOUNT_KEY}" id_rsa
-    error_log "Unable to write id_rsa to storage account ${STORAGE_ACCOUNT_NAME}"
-    python WriteSSHToPrivateStorage.py "${STORAGE_ACCOUNT_NAME}" "${STORAGE_ACCOUNT_KEY}" id_rsa.pub
-    error_log "Unable to write id_rsa.pub to storage account ${STORAGE_ACCOUNT_NAME}"
+    python WriteSSHToPrivateStorage.py "${STORAGE_ACCOUNT_NAME}" "${STORAGE_ACCOUNT_KEY}" idgen_rsa
+    error_log "Unable to write idgen_rsa to storage account ${STORAGE_ACCOUNT_NAME}"
+    python WriteSSHToPrivateStorage.py "${STORAGE_ACCOUNT_NAME}" "${STORAGE_ACCOUNT_KEY}" idgen_rsa.pub
+    error_log "Unable to write idgen_rsa.pub to storage account ${STORAGE_ACCOUNT_NAME}"
 }
 
 function configure_ansible()
@@ -440,7 +440,6 @@ log "    - Minions Subnet is  $subnetMinions" "N"
 log "    - Etcd Subnet    is  $subnetEtcd" "N"
 log "    - VM Suffix          $vmNamePrefix" "N"
 log "    - Ansible Jumpbox VM $ansiblefqdn" "N"
-log "    - VIP LB             $viplb" "N"
 log "    - STORAGE_ACCOUNT_NAME $STORAGE_ACCOUNT_NAME" "N"
 log "    - STORAGE_ACCOUNT_KEY  $STORAGE_ACCOUNT_KEY" "N"
 
