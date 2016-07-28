@@ -232,7 +232,7 @@
           ]
         },
         "protectedSettings": {
-          "commandToExecute": "[concat(variables('customScriptNodeCommand'),' \"', reference(resourceId('Microsoft.Network/networkInterfaces',concat(parameters('kubeMinionsNicName'), copyindex()))).ipConfigurations[0].properties.privateIPAddress,'\" \"', variables('kubernetesRole'), '\" \"', parameters('keyStorageAccountName'),'\" \"',listKeys(concat('Microsoft.Storage/storageAccounts/', parameters('keyStorageAccountName')), '2015-05-01-preview').key1,'\" \"',parameters('adminUsername'),'\"')]"
+          "commandToExecute": "[concat(variables('customScriptNodeCommand'),' \"', parameters('keyStorageAccountName'),'\" \"',listKeys(concat('Microsoft.Storage/storageAccounts/', parameters('keyStorageAccountName')), '2015-05-01-preview').key1,'\" \"',parameters('adminUsername'),'\"')]"
         }
       }
     }
