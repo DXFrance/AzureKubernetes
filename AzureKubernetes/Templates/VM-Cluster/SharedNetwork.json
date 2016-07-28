@@ -14,28 +14,28 @@
         "description": "Virtual Network Name"
       }
     },
-    "adminSubnetPrefix": {
+    "adminSubnetCIDR": {
       "type": "string",
       "metadata": {
-        "description": "subnet Admin Prefix"
+        "description": "subnet Admin CIDR"
       }
     },
-    "mastersSubnetPrefix": {
+    "mastersSubnetCIDR": {
       "type": "string",
       "metadata": {
-        "description": "subnet Masters Prefix"
+        "description": "subnet Masters CIDR"
       }
     },
-    "minionsSubnetPrefix": {
+    "minionsSubnetCIDR": {
       "type": "string",
       "metadata": {
-        "description": "subnet Minions Prefix"
+        "description": "subnet Minions CIDR"
       }
     },
-    "etcdSubnetPrefix": {
+    "etcdSubnetCIDR": {
       "type": "string",
       "metadata": {
-        "description": "subnet Etcd Prefix"
+        "description": "subnet Etcd CIDR"
       }
     }
   },
@@ -67,25 +67,25 @@
           {
             "name": "[variables('subnetMastersName')]",
             "properties": {
-              "addressPrefix": "[parameters('mastersSubnetPrefix')]"
+              "addressPrefix": "[parameters('mastersSubnetCIDR')]"
             }
           },
           {
             "name": "[variables('subnetMinionsName')]",
             "properties": {
-              "addressPrefix": "[parameters('minionsSubnetPrefix')]"
+              "addressPrefix": "[parameters('minionsSubnetCIDR')]"
             }
           },
           {
             "name": "[variables('subnetEtcdName')]",
             "properties": {
-              "addressPrefix": "[parameters('etcdSubnetPrefix')]"
+              "addressPrefix": "[parameters('etcdSubnetCIDR')]"
             }
           },
           {
             "name": "[variables('subnetAdminName')]",
             "properties": {
-              "addressPrefix": "[parameters('adminSubnetPrefix')]"
+              "addressPrefix": "[parameters('adminSubnetCIDR')]"
             }
           }
         ]

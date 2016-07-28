@@ -15,16 +15,16 @@
     "centosOSVersion": {
       "value": "7.2"
     },
-    "adminSubnetPrefix": {
+    "adminSubnetCIDR": {
       "value": "10.0.2.0/24"
     },
-    "mastersSubnetPrefix": {
+    "mastersSubnetCIDR": {
       "value": "10.0.4.0/24"
     },
-    "minionsSubnetPrefix": {
+    "minionsSubnetCIDR": {
       "value": "10.0.6.0/24"
     },
-    "etcdSubnetPrefix": {
+    "etcdSubnetCIDR": {
       "value": "10.0.8.0/24"
     },
     "numberOfMasters": {

@@ -178,6 +178,25 @@
         "description": "Password for on the VMs"
       }
     },
+    "adminSubnetCIDR": {
+      "type": "string",
+      "defaultValue": "devops",
+      "metadata": {
+        "description": "Password for on the VMs"
+      }
+    },
+    "adminSubnetCIDR": {
+      "value": "10.0.2.0/24"
+    },
+    "mastersSubnetCIDR": {
+      "value": "10.0.4.0/24"
+    },
+    "minionsSubnetCIDR": {
+      "value": "10.0.6.0/24"
+    },
+    "etcdSubnetCIDR": {
+      "value": "10.0.8.0/24"
+    },
     "sshKeyData": {
       "type": "string",
       "defaultValue": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDLWadgtcq8rg0HMWlv1/1HQfRayLzGKmHg2ISmAJx+LQCa8SWCwBFGS0vKKwgdwhpMMCl0wI2/eURmxbpOF4Tp10jRikSIlSZyua7FU9VmlLWtYAmRQ42eWvmsCCI/IpgJ4LGODe8xDQtcXOtp3yUhkX5g9HHNwwR35Nnzum1VGMk4ftTA9CC3gfqWcIIKqQ+xE1BzqUNmGpJHghCgG/g8Oh7/sR05CXwASMoGTYuLpPHp2sEfGNm91CmnMa21ifaz4RMAcD2SwqReLgMmi0tZGUGQqLnzX/6ibJvpYSU5iZ/7qEzgDy83dBqaHbI0LEA4H0q59TJ2DWXYu+dloITz hleclerc@HeL.local",
@@ -244,10 +263,10 @@
     "kubeMinionsNicName": "[concat(parameters('prefix'),'-nic-kubeminion')]",
     "etcdNicName": "[concat(parameters('prefix'),'-nic-etcd')]",
 
-    "adminSubnetRoot": "[concat( split(parameters('adminSubnetPrefix'), '.')[0], '.', split(parameters('adminSubnetPrefix'), '.')[1], '.', split(parameters('adminSubnetPrefix'), '.')[2])]",
-    "kubeMastersSubnetRoot": "[concat( split(parameters('mastersSubnetPrefix'), '.')[0], '.', split(parameters('mastersSubnetPrefix'), '.')[1], '.', split(parameters('mastersSubnetPrefix'), '.')[2])]",
-    "kubeMinionsSubnetRoot": "[concat( split(parameters('minionsSubnetPrefix'), '.')[0], '.', split(parameters('minionsSubnetPrefix'), '.')[1], '.', split(parameters('minionsSubnetPrefix'), '.')[2])]",
-    "etcdSubnetRoot": "[concat( split(parameters('etcdSubnetPrefix'), '.')[0], '.', split(parameters('etcdSubnetPrefix'), '.')[1], '.', split(parameters('etcdSubnetPrefix'), '.')[2])]",
+    "adminSubnetRoot": "[concat( split(parameters('adminSubnetCIDR'), '.')[0], '.', split(parameters('adminSubnetCIDR'), '.')[1], '.', split(parameters('adminSubnetCIDR'), '.')[2])]",
+    "kubeMastersSubnetRoot": "[concat( split(parameters('mastersSubnetCIDR'), '.')[0], '.', split(parameters('mastersSubnetCIDR'), '.')[1], '.', split(parameters('mastersSubnetCIDR'), '.')[2])]",
+    "kubeMinionsSubnetRoot": "[concat( split(parameters('minionsSubnetCIDR'), '.')[0], '.', split(parameters('minionsSubnetCIDR'), '.')[1], '.', split(parameters('minionsSubnetCIDR'), '.')[2])]",
+    "etcdSubnetRoot": "[concat( split(parameters('etcdSubnetCIDR'), '.')[0], '.', split(parameters('etcdSubnetCIDR'), '.')[1], '.', split(parameters('etcdSubnetCIDR'), '.')[2])]",
 
     "ansibleIPAddressName": "[concat(parameters('prefix'),'-pip-ansible')]",
     "kubeMastersLbPIPAddressName": "[concat(parameters('prefix'),'-pip-kube-masters')]",
@@ -316,17 +335,17 @@
           "virtualNetworkName": {
             "value": "[variables('virtualNetworkName')]"
           },
-          "adminSubnetPrefix": {
-            "value": "[variables('adminSubnetPrefix')]"
+          "adminSubnetCIDR": {
+            "value": "[parameters('adminSubnetCIDR')]"
           },
-          "mastersSubnetPrefix": {
-            "value": "[variables('mastersSubnetPrefix')]"
+          "mastersSubnetCIDR": {
+            "value": "[parameters('mastersSubnetCIDR')]"
           },
-          "minionsSubnetPrefix": {
-            "value": "[variables('minionsSubnetPrefix')]"
+          "minionsSubnetCIDR": {
+            "value": "[paramaters('minionsSubnetCIDR')]"
           },
-          "etcdSubnetPrefix": {
-            "value": "[variables('etcdSubnetPrefix')]"
+          "etcdSubnetCIDR": {
+            "value": "[parameters('etcdSubnetCIDR')]"
           }
         }
       }
@@ -403,17 +422,17 @@
           "ansibleVmSize": {
             "value": "[parameters('kubernetesVmSize')]"
           },
-          "adminSubnetPrefix": {
-            "value": "[variables('adminSubnetPrefix')]"
+          "adminSubnetCIDR": {
+            "value": "[parameters('adminSubnetCIDR')]"
           },
-          "mastersSubnetPrefix": {
-            "value": "[variables('mastersSubnetPrefix')]"
+          "mastersSubnetCIDR": {
+            "value": "[parameters('mastersSubnetCIDR')]"
           },
-          "minionsSubnetPrefix": {
-            "value": "[variables('minionsSubnetPrefix')]"
+          "minionsSubnetCIDR": {
+            "value": "[parameters('minionsSubnetCIDR')]"
           },
-          "etcdSubnetPrefix": {
-            "value": "[variables('etcdSubnetPrefix')]"
+          "etcdSubnetCIDR": {
+            "value": "[parameters('etcdSubnetCIDR')]"
           },
           "ansibleIPAddressName": {
             "value": "[variables('ansibleIPAddressName')]"
