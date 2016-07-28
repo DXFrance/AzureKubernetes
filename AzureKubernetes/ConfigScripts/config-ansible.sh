@@ -22,7 +22,7 @@ function log()
 	
   x=":ok:"
 
-  if [ "x$2" = "x" ]; then
+  if [ "$2" = "x" ]; then
     x=":question:"
   fi
 
@@ -30,7 +30,7 @@ function log()
     if [ "$2" = "N" ]; then
        x=""
     else
-       x=":hankey:"
+       x=":japanese_goblin:"
     fi
   fi
   mess="$(date) - $(hostname): $1 $x"
@@ -61,6 +61,7 @@ function generate_sshkeys()
   echo -e 'y\n'|ssh-keygen -b 4096 -f idgen_rsa -t rsa -q -N ''
 }
 
+
 function ssh_config()
 {
   # log "tld is ${tld}"
@@ -80,7 +81,7 @@ EOF
 
   error_log "Unable to create ssh config file for root"
 
-  log "Copy generated keys..."
+  log "Copy generated keys..." "0"
 
   cp idgen_rsa ~/.ssh/idgen_rsa
   error_log "Unable to copy idgen_rsa key to root .ssh directory"
@@ -132,24 +133,16 @@ EOF
 }
 
 
-function get_private_ip()
+function add_hosts()
 {
-  log "Get private Ips..." "0"
+  log "Add cluster hosts private Ips..." "0"
 
   # Masters
   let numberOfMasters=$numberOfMasters-1
   
   for i in $(seq 0 $numberOfMasters)
   do
-    let j=4+$i
-  	su - "${sshu}" -c "ssh -l ${sshu} ${subnetMasters3}.${j} cat $FACTS/private-ip-role.fact" >> /tmp/hosts.inv 
-    error_log "unable to ssh -l ${sshu} ${subnetMasters3}.${j}"
-    su - "${sshu}" -c "scp /home/${sshu}/.ssh/idgen_rsa ${sshu}@${subnetMasters3}.${j}:/home/${sshu}/.ssh/idgen_rsa"
-    error_log "unable to scp idgen_rsa to ${subnetMasters3}.${j}"
-    su - "${sshu}" -c "scp /home/${sshu}/.ssh/idgen_rsa.pub ${sshu}@${subnetMasters3}.${j}:/home/${sshu}/.ssh/idgen_rsa.pub"
-    error_log "unable to scp idgen_rsa.pub to ${subnetMasters3}.${j}"
-    su - "${sshu}" -c "ssh -l ${sshu} ${subnetMasters3}.${j} chmod 400 /home/${sshu}/.ssh/idgen_rsa"
-    error_log "unable to chmod idgen_rsa to ${subnetMasters3}.${j}"
+	echo "${subnetEtcd3}.${j},"masters" >>  /tmp/hosts.inv 
   done
 
   # Minions
@@ -158,14 +151,7 @@ function get_private_ip()
   for i in $(seq 0 $numberOfMinions)
   do
     let j=4+$i
-  	su - "${sshu}" -c "ssh -l ${sshu} ${subnetMinions3}.${j} cat $FACTS/private-ip-role.fact" >> /tmp/hosts.inv 
-    error_log "unable to ssh -l ${sshu} ${subnetMinions3}.${j}"
-    su - "${sshu}" -c "scp /home/${sshu}/.ssh/idgen_rsa ${sshu}@${subnetMinions3}.${j}:/home/${sshu}/.ssh/idgen_rsa"
-    error_log "unable to scp idgen_rsa to ${subnetMinions3}.${j}"
-    su - "${sshu}" -c "scp /home/${sshu}/.ssh/idgen_rsa.pub ${sshu}@${subnetMinions3}.${j}:/home/${sshu}/.ssh/idgen_rsa.pub"
-    error_log "unable to scp idgen_rsa.pub to ${subnetMinions3}.${j}"
-    su - "${sshu}" -c "ssh -l ${sshu} ${subnetMinions3}.${j} chmod 400 /home/${sshu}/.ssh/idgen_rsa"
-    error_log "unable to chmod idgen_rsa to ${subnetMinions3}.${j}"
+	echo "${subnetEtcd3}.${j},"minions" >>  /tmp/hosts.inv 
   done
 
   # Etcd
@@ -174,14 +160,7 @@ function get_private_ip()
   for i in $(seq 0 $numberOfEtcd)
   do
     let j=4+$i
-  	su - "${sshu}" -c "ssh -l ${sshu} ${subnetEtcd3}.${j} cat $FACTS/private-ip-role.fact" >> /tmp/hosts.inv 
-    error_log "unable to ssh -l ${sshu} ${subnetEtcd3}.${j}"
-    su - "${sshu}" -c "scp /home/${sshu}/.ssh/idgen_rsa ${sshu}@${subnetEtcd3}.${j}:/home/${sshu}/.ssh/idgen_rsa"
-    error_log "unable to scp idgen_rsa to ${subnetEtcd3}.${j}"
-    su - "${sshu}" -c "scp /home/${sshu}/.ssh/idgen_rsa.pub ${sshu}@${subnetEtcd3}.${j}:/home/${sshu}/.ssh/idgen_rsa.pub"
-    error_log "unable to scp idgen_rsa.pub to ${subnetEtcd3}.${j}"
-    su - "${sshu}" -c "ssh -l ${sshu} ${subnetEtcd3}.${j} chmod 400 /home/${sshu}/.ssh/idgen_rsa"
-    error_log "unable to chmod idgen_rsa to ${subnetEtcd3}.${j}"
+	echo "${subnetEtcd3}.${j},"etcd" >>  /tmp/hosts.inv 
   done
   
 }
@@ -392,15 +371,12 @@ FACTS="/etc/ansible/facts"
 ANSIBLE_HOST_FILE="/etc/ansible/hosts"
 ANSIBLE_CONFIG_FILE="/etc/ansible/ansible.cfg"
 
-#GIT_KUB8_URL="https://github.com/herveleclerc/ansible-kubernetes-centos.git"
 GIT_KUB8_URL="https://github.com/DXFrance/AzureKubernetes.git"
 
-#EPEL_REPO="http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-6.noarch.rpm"
 EPEL_REPO="http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-7.noarch.rpm"
 
 #LOG_URL="https://rocket.alterway.fr/hooks/44vAPspqqtD7Jtmtv/k4Tw89EoXiT5GpniG/HaxMfijFFi5v1YTEN68DOe5fzFBBxB4YeTQz6w3khFE%3D"
 LOG_URL="https://hooks.slack.com/services/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"
-
 
 # Slack notification
 SLACK_TOKEN="$(get_slack_token)"
@@ -448,7 +424,7 @@ install_epel_repo
 install_curl
 generate_sshkeys
 ssh_config
-get_private_ip
+add_hosts
 update_centos_distribution
 install_required_groups
 install_required_packages

@@ -26,7 +26,7 @@
         "description": "ansible IP Address Name"
       }
     },
-    "kubemastersLbPIPAddressName": {
+    "kubeMastersLbPIPAddressName": {
       "type": "string",
       "metadata": {
         "description": "ansible IP Address Name"
@@ -34,53 +34,53 @@
     }
   },
   "variables": {
-    "kubemastersLbBackendPool": "[concat(parameters('prefix'),'-bap-kube-masters')]",
-    "kubemastersLbFrontend": "[concat(parameters('prefix'),'-fe-kube-masters')]",
-    "kubemastersLbName": "[concat(parameters('prefix'),'-lb-kube-masters')]",
-    "kubemastersDomainName": "[concat(parameters('prefix'),'-kube')]",
+    "kubeMastersLbBackendPool": "[concat(parameters('prefix'),'-bap-kube-masters')]",
+    "kubeMastersLbFrontend": "[concat(parameters('prefix'),'-fe-kube-masters')]",
+    "kubeMastersLbName": "[concat(parameters('prefix'),'-lb-kube-masters')]",
+    "kubeMastersDomainName": "[concat(parameters('prefix'),'-kube')]",
     "ansibleDomainName": "[concat(parameters('prefix'),'-ansible')]",
-    "kubemastersLbPIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('kubemastersLbPIPAddressName'))]",
-    "kubemastersLbNatRulesCopy": "lbnrcopy-kube-masters",
-    "kubemastersLbPIPAddressType": "Dynamic",
-    "kubemastersLbID": "[resourceId('Microsoft.Network/loadBalancers',variables('kubemastersLbName'))]",
-    "kubemastersFrontEndIPConfigID": "[concat(variables('kubemastersLbID'),'/frontendIPConfigurations/',variables('kubemastersLbFrontend'))]",
+    "kubeMastersLbPIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('kubeMastersLbPIPAddressName'))]",
+    "kubeMastersLbNatRulesCopy": "lbnrcopy-kube-masters",
+    "kubeMastersLbPIPAddressType": "Dynamic",
+    "kubeMastersLbID": "[resourceId('Microsoft.Network/loadBalancers',variables('kubeMastersLbName'))]",
+    "kubeMastersFrontEndIPConfigID": "[concat(variables('kubeMastersLbID'),'/frontendIPConfigurations/',variables('kubeMastersLbFrontend'))]",
     "ansiblePIPAddressType": "Dynamic"
   },
   "resources": [
     {
       "apiVersion": "[parameters('apiVersion')]",
       "type": "Microsoft.Network/publicIPAddresses",
-      "name": "[parameters('kubemastersLbPIPAddressName')]",
+      "name": "[parameters('kubeMastersLbPIPAddressName')]",
       "location": "[resourceGroup().location]",
       "properties": {
-        "publicIPAllocationMethod": "[variables('kubemastersLbPIPAddressType')]",
+        "publicIPAllocationMethod": "[variables('kubeMastersLbPIPAddressType')]",
         "dnsSettings": {
-          "domainNameLabel": "[variables('kubemastersDomainName')]"
+          "domainNameLabel": "[variables('kubeMastersDomainName')]"
         }
       }
     },
     {
       "apiVersion": "[parameters('apiVersion')]",
-      "name": "[variables('kubemastersLbName')]",
+      "name": "[variables('kubeMastersLbName')]",
       "type": "Microsoft.Network/loadBalancers",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[concat('Microsoft.Network/publicIPAddresses/', parameters('kubemastersLbPIPAddressName'))]"
+        "[concat('Microsoft.Network/publicIPAddresses/', parameters('kubeMastersLbPIPAddressName'))]"
       ],
       "properties": {
         "frontendIPConfigurations": [
           {
-            "name": "[variables('kubemastersLbFrontend')]",
+            "name": "[variables('kubeMastersLbFrontend')]",
             "properties": {
               "publicIPAddress": {
-                "id": "[variables('kubemastersLbPIPAddressID')]"
+                "id": "[variables('kubeMastersLbPIPAddressID')]"
               }
             }
           }
         ],
         "backendAddressPools": [
           {
-            "name": "[variables('kubemastersLbBackendPool')]"
+            "name": "[variables('kubeMastersLbBackendPool')]"
           }
         ]
       }
@@ -88,18 +88,18 @@
     {
       "apiVersion": "[parameters('apiVersion')]",
       "type": "Microsoft.Network/loadBalancers/inboundNatRules",
-      "name": "[concat(variables('kubemastersLbName'), '/', 'HTTP-8', copyIndex())]",
+      "name": "[concat(variables('kubeMastersLbName'), '/', 'HTTP-8', copyIndex())]",
       "location": "[resourceGroup().location]",
       "copy": {
-        "name": "[variables('kubemastersLbNatRulesCopy')]",
+        "name": "[variables('kubeMastersLbNatRulesCopy')]",
         "count": "[parameters('numberOfMasters')]"
       },
       "dependsOn": [
-        "[concat('Microsoft.Network/loadBalancers/', variables('kubemastersLbName'))]"
+        "[concat('Microsoft.Network/loadBalancers/', variables('kubeMastersLbName'))]"
       ],
       "properties": {
         "frontendIPConfiguration": {
-          "id": "[variables('kubemastersFrontEndIPConfigID')]"
+          "id": "[variables('kubeMastersFrontEndIPConfigID')]"
         },
         "protocol": "tcp",
         "frontendPort": "[copyIndex(80)]",
@@ -110,18 +110,18 @@
     {
       "apiVersion": "[parameters('apiVersion')]",
       "type": "Microsoft.Network/loadBalancers/inboundNatRules",
-      "name": "[concat(variables('kubemastersLbName'), '/', 'SSH-', copyIndex())]",
+      "name": "[concat(variables('kubeMastersLbName'), '/', 'SSH-', copyIndex())]",
       "location": "[resourceGroup().location]",
       "copy": {
-        "name": "[variables('kubemastersLbNatRulesCopy')]",
+        "name": "[variables('kubeMastersLbNatRulesCopy')]",
         "count": "[parameters('numberOfMasters')]"
       },
       "dependsOn": [
-        "[concat('Microsoft.Network/loadBalancers/', variables('kubemastersLbName'))]"
+        "[concat('Microsoft.Network/loadBalancers/', variables('kubeMastersLbName'))]"
       ],
       "properties": {
         "frontendIPConfiguration": {
-          "id": "[variables('kubemastersFrontEndIPConfigID')]"
+          "id": "[variables('kubeMastersFrontEndIPConfigID')]"
         },
         "protocol": "tcp",
         "frontendPort": "[copyIndex(22)]",
@@ -144,13 +144,13 @@
 
   ],
   "outputs": {
-    "kubemastersLbID": {
+    "kubeMastersLbID": {
       "type": "string",
-      "value": "[variables('kubemastersLbID')]"
+      "value": "[variables('kubeMastersLbID')]"
     },
-    "kubemastersLbBackendPoolID": {
+    "kubeMastersLbBackendPoolID": {
       "type": "string",
-      "value": "[concat(variables('kubemastersLbID'), '/backendAddressPools/', variables('kubemastersLbBackendPool'))]"
+      "value": "[concat(variables('kubeMastersLbID'), '/backendAddressPools/', variables('kubeMastersLbBackendPool'))]"
     },
     "result": {
       "value": "Load Balancers and IP Provisioning achieved",

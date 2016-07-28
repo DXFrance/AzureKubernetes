@@ -114,20 +114,20 @@
     "addressPrefix": "10.0.0.0/16",
    
     "subnetAdminName": "SubnetADMIN",
-    "subnetAdminPrefix": "10.0.2.0/24",
+    "adminSubnetPrefix": "10.0.2.0/24",
     "subnetAdminRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetAdminName'))]",
     
     "subnetMastersName": "SubnetMASTERS",
-    "subnetMastersPrefix": "10.0.4.0/24",
-    "subnetMastersRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetMastersName'))]",
+    "mastersSubnetPrefix": "10.0.4.0/24",
+    "kubeMastersSubnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetMastersName'))]",
     
     "subnetMinionsName": "SubnetMINIONS",
-    "subnetMinionsPrefix": "10.0.6.0/24",
-    "subnetMinionsRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetMinionsName'))]", 
+    "minionsSubnetPrefix": "10.0.6.0/24",
+    "kubeMinionsSubnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetMinionsName'))]", 
     
     "subnetEtcdName": "SubnetETCD",
-    "subnetEtcdPrefix": "10.0.8.0/24",
-    "subnetEtcdRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetEtcdName'))]", 
+    "etcdSubnetPrefix": "10.0.8.0/24",
+    "etcdSubnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetEtcdName'))]", 
        
     "storageAccountName": "[concat(uniquestring(resourceGroup().id), parameters('nameSuffix'))]",
     
@@ -306,25 +306,25 @@
           {
             "name": "[variables('subnetMastersName')]",
             "properties": {
-              "addressPrefix": "[variables('subnetMastersPrefix')]"
+              "addressPrefix": "[variables('mastersSubnetPrefix')]"
             }
           },
           {
             "name": "[variables('subnetMinionsName')]",
             "properties": {
-              "addressPrefix": "[variables('subnetMinionsPrefix')]"
+              "addressPrefix": "[variables('minionsSubnetPrefix')]"
             }
           },
           {
             "name": "[variables('subnetEtcdName')]",
             "properties": {
-              "addressPrefix": "[variables('subnetEtcdPrefix')]"
+              "addressPrefix": "[variables('etcdSubnetPrefix')]"
             }
           },
           {
             "name": "[variables('subnetAdminName')]",
             "properties": {
-              "addressPrefix": "[variables('subnetAdminPrefix')]"
+              "addressPrefix": "[variables('adminSubnetPrefix')]"
             }
           }
         ]
@@ -351,7 +351,7 @@
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
               "subnet": {
-                "id": "[variables('subnetMastersRef')]"
+                "id": "[variables('kubeMastersSubnetRef')]"
               },
               "loadBalancerBackendAddressPools": [
                 {
@@ -387,7 +387,7 @@
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
               "subnet": {
-                "id": "[variables('subnetMinionsRef')]"
+                "id": "[variables('kubeMinionsSubnetRef')]"
               }
             }
           }
@@ -413,7 +413,7 @@
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
               "subnet": {
-                "id": "[variables('subnetEtcdRef')]"
+                "id": "[variables('etcdSubnetRef')]"
               }
             }
           }
@@ -725,7 +725,7 @@
             "[variables('pubBlobUrl')]",
             "[variables('tokenBlobUrl')]"
           ],
-          "commandToExecute": "[concat('/bin/bash deploy.sh ',parameters('numberOfMasters'), ' ',parameters('numberOfMinions'), ' ',parameters('numberOfEtcd'), ' ', variables('subnetMastersPrefix'), ' ', variables('subnetMinionsPrefix'), ' ',variables('subnetEtcdPrefix'), ' ',parameters('nameSuffix'), ' ', ' ', reference(variables('ansibleIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn,' ', parameters('adminUserName'), ' ', reference(variables('lbPublicIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn,' >/tmp/deploy.log 2>&1 &') ]",
+          "commandToExecute": "[concat('/bin/bash deploy.sh ',parameters('numberOfMasters'), ' ',parameters('numberOfMinions'), ' ',parameters('numberOfEtcd'), ' ', variables('mastersSubnetPrefix'), ' ', variables('minionsSubnetPrefix'), ' ',variables('etcdSubnetPrefix'), ' ',parameters('nameSuffix'), ' ', ' ', reference(variables('ansibleIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn,' ', parameters('adminUserName'), ' ', reference(variables('lbPublicIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn,' >/tmp/deploy.log 2>&1 &') ]",
           "timestamp": "variables('ansibleIPAddressID')"
         },
         "protectedSettings": {

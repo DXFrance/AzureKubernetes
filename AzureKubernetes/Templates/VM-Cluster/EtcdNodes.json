@@ -44,10 +44,16 @@
         "description": "Size of the Ansible virtual machine"
       }
     },
-    "subnetEtcdRef": {
+    "etcdSubnetRef": {
       "type": "string",
       "metadata": {
         "description": "subnet Etcd"
+      }
+    },
+    "etcdSubnetRoot": {
+      "type": "string",
+      "metadata": {
+        "description": "subnet Etcd root for static IP computing"
       }
     },
     "adminUserName": {
@@ -89,7 +95,6 @@
     }
   },
   "variables": {
-    "nicPIPAddressType": "Dynamic",
     "etcdVmName": "[concat(parameters('prefix'),'-etcd-')]",
     "etcdOsDiskName": "[concat(parameters('prefix'),'-etcd-os-')]",
     "etcdDataDiskName": "[concat(parameters('prefix'),'-etcd-data-')]",
@@ -125,9 +130,10 @@
           {
             "name": "EtcdIpConfig",
             "properties": {
-              "privateIPAllocationMethod": "Dynamic",
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[concat(parameters('etcdSubnetRoot'), '.',add(copyindex(),4) )]",
               "subnet": {
-                "id": "[parameters('subnetEtcdRef')]"
+                "id": "[parameters('etcdSubnetRef')]"
               }
             }
           }

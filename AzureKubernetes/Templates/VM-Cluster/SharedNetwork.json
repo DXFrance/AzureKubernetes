@@ -14,25 +14,25 @@
         "description": "Virtual Network Name"
       }
     },
-    "subnetAdminPrefix": {
+    "adminSubnetPrefix": {
       "type": "string",
       "metadata": {
         "description": "subnet Admin Prefix"
       }
     },
-    "subnetMastersPrefix": {
+    "mastersSubnetPrefix": {
       "type": "string",
       "metadata": {
         "description": "subnet Masters Prefix"
       }
     },
-    "subnetMinionsPrefix": {
+    "minionsSubnetPrefix": {
       "type": "string",
       "metadata": {
         "description": "subnet Minions Prefix"
       }
     },
-    "subnetEtcdPrefix": {
+    "etcdSubnetPrefix": {
       "type": "string",
       "metadata": {
         "description": "subnet Etcd Prefix"
@@ -45,11 +45,11 @@
     "subnetAdminName": "SubnetADMIN",
     "subnetAdminRef": "[concat(variables('vnetId'),'/subnets/',variables('subnetAdminName'))]",
     "subnetMastersName": "SubnetMASTERS",
-    "subnetMastersRef": "[concat(variables('vnetId'),'/subnets/',variables('subnetMastersName'))]",
+    "kubeMastersSubnetRef": "[concat(variables('vnetId'),'/subnets/',variables('subnetMastersName'))]",
     "subnetMinionsName": "SubnetMINIONS",
-    "subnetMinionsRef": "[concat(variables('vnetId'),'/subnets/',variables('subnetMinionsName'))]",
+    "kubeMinionsSubnetRef": "[concat(variables('vnetId'),'/subnets/',variables('subnetMinionsName'))]",
     "subnetEtcdName": "SubnetETCD",
-    "subnetEtcdRef": "[concat(variables('vnetId'),'/subnets/',variables('subnetEtcdName'))]"
+    "etcdSubnetRef": "[concat(variables('vnetId'),'/subnets/',variables('subnetEtcdName'))]"
   },
   "resources": [
     {
@@ -67,25 +67,25 @@
           {
             "name": "[variables('subnetMastersName')]",
             "properties": {
-              "addressPrefix": "[parameters('subnetMastersPrefix')]"
+              "addressPrefix": "[parameters('mastersSubnetPrefix')]"
             }
           },
           {
             "name": "[variables('subnetMinionsName')]",
             "properties": {
-              "addressPrefix": "[parameters('subnetMinionsPrefix')]"
+              "addressPrefix": "[parameters('minionsSubnetPrefix')]"
             }
           },
           {
             "name": "[variables('subnetEtcdName')]",
             "properties": {
-              "addressPrefix": "[parameters('subnetEtcdPrefix')]"
+              "addressPrefix": "[parameters('etcdSubnetPrefix')]"
             }
           },
           {
             "name": "[variables('subnetAdminName')]",
             "properties": {
-              "addressPrefix": "[parameters('subnetAdminPrefix')]"
+              "addressPrefix": "[parameters('adminSubnetPrefix')]"
             }
           }
         ]
@@ -93,17 +93,17 @@
     }
   ],
   "outputs": {
-    "subnetMastersRef": {
+    "kubeMastersSubnetRef": {
       "type": "string",
-      "value": "[variables('subnetMastersRef')]"
+      "value": "[variables('kubeMastersSubnetRef')]"
     },
-    "subnetMinionsRef": {
+    "kubeMinionsSubnetRef": {
       "type": "string",
-      "value": "[variables('subnetMinionsRef')]"
+      "value": "[variables('kubeMinionsSubnetRef')]"
     },
-    "subnetEtcdRef": {
+    "etcdSubnetRef": {
       "type": "string",
-      "value": "[variables('subnetEtcdRef')]"
+      "value": "[variables('etcdSubnetRef')]"
     },
     "subnetAdminRef": {
       "type": "string",

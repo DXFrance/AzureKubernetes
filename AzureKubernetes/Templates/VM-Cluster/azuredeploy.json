@@ -244,13 +244,13 @@
     "kubeMinionsNicName": "[concat(parameters('prefix'),'-nic-kubeminion')]",
     "etcdNicName": "[concat(parameters('prefix'),'-nic-etcd')]",
 
-    "subnetAdminPrefix": "10.0.2.0/24",
-    "subnetMastersPrefix": "10.0.4.0/24",
-    "subnetMinionsPrefix": "10.0.6.0/24",
-    "subnetEtcdPrefix": "10.0.8.0/24",
+    "adminSubnetRoot": "[concat( split(parameters('adminSubnetPrefix'), '.')[0], '.', split(parameters('adminSubnetPrefix'), '.')[1], '.', split(parameters('adminSubnetPrefix'), '.')[2])]",
+    "kubeMastersSubnetRoot": "[concat( split(parameters('mastersSubnetPrefix'), '.')[0], '.', split(parameters('mastersSubnetPrefix'), '.')[1], '.', split(parameters('mastersSubnetPrefix'), '.')[2])]",
+    "kubeMinionsSubnetRoot": "[concat( split(parameters('minionsSubnetPrefix'), '.')[0], '.', split(parameters('minionsSubnetPrefix'), '.')[1], '.', split(parameters('minionsSubnetPrefix'), '.')[2])]",
+    "etcdSubnetRoot": "[concat( split(parameters('etcdSubnetPrefix'), '.')[0], '.', split(parameters('etcdSubnetPrefix'), '.')[1], '.', split(parameters('etcdSubnetPrefix'), '.')[2])]",
 
     "ansibleIPAddressName": "[concat(parameters('prefix'),'-pip-ansible')]",
-    "kubemastersLbPIPAddressName": "[concat(parameters('prefix'),'-pip-kube-masters')]",
+    "kubeMastersLbPIPAddressName": "[concat(parameters('prefix'),'-pip-kube-masters')]",
     "ansibleVMName": "[concat(parameters('prefix'), '-ansible')]"
 
   },
@@ -316,17 +316,17 @@
           "virtualNetworkName": {
             "value": "[variables('virtualNetworkName')]"
           },
-          "subnetAdminPrefix": {
-            "value": "[variables('subnetAdminPrefix')]"
+          "adminSubnetPrefix": {
+            "value": "[variables('adminSubnetPrefix')]"
           },
-          "subnetMastersPrefix": {
-            "value": "[variables('subnetMastersPrefix')]"
+          "mastersSubnetPrefix": {
+            "value": "[variables('mastersSubnetPrefix')]"
           },
-          "subnetMinionsPrefix": {
-            "value": "[variables('subnetMinionsPrefix')]"
+          "minionsSubnetPrefix": {
+            "value": "[variables('minionsSubnetPrefix')]"
           },
-          "subnetEtcdPrefix": {
-            "value": "[variables('subnetEtcdPrefix')]"
+          "etcdSubnetPrefix": {
+            "value": "[variables('etcdSubnetPrefix')]"
           }
         }
       }
@@ -354,8 +354,8 @@
           "ansibleIPAddressName": {
             "value": "[variables('ansibleIPAddressName')]"
           },
-          "kubemastersLbPIPAddressName": {
-            "value": "[variables('kubemastersLbPIPAddressName')]"
+          "kubeMastersLbPIPAddressName": {
+            "value": "[variables('kubeMastersLbPIPAddressName')]"
           }
         }
       }
@@ -403,23 +403,23 @@
           "ansibleVmSize": {
             "value": "[parameters('kubernetesVmSize')]"
           },
-          "subnetAdminPrefix": {
-            "value": "[variables('subnetAdminPrefix')]"
+          "adminSubnetPrefix": {
+            "value": "[variables('adminSubnetPrefix')]"
           },
-          "subnetMastersPrefix": {
-            "value": "[variables('subnetMastersPrefix')]"
+          "mastersSubnetPrefix": {
+            "value": "[variables('mastersSubnetPrefix')]"
           },
-          "subnetMinionsPrefix": {
-            "value": "[variables('subnetMinionsPrefix')]"
+          "minionsSubnetPrefix": {
+            "value": "[variables('minionsSubnetPrefix')]"
           },
-          "subnetEtcdPrefix": {
-            "value": "[variables('subnetEtcdPrefix')]"
+          "etcdSubnetPrefix": {
+            "value": "[variables('etcdSubnetPrefix')]"
           },
           "ansibleIPAddressName": {
             "value": "[variables('ansibleIPAddressName')]"
           },
-          "kubemastersLbPIPAddressName": {
-            "value": "[variables('kubemastersLbPIPAddressName')]"
+          "kubeMastersLbPIPAddressName": {
+            "value": "[variables('kubeMastersLbPIPAddressName')]"
           },
           "adminUserName": {
             "value": "[parameters('adminUserName')]"
@@ -479,14 +479,17 @@
           "kubeMastersNicName": {
             "value": "[variables('kubeMastersNicName')]"
           },
-          "kubemastersLbID": {
-            "value": "[reference('SharedPIPandLoadBalancer').outputs.kubemastersLbID.value]"
+          "kubeMastersLbID": {
+            "value": "[reference('SharedPIPandLoadBalancer').outputs.kubeMastersLbID.value]"
           },
-          "kubemastersLbBackendPoolID": {
-            "value": "[reference('SharedPIPandLoadBalancer').outputs.kubemastersLbBackendPoolID.value]"
+          "kubeMastersLbBackendPoolID": {
+            "value": "[reference('SharedPIPandLoadBalancer').outputs.kubeMastersLbBackendPoolID.value]"
           },
-          "subnetMastersRef": {
-            "value": "[reference('SharedNetwork').outputs.subnetMastersRef.value]"
+          "kubeMastersSubnetRef": {
+            "value": "[reference('SharedNetwork').outputs.kubeMastersSubnetRef.value]"
+          },
+          "kubeMastersSubnetRoot": {
+            "value": "[variables('kubeMastersSubnetRoot')]"
           },
           "kubernetesVmSize": {
             "value": "[parameters('kubernetesVmSize')]"
@@ -546,8 +549,11 @@
           "kubeMinionsNicName": {
             "value": "[variables('kubeMinionsNicName')]"
           },
-          "subnetMinionsRef": {
-            "value": "[reference('SharedNetwork').outputs.subnetMinionsRef.value]"
+          "kubeMinionsSubnetRef": {
+            "value": "[reference('SharedNetwork').outputs.kubeMinionsSubnetRef.value]"
+          },
+          "kubeMinionsSubnetRoot": {
+            "value": "[variables('kubeMinionsSubnetRoot')]"
           },
           "kubernetesVmSize": {
             "value": "[parameters('kubernetesVmSize')]"
@@ -607,8 +613,11 @@
           "etcdNicName": {
             "value": "[variables('etcdNicName')]"
           },
-          "subnetEtcdRef": {
-            "value": "[reference('SharedNetwork').outputs.subnetEtcdRef.value]"
+          "etcdSubnetRef": {
+            "value": "[reference('SharedNetwork').outputs.etcdSubnetRef.value]"
+          },
+          "etcdSubnetRoot": {
+            "value": "[variables('etcdSubnetRoot')]"
           },
           "etcdVmSize": {
             "value": "[parameters('kubernetesVmSize')]"

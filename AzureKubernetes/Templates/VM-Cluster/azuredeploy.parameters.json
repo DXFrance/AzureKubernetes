@@ -15,6 +15,18 @@
     "centosOSVersion": {
       "value": "7.2"
     },
+    "adminSubnetPrefix": {
+      "value": "10.0.2.0/24"
+    },
+    "mastersSubnetPrefix": {
+      "value": "10.0.4.0/24"
+    },
+    "minionsSubnetPrefix": {
+      "value": "10.0.6.0/24"
+    },
+    "etcdSubnetPrefix": {
+      "value": "10.0.8.0/24"
+    },
     "numberOfMasters": {
       "value": 1
     },

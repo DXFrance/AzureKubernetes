@@ -38,22 +38,28 @@
         "description": "kube Master NicName"
       }
     },
-    "kubemastersLbID": {
+    "kubeMastersLbID": {
       "type": "string",
       "metadata": {
         "description": "kube Masters Load Balancer ID"
       }
     },
-    "kubemastersLbBackendPoolID": {
+    "kubeMastersLbBackendPoolID": {
       "type": "string",
       "metadata": {
         "description": "kube Masters Backend Address Pool ID"
       }
     },
-    "subnetMastersRef": {
+    "kubeMastersSubnetRef": {
       "type": "string",
       "metadata": {
         "description": "subnet Masters"
+      }
+    },
+    "kubeMastersSubnetRoot": {
+      "type": "string",
+      "metadata": {
+        "description": "subnet kubeMasters root for static IP computing"
       }
     },
     "adminUserName": {
@@ -101,7 +107,6 @@
     }
   },
   "variables": {
-    "nicPIPAddressType": "Dynamic",
     "masterNetworkInterfacesCopy": "nicopy-kube-master",
     "kubeMastersVmName": "[concat(parameters('prefix'),'-kube-master-')]",
     "kubeMastersOsDiskName": "[concat(parameters('prefix'),'-kube-master-os-')]",
@@ -139,21 +144,22 @@
           {
             "name": "MastersIpConfig",
             "properties": {
-              "privateIPAllocationMethod": "[variables('nicPIPAddressType')]",
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[concat(parameters('kubeMastersSubnetRoot'), '.',add(copyindex(),4) )]",
               "subnet": {
-                "id": "[parameters('subnetMastersRef')]"
+                "id": "[parameters('kubeMastersSubnetRef')]"
               },
               "loadBalancerBackendAddressPools": [
                 {
-                  "id": "[parameters('kubemastersLbBackendPoolID')]"
+                  "id": "[parameters('kubeMastersLbBackendPoolID')]"
                 }
               ],
               "loadBalancerInboundNatRules": [
                 {
-                  "id": "[concat(parameters('kubemastersLbID'),'/inboundNatRules/HTTP-8', copyindex())]"
+                  "id": "[concat(parameters('kubeMastersLbID'),'/inboundNatRules/HTTP-8', copyindex())]"
                 },
                 {
-                  "id": "[concat(parameters('kubemastersLbID'),'/inboundNatRules/SSH-', copyindex())]"
+                  "id": "[concat(parameters('kubeMastersLbID'),'/inboundNatRules/SSH-', copyindex())]"
                 }
               ]
             }
@@ -201,7 +207,7 @@
           "osDisk": {
             "name": "[concat(variables('kubeMastersOsDiskName'), copyindex())]",
             "vhd": {
-              "uri": "[concat('http://',parameters('kubeMastersStorageAccountName'),'.blob.core.windows.net/vhds/', variables('kubemastersOsDiskName'), copyindex(),'.vhd')]"
+              "uri": "[concat('http://',parameters('kubeMastersStorageAccountName'),'.blob.core.windows.net/vhds/', variables('kubeMastersOsDiskName'), copyindex(),'.vhd')]"
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
@@ -212,7 +218,7 @@
               "diskSizeGB": "1000",
               "lun": 0,
               "vhd": {
-                "uri": "[concat('http://', parameters('kubeMastersStorageAccountName'),'.blob.core.windows.net/vhds/', variables('kubemastersDataDiskName'), copyIndex(), '.vhd')]"
+                "uri": "[concat('http://', parameters('kubeMastersStorageAccountName'),'.blob.core.windows.net/vhds/', variables('kubeMastersDataDiskName'), copyIndex(), '.vhd')]"
               },
               "createOption": "Empty"
             }

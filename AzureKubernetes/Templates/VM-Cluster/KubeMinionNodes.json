@@ -26,10 +26,16 @@
         "description": "kube Minion NicName"
       }
     },
-    "subnetMinionsRef": {
+    "kubeMinionsSubnetRef": {
       "type": "string",
       "metadata": {
         "description": "subnet Minions"
+      }
+    },
+    "kubeMinionsSubnetRoot": {
+      "type": "string",
+      "metadata": {
+        "description": "subnet kubeMinions root for static IP computing"
       }
     },
     "kubeMinionsAvailabilitySetName": {
@@ -125,9 +131,10 @@
           {
             "name": "MinionsIpConfig",
             "properties": {
-              "privateIPAllocationMethod": "Dynamic",
+              "privateIPAllocationMethod": "Static",
+              "privateIPAddress": "[concat(parameters('kubeMinionsSubnetRoot'), '.',add(copyindex(),4) )]",
               "subnet": {
-                "id": "[parameters('subnetMinionsRef')]"
+                "id": "[parameters('kubeMinionsSubnetRef')]"
               }
             }
           }

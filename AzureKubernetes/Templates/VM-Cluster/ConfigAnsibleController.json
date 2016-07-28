@@ -58,25 +58,25 @@
         "description": "Size of the Ansible virtual machine"
       }
     },
-    "subnetAdminPrefix": {
+    "adminSubnetPrefix": {
       "type": "string",
       "metadata": {
         "description": "subnet Admin Prefix"
       }
     },
-    "subnetMastersPrefix": {
+    "mastersSubnetPrefix": {
       "type": "string",
       "metadata": {
         "description": "subnet Masters Prefix"
       }
     },
-    "subnetMinionsPrefix": {
+    "minionsSubnetPrefix": {
       "type": "string",
       "metadata": {
         "description": "subnet Minions Prefix"
       }
     },
-    "subnetEtcdPrefix": {
+    "etcdSubnetPrefix": {
       "type": "string",
       "metadata": {
         "description": "subnet Etcd Prefix"
@@ -88,10 +88,10 @@
         "description": "ansible IP Address Name"
       }
     },
-    "kubemastersLbPIPAddressName": {
+    "kubeMastersLbPIPAddressName": {
       "type": "string",
       "metadata": {
-        "description": "kubemastersLbPIPAddressName IP Address Name"
+        "description": "kubeMastersLbPIPAddressName IP Address Name"
       }
     },
     "adminUserName": {
@@ -169,7 +169,7 @@
 
     "assetsStorageAccountId": "[resourceId(parameters('vaultAccountName'),'Microsoft.Storage/storageAccounts', parameters('vaultAccountName'))]",
     "ansibleIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('ansibleIPAddressName'))]",
-    "kubemastersLbPIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('kubemastersLbPIPAddressName'))]",
+    "kubeMastersLbPIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('kubeMastersLbPIPAddressName'))]",
 
     "adminPassword": "V3l0C1RaPt0R#",
     "disablePasswordAuthentication": "true"
@@ -266,7 +266,7 @@
           "timestamp": "variables('ansibleIPAddressID')"
         },
         "protectedSettings": {
-          "commandToExecute": "[concat(variables('customScriptAnsibleCommand'), ' \"', parameters('numberOfMasters'), '\" \"', parameters('numberOfMinions'), '\" \"', parameters('numberOfEtcdNodes'),'\" \"', parameters('subnetMastersPrefix'),'\" \"', parameters('subnetMinionsPrefix'),'\" \"', parameters('subnetEtcdPrefix'), '\" \"', parameters('prefix'), '\" \"', reference(variables('ansibleIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn, '\" \"', parameters('adminUserName'), '\" \"', reference(variables('kubemastersLbPIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn, '\" \"', parameters('keyStorageAccountName'), '\" \"', listKeys(concat('Microsoft.Storage/storageAccounts/',parameters('keyStorageAccountName')),'2015-05-01-preview').key1, '\"')]"
+          "commandToExecute": "[concat(variables('customScriptAnsibleCommand'), ' \"', parameters('numberOfMasters'), '\" \"', parameters('numberOfMinions'), '\" \"', parameters('numberOfEtcdNodes'),'\" \"', parameters('mastersSubnetPrefix'),'\" \"', parameters('minionsSubnetPrefix'),'\" \"', parameters('etcdSubnetPrefix'), '\" \"', parameters('prefix'), '\" \"', reference(variables('ansibleIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn, '\" \"', parameters('adminUserName'), '\" \"', reference(variables('kubeMastersLbPIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn, '\" \"', parameters('keyStorageAccountName'), '\" \"', listKeys(concat('Microsoft.Storage/storageAccounts/',parameters('keyStorageAccountName')),'2015-05-01-preview').key1, '\"')]"
         }
       }
     }
