@@ -180,22 +180,31 @@
     },
     "adminSubnetCIDR": {
       "type": "string",
-      "defaultValue": "devops",
+      "defaultValue": "10.0.2.0/24",
       "metadata": {
-        "description": "Password for on the VMs"
+        "description": "admin Subnet CIDR"
       }
     },
-    "adminSubnetCIDR": {
-      "value": "10.0.2.0/24"
-    },
     "mastersSubnetCIDR": {
-      "value": "10.0.4.0/24"
+      "type": "string",
+      "defaultValue": "10.0.4.0/24",
+      "metadata": {
+        "description": "masters Subnet CIDR"
+      }
     },
     "minionsSubnetCIDR": {
-      "value": "10.0.6.0/24"
+      "type": "string",
+      "defaultValue": "10.0.6.0/24",
+      "metadata": {
+        "description": "minions Subnet CIDR"
+      }
     },
     "etcdSubnetCIDR": {
-      "value": "10.0.8.0/24"
+      "type": "string",
+      "defaultValue": "10.0.8.0/24",
+      "metadata": {
+        "description": "etcd Subnet CIDR"
+      }
     },
     "sshKeyData": {
       "type": "string",
@@ -342,7 +351,7 @@
             "value": "[parameters('mastersSubnetCIDR')]"
           },
           "minionsSubnetCIDR": {
-            "value": "[paramaters('minionsSubnetCIDR')]"
+            "value": "[parameters('minionsSubnetCIDR')]"
           },
           "etcdSubnetCIDR": {
             "value": "[parameters('etcdSubnetCIDR')]"

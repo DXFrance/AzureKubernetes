@@ -49,33 +49,21 @@ function fix_etc_hosts()
 
 function install_packages()
 {
-    log "Install software-properties-common ..."
-    until apt-get --yes install software-properties-common
+    log "Install easy_install: ..."
+    until yum install python-setuptools python-setuptools-devel
     do
-      log "Lock detected on apt-get while install Try again..."
+      log "Lock detected on yum easy_install Try again..."
       sleep 2
     done
-    
-    log "Update System ..."
-    until apt-get --yes update
-    do
-      log "Lock detected on apt-get while install Try again..."
-      sleep 2
-    done
-    
-    log "Install git ..."
-    until apt-get --yes install git
-    do
-      log "Lock detected on apt-get while install Try again..."
-      sleep 2
-    done
-    
+	error_log "Unable to get easy_install packages"
+
     log "Install pip ..."
-    until apt-get --yes install python-pip
+    until easy_install pip
     do
-      log "Lock detected on apt-get while install Try again..."
+      log "Lock detected on easy_install pip Try again..."
       sleep 2
     done
+	error_log "Unable to get pip packages"
 }
 
 
@@ -162,7 +150,7 @@ LOG_DATE=$(date +%s)
 
 GIT_KUB8_URL="https://github.com/DXFrance/AzureKubernetes.git"
 
-LOG_URL="https://hooks.slack.com/services/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"
+LOG_URL="https://hooks.slack.com/services/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"
 
 # Slack notification
 SLACK_TOKEN="$(get_slack_token)"
