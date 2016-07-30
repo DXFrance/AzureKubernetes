@@ -437,3 +437,7 @@ test_ansible
 get_kube_playbook
 install_slack_callback
 deploy
+
+log "Success : End of Execution of Install Script from CustomScript"
+
+exit 0

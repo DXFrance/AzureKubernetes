@@ -50,7 +50,7 @@ function fix_etc_hosts()
 function install_packages()
 {
     log "Install easy_install: ..."
-    until yum install python-setuptools python-setuptools-devel
+    until sudo yum -y install python-setuptools python-setuptools-devel
     do
       log "Lock detected on yum easy_install Try again..."
       sleep 2
@@ -58,7 +58,7 @@ function install_packages()
 	error_log "Unable to get easy_install packages"
 
     log "Install pip ..."
-    until easy_install pip
+    until sudo easy_install pip
     do
       log "Lock detected on easy_install pip Try again..."
       sleep 2
