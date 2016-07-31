@@ -72,9 +72,9 @@ function get_sshkeys()
     until python GetSSHFromPrivateStorage.py "${STORAGE_ACCOUNT_NAME}" "${STORAGE_ACCOUNT_KEY}" idgen_rsa
     do
         log "Fails to Get idgen_rsa key trying again ..."
-        sleep 60
+        sleep 180
         let c=${c}+1
-        if [ "${c}" -gt 4 ]; then
+        if [ "${c}" -gt 5 ]; then
            log "Timeout to get idgen_rsa key exiting ..."
            exit 1
         fi

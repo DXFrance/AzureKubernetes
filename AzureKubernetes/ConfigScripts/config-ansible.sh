@@ -205,6 +205,15 @@ function install_python_modules()
   log "Install ansible required python modules..." "0"
   pip install PyYAML jinja2 paramiko
   error_log "Unable to install python packages via pip"
+
+  #log "upgrading pip"
+  #does not work
+  #pip install --upgrade pip
+
+  log "Install azure storage python module via pip..."
+  pip install azure-storage
+  error_log "Unable to install azure-storage package via pip"
+
 }
 
 function install_ansible()
@@ -229,12 +238,6 @@ function install_ansible()
 
 function put_sshkeys()
  {
-   	log "upgrading pip"
-	pip install --upgrade pip
-
-    log "Install azure storage python module ..."
-    pip install azure-storage
-
     # Push both Private and Public Key
     log "Push ssh keys to Azure Storage"
     python WriteSSHToPrivateStorage.py "${STORAGE_ACCOUNT_NAME}" "${STORAGE_ACCOUNT_KEY}" idgen_rsa
@@ -432,7 +435,7 @@ install_required_groups
 install_required_packages
 install_python_modules
 install_ansible
-put_sshkeys
+#put_sshkeys
 configure_ansible
 create_inventory
 test_ansible
