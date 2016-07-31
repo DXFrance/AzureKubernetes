@@ -41,6 +41,7 @@ function log()
 
 function fix_etc_hosts()
 {
+	#does not work - check later
 	log "Add hostame and ip in hosts file ..."
 	IP=$(ip addr show eth0 | grep inet | grep -v inet6 | awk '{ print $2; }' | sed 's?/.*$??')
 	HOST=$(hostname)
@@ -49,21 +50,13 @@ function fix_etc_hosts()
 
 function install_packages()
 {
-    log "Install easy_install: ..."
-    until sudo yum -y install python-setuptools python-setuptools-devel
-    do
-      log "Lock detected on yum easy_install Try again..."
-      sleep 2
-    done
-	error_log "Unable to get easy_install packages"
-
-    log "Install pip ..."
-    until sudo easy_install pip
-    do
-      log "Lock detected on easy_install pip Try again..."
-      sleep 2
-    done
-	error_log "Unable to get pip packages"
+  log "Install pip required packages..." "0"
+  until yum install -y git python2-devel python-pip libffi-devel libssl-dev openssl-devel
+  do
+    log "Lock detected on VM init Try again..." "0"
+    sleep 2
+  done
+  error_log "Unable to get system packages"
 }
 
 
@@ -164,7 +157,7 @@ repo_name="ansible-kubernetes-centos"
 slack_repo="slack-ansible-plugin"
 
 ## Call functions
-fix_etc_hosts
+#fix_etc_hosts
 install_packages
 get_sshkeys
 ssh_config

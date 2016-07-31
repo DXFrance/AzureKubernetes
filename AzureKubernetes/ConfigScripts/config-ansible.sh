@@ -229,7 +229,9 @@ function install_ansible()
 
 function put_sshkeys()
  {
-   
+   	log "upgrading pip"
+	pip install --upgrade pip
+
     log "Install azure storage python module ..."
     pip install azure-storage
 
