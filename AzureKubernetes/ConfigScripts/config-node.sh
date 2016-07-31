@@ -213,11 +213,11 @@ install_curl
 update_centos_distribution
 install_packages
 install_python_modules
-#get_sshkeys
-#ssh_config
+get_sshkeys
+ssh_config
 
 # Script Wait for the wait_module from ansible playbook
-#start_nc
+start_nc
 
 log "Success : End of Execution of Install Script from config-node CustomScript"
 
