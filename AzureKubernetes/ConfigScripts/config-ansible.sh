@@ -142,7 +142,7 @@ function add_hosts()
   
   for i in $(seq 0 $numberOfMasters)
   do
-	echo "${subnetEtcd3}.${j},"masters" >>  /tmp/hosts.inv 
+	echo "${subnetEtcd3}.${j},masters" >>  /tmp/hosts.inv 
   done
 
   # Minions
@@ -438,6 +438,3 @@ get_kube_playbook
 install_slack_callback
 deploy
 
-log "Success : End of Execution of Install Script from CustomScript"
-
-exit 0

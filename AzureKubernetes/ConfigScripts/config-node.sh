@@ -44,7 +44,7 @@ function fix_etc_hosts()
 	log "Add hostame and ip in hosts file ..."
 	IP=$(ip addr show eth0 | grep inet | grep -v inet6 | awk '{ print $2; }' | sed 's?/.*$??')
 	HOST=$(hostname)
-	echo "${IP}" "${HOST}" >> "${HOST_FILE}"
+	echo "${IP}" "${HOST}" | sudo tee -a "${HOST_FILE}"
 }
 
 function install_packages()
@@ -147,6 +147,7 @@ STORAGE_ACCOUNT_KEY="${2}"
 ANSIBLE_USER="${3}"
 
 LOG_DATE=$(date +%s)
+HOST_FILE="/etc/hosts"
 
 GIT_KUB8_URL="https://github.com/DXFrance/AzureKubernetes.git"
 
