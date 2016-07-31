@@ -429,7 +429,7 @@ install_curl
 #generate_sshkeys
 #ssh_config
 #add_hosts
-#update_centos_distribution
+update_centos_distribution
 #install_required_groups
 install_required_packages
 install_python_modules

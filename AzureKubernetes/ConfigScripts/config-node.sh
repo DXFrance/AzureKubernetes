@@ -54,6 +54,17 @@ function install_curl()
   done
 }
 
+function update_centos_distribution()
+{
+log "Update Centos distribution..." "0"
+until yum -y update --exclude=WALinuxAgent
+do
+log "Lock detected on VM init Try again..." "0"
+sleep 2
+done
+error_log "unable to update system"
+}
+
 function fix_etc_hosts()
 {
 	#does not work - check later
@@ -199,6 +210,7 @@ slack_repo="slack-ansible-plugin"
 #fix_etc_hosts
 install_epel_repo
 install_curl
+update_centos_distribution
 install_packages
 install_python_modules
 #get_sshkeys
