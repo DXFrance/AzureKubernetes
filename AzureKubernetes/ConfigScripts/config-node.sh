@@ -39,6 +39,21 @@ function log()
   echo "$(date) : $1"
 }
 
+function install_epel_repo()
+{
+   rpm -iUvh "${EPEL_REPO}"
+}
+
+function install_curl()
+{
+  # Installation of curl for logging
+  until yum install -y curl 
+  do
+    log "Lock detected on yum install VM init Try again..."
+    sleep 2
+  done
+}
+
 function fix_etc_hosts()
 {
 	#does not work - check later
@@ -59,13 +74,22 @@ function install_packages()
   error_log "Unable to get system packages"
 }
 
+function install_python_modules()
+{
+  log "upgrading pip"
+  #does not work
+  pip install --upgrade pip
+
+  log "Install azure storage python module via pip..."
+  pip install azure-storage
+  error_log "Unable to install azure-storage package via pip"
+
+}
 
 function get_sshkeys()
  {
    
     c=0;
-    log "Install azure storage python module ..."
-    pip install azure-storage
 
     # Pull both Private and Public Key
     log "Get ssh keys from Azure Storage"
@@ -143,6 +167,7 @@ LOG_DATE=$(date +%s)
 HOST_FILE="/etc/hosts"
 
 GIT_KUB8_URL="https://github.com/DXFrance/AzureKubernetes.git"
+EPEL_REPO="http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-7.noarch.rpm"
 
 LOG_URL="https://hooks.slack.com/services/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"
 
@@ -158,6 +183,8 @@ slack_repo="slack-ansible-plugin"
 
 ## Call functions
 #fix_etc_hosts
+install_epel_repo
+install_curl
 install_packages
 get_sshkeys
 ssh_config
