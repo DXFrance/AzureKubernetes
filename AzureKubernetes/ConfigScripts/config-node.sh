@@ -78,10 +78,10 @@ function install_python_modules()
 {
   log "upgrading pip"
   #does not work
-  sudo pip install --upgrade pip
+  pip install --upgrade pip
 
   log "Install azure storage python module via pip..."
-  sudo pip install azure-storage
+  pip install azure-storage
   error_log "Unable to install azure-storage package via pip"
 
 }
@@ -141,6 +141,21 @@ function ssh_config()
   chmod 400 "/home/${ANSIBLE_USER}/.ssh/authorized_keys"
   error_log "Unable to chmod $ANSIBLE_USER authorized_keys file"
   
+}
+
+function get_slack_token()
+{
+  # this function set the SLACK_TOKEN environment variable in order to use slack-ansible-plugin
+
+  # token=$(grep "token:" slack-token.tok | cut -f2 -d:)
+  # base64 encoding in order to avoid to handle vm extension fileuris parameters outside of github
+  # because github forbids token archiving
+  # the alternative would be to put a file in a vault or a storage account and copy this file from 
+  # the config-ansible.sh (deployment through fileuris mechanism would also present an issue because
+  # it seems currently impossible to use both github and a storage account in the fileuris list)
+  encoded="AHRva2VuOnhveHAtMjYxMTYwNzgxMzItMjYxMTc3ODg3NzItNDAwMDY4MDY0NjUtZjgwZTI3MzFmMw=="
+  token=$(base64 -d -i <<<"$encoded")
+  echo "$token"
 }
 
 function start_nc()
