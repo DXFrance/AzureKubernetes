@@ -208,10 +208,10 @@ function install_python_modules()
 
   log "upgrading pip"
   #does not work
-  pip install --upgrade pip
+  sudo pip install --upgrade pip
 
   log "Install azure storage python module via pip..."
-  pip install azure-storage
+  sudo pip install azure-storage
   error_log "Unable to install azure-storage package via pip"
 
 }
