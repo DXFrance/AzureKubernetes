@@ -201,12 +201,11 @@ install_epel_repo
 install_curl
 install_packages
 install_python_modules
-get_sshkeys
-ssh_config
-privateIP_for_ansible
+#get_sshkeys
+#ssh_config
 
 # Script Wait for the wait_module from ansible playbook
-start_nc
+#start_nc
 
 log "Success : End of Execution of Install Script from config-node CustomScript"
 

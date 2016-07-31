@@ -276,7 +276,7 @@ function test_ansible()
   log "$mess" "0"
 }
 
-function install_slack_callback()
+function install_ansible_slack_callback()
 {
 
   mkdir -p "/usr/share/ansible_plugins/callback_plugins"
@@ -286,7 +286,6 @@ function install_slack_callback()
   pip install -r requirements.txt
   cp slack-logger.py /usr/share/ansible_plugins/callback_plugins/slack-logger.py
 }
-
 
 function create_inventory()
 {
@@ -427,19 +426,19 @@ log "    - STORAGE_ACCOUNT_KEY  $STORAGE_ACCOUNT_KEY" "N"
 
 install_epel_repo
 install_curl
-generate_sshkeys
-ssh_config
-add_hosts
-update_centos_distribution
-install_required_groups
+#generate_sshkeys
+#ssh_config
+#add_hosts
+#update_centos_distribution
+#install_required_groups
 install_required_packages
 install_python_modules
-install_ansible
+#install_ansible
 #put_sshkeys
-configure_ansible
-create_inventory
-test_ansible
-get_kube_playbook
-install_slack_callback
-deploy
+#configure_ansible
+#create_inventory
+#test_ansible
+#get_kube_playbook
+#install_ansible_slack_callback
+#deploy
 
