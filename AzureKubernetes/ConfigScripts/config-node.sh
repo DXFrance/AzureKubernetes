@@ -74,6 +74,17 @@ function fix_etc_hosts()
 	echo "${IP}" "${HOST}" | sudo tee -a "${HOST_FILE}"
 }
 
+function install_required_groups()
+{
+  log "Install ansible required groups..." "0"
+  until yum -y group install "Development Tools"
+  do
+    log "Lock detected on VM init Try again..." "0"
+    sleep 2
+  done
+  error_log "unable to get group packages"
+}
+
 function install_packages()
 {
   log "Install pip required packages..." "0"
@@ -211,6 +222,7 @@ slack_repo="slack-ansible-plugin"
 install_epel_repo
 install_curl
 update_centos_distribution
+install_required_groups
 install_packages
 install_python_modules
 get_sshkeys
