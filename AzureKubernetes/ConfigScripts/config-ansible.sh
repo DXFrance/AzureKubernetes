@@ -224,8 +224,8 @@ function put_sshkeys()
   
   # Push both Private and Public Key
   log "Change permissions on idgen_rsa" "0"
-  chmod 644 idgen_rsa
-  error_log "Unable to chmod local idgen_rsa file"
+  #chmod 644 idgen_rsa
+  #error_log "Unable to chmod local idgen_rsa file"
   chmod 644 ~/.ssh/idgen_rsa
   error_log "Unable to chmod root idgen_rsa file"
 
