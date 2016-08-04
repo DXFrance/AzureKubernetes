@@ -222,16 +222,8 @@ function install_python_modules()
 function put_sshkeys()
  {
   
-  # Push both Private and Public Key
-  log "Change permissions on idgen_rsa" "0"
-  #chmod 644 idgen_rsa
-  #error_log "Unable to chmod local idgen_rsa file"
-  chmod 644 ~/.ssh/idgen_rsa
-  error_log "Unable to chmod root idgen_rsa file"
-
   log "Push ssh keys to Azure Storage" "0"
-  #python WriteSSHToPrivateStorage.py "${STORAGE_ACCOUNT_NAME}" "${STORAGE_ACCOUNT_KEY}" idgen_rsa
-  python WriteSSHToPrivateStorage.py "${STORAGE_ACCOUNT_NAME}" "${STORAGE_ACCOUNT_KEY}" ~/.ssh/idgen_rsa
+  python WriteSSHToPrivateStorage.py "${STORAGE_ACCOUNT_NAME}" "${STORAGE_ACCOUNT_KEY}" idgen_rsa
   error_log "Unable to write idgen_rsa to storage account ${STORAGE_ACCOUNT_NAME}"
   python WriteSSHToPrivateStorage.py "${STORAGE_ACCOUNT_NAME}" "${STORAGE_ACCOUNT_KEY}" idgen_rsa.pub
   error_log "Unable to write idgen_rsa.pub to storage account ${STORAGE_ACCOUNT_NAME}"
@@ -446,8 +438,8 @@ fix_etc_hosts
 install_required_groups
 install_required_packages
 install_python_modules
-install_ansible
 put_sshkeys
+install_ansible
 configure_ansible
 create_inventory
 test_ansible
