@@ -176,6 +176,17 @@ done
 error_log "unable to update system"
 }
 
+function fix_etc_hosts()
+{
+	#does not work - try removing selinux
+	log "setenforce 0"
+	setenforce 0
+
+	log "Add hostame and ip in hosts file ..."
+	IP=$(ip addr show eth0 | grep inet | grep -v inet6 | awk '{ print $2; }' | sed 's?/.*$??')
+	HOST=$(hostname)
+	echo "${IP}" "${HOST}" | sudo tee -a "${HOST_FILE}"
+}
 
 function install_required_groups()
 {
@@ -206,14 +217,27 @@ function install_python_modules()
   pip install PyYAML jinja2 paramiko
   error_log "Unable to install python packages via pip"
 
-  log "upgrading pip"
-  #does not work
-  pip install --upgrade pip
+  #does not work - try removing selinux
+  log "setenforce 0"
+  setenforce 0
 
+  log "upgrading pip"
+  pip install --upgrade pip
+  log "$1"
   log "Install azure storage python module via pip..."
   pip install azure-storage
-  error_log "Unable to install azure-storage package via pip"
+  log "$1"  
+}
 
+
+function put_sshkeys()
+ {
+    # Push both Private and Public Key
+    log "Push ssh keys to Azure Storage" "0"
+    python WriteSSHToPrivateStorage.py "${STORAGE_ACCOUNT_NAME}" "${STORAGE_ACCOUNT_KEY}" idgen_rsa
+    error_log "Unable to write idgen_rsa to storage account ${STORAGE_ACCOUNT_NAME}"
+    python WriteSSHToPrivateStorage.py "${STORAGE_ACCOUNT_NAME}" "${STORAGE_ACCOUNT_KEY}" idgen_rsa.pub
+    error_log "Unable to write idgen_rsa.pub to storage account ${STORAGE_ACCOUNT_NAME}"
 }
 
 function install_ansible()
@@ -236,15 +260,6 @@ function install_ansible()
   error_log "Unable to install ansible"
 }
 
-function put_sshkeys()
- {
-    # Push both Private and Public Key
-    log "Push ssh keys to Azure Storage"
-    python WriteSSHToPrivateStorage.py "${STORAGE_ACCOUNT_NAME}" "${STORAGE_ACCOUNT_KEY}" idgen_rsa
-    error_log "Unable to write idgen_rsa to storage account ${STORAGE_ACCOUNT_NAME}"
-    python WriteSSHToPrivateStorage.py "${STORAGE_ACCOUNT_NAME}" "${STORAGE_ACCOUNT_KEY}" idgen_rsa.pub
-    error_log "Unable to write idgen_rsa.pub to storage account ${STORAGE_ACCOUNT_NAME}"
-}
 
 function configure_ansible()
 {
@@ -430,6 +445,7 @@ generate_sshkeys
 ssh_config
 add_hosts
 update_centos_distribution
+fix_etc_hosts
 install_required_groups
 install_required_packages
 install_python_modules
@@ -441,4 +457,3 @@ test_ansible
 get_kube_playbook
 install_ansible_slack_callback
 deploy
-

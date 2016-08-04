@@ -67,7 +67,10 @@ error_log "unable to update system"
 
 function fix_etc_hosts()
 {
-	#does not work - check later
+	#does not work - try removing selinux
+	log "setenforce 0"
+	setenforce 0
+
 	log "Add hostame and ip in hosts file ..."
 	IP=$(ip addr show eth0 | grep inet | grep -v inet6 | awk '{ print $2; }' | sed 's?/.*$??')
 	HOST=$(hostname)
@@ -98,8 +101,11 @@ function install_packages()
 
 function install_python_modules()
 {
+  #does not work - try removing selinux
+  log "setenforce 0"
+  setenforce 0
+  
   log "upgrading pip"
-  #does not work
   pip install --upgrade pip
 
   log "Install azure storage python module via pip..."
@@ -222,6 +228,7 @@ slack_repo="slack-ansible-plugin"
 install_epel_repo
 install_curl
 update_centos_distribution
+fix_etc_hosts
 install_required_groups
 install_packages
 install_python_modules
