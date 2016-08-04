@@ -110,7 +110,7 @@ function get_sshkeys()
  {
     c=0;
 
-   sleep 360
+   sleep 240
    # Pull both Private and Public Key
     log "Get ssh keys from Azure Storage" "0"
     until python GetSSHFromPrivateStorage.py "${STORAGE_ACCOUNT_NAME}" "${STORAGE_ACCOUNT_KEY}" idgen_rsa
@@ -129,14 +129,14 @@ function get_sshkeys()
 
 function ssh_config()
 {
-  log "Configure ssh..."
-  log "Create ssh configuration for ${ANSIBLE_USER}"
+  log "Configure ssh..." "0"
+  log "Create ssh configuration for ${ANSIBLE_USER}" "0"
   
   printf "Host *\n  user %s\n  StrictHostKeyChecking no\n" "${ANSIBLE_USER}"  >> "/home/${ANSIBLE_USER}/.ssh/config"
   
   error_log "Unable to create ssh config file for user ${ANSIBLE_USER}"
   
-  log "Copy generated keys..."
+  log "Copy generated keys..." "0"
   
   cp idgen_rsa "/home/${ANSIBLE_USER}/.ssh/idgen_rsa"
   error_log "Unable to copy idgen_rsa key to $ANSIBLE_USER .ssh directory"
@@ -181,22 +181,29 @@ function get_slack_token()
 
 function start_nc()
 {
-  log "Pause script for Control VM..."
+  log "Pause script for Control VM..." "0"
   nohup nc -d -l 3333 >/tmp/nohup.log 2>&1
 }
 
-log "Execution of Install Script from CustomScript ..."
+log "Execution of Install Script from CustomScript ..." "0"
 
 ## Variables
 
 CWD="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
 
-log "CustomScript Directory is ${CWD}"
+log "CustomScript Directory is ${CWD}" "0"
 
 BASH_SCRIPT="${0}"
 STORAGE_ACCOUNT_NAME="${1}"
 STORAGE_ACCOUNT_KEY="${2}"
 ANSIBLE_USER="${3}"
+
+
+log "*BEGIN* Installation Kubernetes Node on Azure" "N"
+log "  Parameters : " "N"
+log "    - STORAGE_ACCOUNT_NAME $STORAGE_ACCOUNT_NAME" "N"
+log "    - STORAGE_ACCOUNT_KEY  $STORAGE_ACCOUNT_KEY" "N"
+log "    - ANSIBLE_USER         $ANSIBLE_USER" "N"
 
 LOG_DATE=$(date +%s)
 HOST_FILE="/etc/hosts"
@@ -217,7 +224,6 @@ repo_name="ansible-kubernetes-centos"
 slack_repo="slack-ansible-plugin"
 
 ## Call functions
-#fix_etc_hosts
 install_epel_repo
 install_curl
 update_centos_distribution
@@ -231,6 +237,6 @@ ssh_config
 # Script Wait for the wait_module from ansible playbook
 start_nc
 
-log "Success : End of Execution of Install Script from config-node CustomScript"
+log "Success : End of Execution of Install Script from config-node CustomScript" "0"
 
 exit 0
