@@ -110,12 +110,13 @@ function get_sshkeys()
  {
     c=0;
 
+   sleep 360
    # Pull both Private and Public Key
     log "Get ssh keys from Azure Storage" "0"
     until python GetSSHFromPrivateStorage.py "${STORAGE_ACCOUNT_NAME}" "${STORAGE_ACCOUNT_KEY}" idgen_rsa
     do
         log "Fails to Get idgen_rsa key trying again ..." "0"
-        sleep 180
+        sleep 120
         let c=${c}+1
         if [ "${c}" -gt 5 ]; then
            log "Timeout to get idgen_rsa key exiting ..." "1"

@@ -215,19 +215,17 @@ function install_python_modules()
 
   log "upgrading pip" "0"
   pip install --upgrade pip
-  log "$1"
   log "Install azure storage python module via pip..." "0"
   pip install azure-storage
-  log "$1"  
 }
 
 function put_sshkeys()
  {
-  #does not work - try removing selinux
-  log "setenforce 0" "0"
-  setenforce 0
   
   # Push both Private and Public Key
+  log "Change permissions on idgen_rsa" "0"
+  chmod 644 "idgen_rsa"
+
   log "Push ssh keys to Azure Storage" "0"
   python WriteSSHToPrivateStorage.py "${STORAGE_ACCOUNT_NAME}" "${STORAGE_ACCOUNT_KEY}" idgen_rsa
   error_log "Unable to write idgen_rsa to storage account ${STORAGE_ACCOUNT_NAME}"
