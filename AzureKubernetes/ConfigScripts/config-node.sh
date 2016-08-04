@@ -67,11 +67,7 @@ error_log "unable to update system"
 
 function fix_etc_hosts()
 {
-	#does not work - try removing selinux
-	log "setenforce 0"
-	setenforce 0
-
-	log "Add hostame and ip in hosts file ..."
+	log "Add hostame and ip in hosts file ..." "0"
 	IP=$(ip addr show eth0 | grep inet | grep -v inet6 | awk '{ print $2; }' | sed 's?/.*$??')
 	HOST=$(hostname)
 	echo "${IP}" "${HOST}" | sudo tee -a "${HOST_FILE}"
@@ -100,15 +96,11 @@ function install_packages()
 }
 
 function install_python_modules()
-{
-  #does not work - try removing selinux
-  log "setenforce 0"
-  setenforce 0
-  
-  log "upgrading pip"
+{ 
+  log "upgrading pip" "0"
   pip install --upgrade pip
 
-  log "Install azure storage python module via pip..."
+  log "Install azure storage python module via pip..." "0"
   pip install azure-storage
   error_log "Unable to install azure-storage package via pip"
 
@@ -118,15 +110,15 @@ function get_sshkeys()
  {
     c=0;
 
-    # Pull both Private and Public Key
-    log "Get ssh keys from Azure Storage"
+   # Pull both Private and Public Key
+    log "Get ssh keys from Azure Storage" "0"
     until python GetSSHFromPrivateStorage.py "${STORAGE_ACCOUNT_NAME}" "${STORAGE_ACCOUNT_KEY}" idgen_rsa
     do
-        log "Fails to Get idgen_rsa key trying again ..."
+        log "Fails to Get idgen_rsa key trying again ..." "0"
         sleep 180
         let c=${c}+1
         if [ "${c}" -gt 5 ]; then
-           log "Timeout to get idgen_rsa key exiting ..."
+           log "Timeout to get idgen_rsa key exiting ..." "1"
            exit 1
         fi
     done
