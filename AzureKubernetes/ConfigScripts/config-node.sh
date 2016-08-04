@@ -138,10 +138,10 @@ function ssh_config()
   
   log "Copy generated keys..."
   
-  cp id_rsa "/home/${ANSIBLE_USER}/.ssh/idgen_rsa"
+  cp idgen_rsa "/home/${ANSIBLE_USER}/.ssh/idgen_rsa"
   error_log "Unable to copy idgen_rsa key to $ANSIBLE_USER .ssh directory"
 
-  cp id_rsa.pub "/home/${ANSIBLE_USER}/.ssh/idgen_rsa.pub"
+  cp idgen_rsa.pub "/home/${ANSIBLE_USER}/.ssh/idgen_rsa.pub"
   error_log "Unable to copy idgen_rsa.pub key to $ANSIBLE_USER .ssh directory"
   
   cat "/home/${ANSIBLE_USER}/.ssh/idgen_rsa.pub" >> "/home/${ANSIBLE_USER}/.ssh/authorized_keys"
