@@ -282,6 +282,7 @@ function test_ansible()
 
 function install_ansible_slack_callback()
 {
+  log "install ansible callback..." "0"
 
   mkdir -p "/usr/share/ansible_plugins/callback_plugins"
   error_log "Unable to create callback plugin"
@@ -293,6 +294,8 @@ function install_ansible_slack_callback()
 
 function create_inventory()
 {
+  log "Create ansible inventory..." "0"
+
   masters=""
   etcd=""
   minions=""
@@ -321,6 +324,8 @@ function create_inventory()
 
 function get_kube_playbook()
 {
+  log "Get kubernetes playbook from $local_kub8/$repo_name" "0"
+
   cd "$CWD" || error_log "unable to back with cd .."  
   rm -f kub8
   git clone "${GIT_KUB8_URL}" "$local_kub8"
@@ -331,7 +336,8 @@ function get_kube_playbook()
 
 function get_slack_token()
 {
-  # this function set the SLACK_TOKEN environment variable in order to use slack-ansible-plugin
+  # this function get the slack incoming WebHook token in order to set the SLACK_TOKEN 
+  # environment variable in order to use slack-ansible-plugin
 
   # token=$(grep "token:" slack-token.tok | cut -f2 -d:)
   # base64 encoding in order to avoid to handle vm extension fileuris parameters outside of github
@@ -339,6 +345,7 @@ function get_slack_token()
   # the alternative would be to put a file in a vault or a storage account and copy this file from 
   # the config-ansible.sh (deployment through fileuris mechanism would also present an issue because
   # it seems currently impossible to use both github and a storage account in the fileuris list)
+  log "Get slack token for incoming WebHook" "0"
   encoded="AHRva2VuOnhveHAtMjYxMTYwNzgxMzItMjYxMTc3ODg3NzItNDAwMDY4MDY0NjUtZjgwZTI3MzFmMw=="
   token=$(base64 -d -i <<<"$encoded")
   echo "$token"
@@ -346,10 +353,11 @@ function get_slack_token()
 
 function deploy()
 {
+  log "Ansible deploy integrated-wait-deploy.yml playbook (git submodule)" "0"
   cd "$CWD" || error_log "unable to back with cd $CWD"  
   cd "$local_kub8/$repo_name" || error_log "unable to back with cd $local_kub8/$repo_name"
   log "Playing playbook" "0"
-  ansible-playbook -i "${ANSIBLE_HOST_FILE}" integrated-deploy.yml | tee -a /tmp/deploy-"${LOG_DATE}".log
+  ansible-playbook -i "${ANSIBLE_HOST_FILE}" integrated-wait-deploy.yml | tee -a /tmp/deploy-"${LOG_DATE}".log
   error_log "playbook kubernetes integrated-wait-deploy.yml had errors"
 
   log "*END* Installation Kubernetes Cluster on Azure" "0"
