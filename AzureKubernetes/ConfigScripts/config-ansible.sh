@@ -151,7 +151,7 @@ function add_hosts()
   for i in $(seq 0 $numberOfMinions)
   do
     let j=4+$i
-	echo "${subnetEtcd3}.${j},"minions" >>  /tmp/hosts.inv 
+	echo "${subnetEtcd3}.${j},minions" >>  /tmp/hosts.inv 
   done
 
   # Etcd
@@ -160,7 +160,7 @@ function add_hosts()
   for i in $(seq 0 $numberOfEtcd)
   do
     let j=4+$i
-	echo "${subnetEtcd3}.${j},"etcd" >>  /tmp/hosts.inv 
+	echo "${subnetEtcd3}.${j},etcd" >>  /tmp/hosts.inv 
   done
   
 }
@@ -272,6 +272,7 @@ function configure_ansible()
 
 function test_ansible()
 {
+  log "Test ansible..." "0"
   mess=$(ansible masters -m ping)
   log "$mess" "0"
   mess=$(ansible minions -m ping)
@@ -282,7 +283,7 @@ function test_ansible()
 
 function install_ansible_slack_callback()
 {
-  log "install ansible callback..." "0"
+  log "Install ansible callback..." "0"
 
   mkdir -p "/usr/share/ansible_plugins/callback_plugins"
   error_log "Unable to create callback plugin"
@@ -359,8 +360,6 @@ function deploy()
   log "Playing playbook" "0"
   ansible-playbook -i "${ANSIBLE_HOST_FILE}" integrated-wait-deploy.yml | tee -a /tmp/deploy-"${LOG_DATE}".log
   error_log "playbook kubernetes integrated-wait-deploy.yml had errors"
-
-  log "*END* Installation Kubernetes Cluster on Azure" "0"
 }
 
 
@@ -455,4 +454,4 @@ get_kube_playbook
 install_ansible_slack_callback
 deploy
 
-log "Success : End of Execution of Install Script from config-ansible CustomScript","0"
+log "Success : End of Execution of Install Script from config-ansible CustomScript" "0"
