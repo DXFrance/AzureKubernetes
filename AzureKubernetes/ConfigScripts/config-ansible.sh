@@ -142,7 +142,8 @@ function add_hosts()
   
   for i in $(seq 0 $numberOfMasters)
   do
-	echo "${subnetEtcd3}.${j},masters" >>  /tmp/hosts.inv 
+    let j=4+$i
+	echo "${subnetMasters3}.${j},masters" >>  /tmp/hosts.inv 
   done
 
   # Minions
@@ -151,7 +152,7 @@ function add_hosts()
   for i in $(seq 0 $numberOfMinions)
   do
     let j=4+$i
-	echo "${subnetEtcd3}.${j},minions" >>  /tmp/hosts.inv 
+	echo "${subnetMinions3}.${j},minions" >>  /tmp/hosts.inv 
   done
 
   # Etcd
