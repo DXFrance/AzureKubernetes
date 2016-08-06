@@ -302,15 +302,9 @@ function create_inventory()
     fi
   done
 
-  printf "[cluster]%s\n" "${masters}${minions}${etcd}" >> "${ANSIBLE_HOST_FILE}"
-  printf "%s\n" "ansible_user=${ANSIBLE_USER} ansible_ssh_private_key_file=/home/${ANSIBLE_USER}/.ssh/idgen_rsa" >> "${ANSIBLE_HOST_FILE}"
-
   printf "[masters]%s\n" "${masters}" >> "${ANSIBLE_HOST_FILE}"
-  printf "%s\n" "ansible_user=${ANSIBLE_USER} ansible_ssh_private_key_file=/home/${ANSIBLE_USER}/.ssh/idgen_rsa" >> "${ANSIBLE_HOST_FILE}"
   printf "[minions]%s\n" "${minions}" >> "${ANSIBLE_HOST_FILE}"
-  printf "%s\n" "ansible_user=${ANSIBLE_USER} ansible_ssh_private_key_file=/home/${ANSIBLE_USER}/.ssh/idgen_rsa" >> "${ANSIBLE_HOST_FILE}"
   printf "[etcd]%s\n" "${etcd}"       >> "${ANSIBLE_HOST_FILE}"
-  printf "%s\n" "ansible_user=${ANSIBLE_USER} ansible_ssh_private_key_file=/home/${ANSIBLE_USER}/.ssh/idgen_rsa" >> "${ANSIBLE_HOST_FILE}"
 
   error_log "unable to create hosts file entries to /etc/ansible"
 
