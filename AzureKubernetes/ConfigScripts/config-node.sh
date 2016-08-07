@@ -182,7 +182,7 @@ function get_slack_token()
 function start_nc()
 {
   log "Pause script for Control VM..." "0"
-  nohup nc -d -l 3333 >/tmp/nohup.log 2>&1
+  nohup nc -l 3333 >/tmp/nohup.log 2>&1
 }
 
 log "Execution of Install Script from CustomScript ..." "0"
