@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "AzureKubernetes", "AzureKubernetes\AzureKubernetes.deployproj", "{8A5223A2-10E2-4DC1-98B6-5F365B8FEF73}"
 EndProject
@@ -49,6 +49,28 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{96E0
 		Kubernetes-Ansible-Centos-Azure\scripts\first-boot.sh = Kubernetes-Ansible-Centos-Azure\scripts\first-boot.sh
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ansible-kubernetes-centos", "ansible-kubernetes-centos", "{A158ED55-FE55-4778-A9FD-C190F60ACC09}"
+	ProjectSection(SolutionItems) = preProject
+		ansible-kubernetes-centos\.git = ansible-kubernetes-centos\.git
+		ansible-kubernetes-centos\integrated-deploy.yml = ansible-kubernetes-centos\integrated-deploy.yml
+		ansible-kubernetes-centos\inventory = ansible-kubernetes-centos\inventory
+		ansible-kubernetes-centos\kubelet-rolling-update-dns.yml = ansible-kubernetes-centos\kubelet-rolling-update-dns.yml
+		ansible-kubernetes-centos\LICENSE = ansible-kubernetes-centos\LICENSE
+		ansible-kubernetes-centos\README.md = ansible-kubernetes-centos\README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{6534E394-2597-4C53-809B-A804DD9175EF}"
+	ProjectSection(SolutionItems) = preProject
+		ansible-kubernetes-centos\scripts\disks.sh = ansible-kubernetes-centos\scripts\disks.sh
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "roles", "roles", "{B9504D36-6333-43B9-9891-64264DAD425B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "group_vars", "group_vars", "{020A7EDF-DF48-4024-A76C-24FDF2FFF404}"
+	ProjectSection(SolutionItems) = preProject
+		ansible-kubernetes-centos\group_vars\all.yml = ansible-kubernetes-centos\group_vars\all.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -68,5 +90,8 @@ Global
 		{8AB3EE56-AE24-4B2E-952E-1F3A66BDDD1D} = {0B071DD1-ACBE-4736-AD34-06DDCC61D4D8}
 		{34519E4F-8AEB-4936-972D-B93B7554A187} = {9D395FB0-4E8A-4583-B853-5DA742A60311}
 		{96E00745-1332-445B-9F2C-7B14EE9DE861} = {1A97D0D4-DBDC-4DC0-8D4B-F3822B63FC8E}
+		{6534E394-2597-4C53-809B-A804DD9175EF} = {A158ED55-FE55-4778-A9FD-C190F60ACC09}
+		{B9504D36-6333-43B9-9891-64264DAD425B} = {A158ED55-FE55-4778-A9FD-C190F60ACC09}
+		{020A7EDF-DF48-4024-A76C-24FDF2FFF404} = {A158ED55-FE55-4778-A9FD-C190F60ACC09}
 	EndGlobalSection
 EndGlobal
