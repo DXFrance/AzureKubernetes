@@ -53,6 +53,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ansible-kubernetes-centos",
 	ProjectSection(SolutionItems) = preProject
 		ansible-kubernetes-centos\.git = ansible-kubernetes-centos\.git
 		ansible-kubernetes-centos\integrated-deploy.yml = ansible-kubernetes-centos\integrated-deploy.yml
+		ansible-kubernetes-centos\integrated-wait-deploy.yml = ansible-kubernetes-centos\integrated-wait-deploy.yml
 		ansible-kubernetes-centos\inventory = ansible-kubernetes-centos\inventory
 		ansible-kubernetes-centos\kubelet-rolling-update-dns.yml = ansible-kubernetes-centos\kubelet-rolling-update-dns.yml
 		ansible-kubernetes-centos\LICENSE = ansible-kubernetes-centos\LICENSE
