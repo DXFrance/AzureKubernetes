@@ -87,7 +87,7 @@ function install_required_groups()
 function install_packages()
 {
   log "Install pip required packages..." "0"
-  until yum install -y git python2-devel python-pip libffi-devel libssl-dev openssl-devel
+  until yum install -y git python2-devel python-pip libffi-devel libssl-dev openssl-devel nc
   do
     log "Lock detected on VM init Try again..." "0"
     sleep 2
