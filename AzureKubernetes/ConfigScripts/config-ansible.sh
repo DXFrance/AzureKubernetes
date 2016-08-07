@@ -101,7 +101,7 @@ EOF
   ## Devops User
   # No host Checking for ANSIBLE_USER 
 
-  log "Create ssh configuration for ${ANSIBLE_USER}"
+  log "Create ssh configuration for ${ANSIBLE_USER}" "0"
 
   printf "Host *\n  user %s\n  StrictHostKeyChecking no\n" "${ANSIBLE_USER}"  >> "/home/${ANSIBLE_USER}/.ssh/config"
 
@@ -308,23 +308,18 @@ function create_inventory()
     role=$(echo "$i"|cut -f2 -d,)
 
     if [ "$role" = "masters" ]; then
-      masters=$(printf "%s\n%s" "${masters}" "${ip}")
-    elif [ "$role" = "etcd" ]; then
-      etcd=$(printf "%s\n%s" "${etcd}" "${ip}")
+      masters=$(printf "%s\n%s" "${masters}" "${ip} ansible_user=${ANSIBLE_USER} ansible_ssh_private_key_file=/home/${ANSIBLE_USER}/.ssh/idgen_rsa")
     elif [ "$role" = "minions" ]; then
-      minions=$(printf "%s\n%s" "${minions}" "${ip}")
+      minions=$(printf "%s\n%s" "${minions}" "${ip} ansible_user=${ANSIBLE_USER} ansible_ssh_private_key_file=/home/${ANSIBLE_USER}/.ssh/idgen_rsa")
+    elif [ "$role" = "etcd" ]; then
+      etcd=$(printf "%s\n%s" "${etcd}" "${ip} ansible_user=${ANSIBLE_USER} ansible_ssh_private_key_file=/home/${ANSIBLE_USER}/.ssh/idgen_rsa")
     fi
   done
 
   printf "[cluster]%s\n" "${masters}${minions}${etcd}" >> "${ANSIBLE_HOST_FILE}"
-  printf "%s\n" "ansible_user=${ANSIBLE_USER} ansible_ssh_private_key_file=/home/${ANSIBLE_USER}/.ssh/idgen_rsa" >> "${ANSIBLE_HOST_FILE}"
-
   printf "[masters]%s\n" "${masters}" >> "${ANSIBLE_HOST_FILE}"
-  printf "%s\n" "ansible_user=${ANSIBLE_USER} ansible_ssh_private_key_file=/home/${ANSIBLE_USER}/.ssh/idgen_rsa" >> "${ANSIBLE_HOST_FILE}"
   printf "[minions]%s\n" "${minions}" >> "${ANSIBLE_HOST_FILE}"
-  printf "%s\n" "ansible_user=${ANSIBLE_USER} ansible_ssh_private_key_file=/home/${ANSIBLE_USER}/.ssh/idgen_rsa" >> "${ANSIBLE_HOST_FILE}"
   printf "[etcd]%s\n" "${etcd}"       >> "${ANSIBLE_HOST_FILE}"
-  printf "%s\n" "ansible_user=${ANSIBLE_USER} ansible_ssh_private_key_file=/home/${ANSIBLE_USER}/.ssh/idgen_rsa" >> "${ANSIBLE_HOST_FILE}"
 
   error_log "unable to create hosts file entries to /etc/ansible"
 
