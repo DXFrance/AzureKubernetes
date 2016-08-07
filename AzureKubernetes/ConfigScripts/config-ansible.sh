@@ -75,7 +75,7 @@ function ssh_config()
   log "Create ssh configuration for root" "0"
   cat << 'EOF' >> ~/.ssh/config
 Host *
-    user devops
+    user root
     StrictHostKeyChecking no
 EOF
 
@@ -99,34 +99,31 @@ EOF
   error_log "Unable to chmod root idgen_rsa.pub file"
 
   ## Devops User
-  # No host Checking for sshu 
+  # No host Checking for ANSIBLE_USER 
 
-  log "Create ssh configuration for ${sshu}" "0"
-  cat << 'EOF' >> /home/${sshu}/.ssh/config
-Host *
-    user devops
-    StrictHostKeyChecking no
-EOF
+  log "Create ssh configuration for ${ANSIBLE_USER}"
 
-  error_log "Unable to create ssh config file for user ${sshu}"
+  printf "Host *\n  user %s\n  StrictHostKeyChecking no\n" "${ANSIBLE_USER}"  >> "/home/${ANSIBLE_USER}/.ssh/config"
 
-  cp idgen_rsa "/home/${sshu}/.ssh/idgen_rsa"
-  error_log "Unable to copy idgen_rsa key to $sshu .ssh directory"
+  error_log "Unable to create ssh config file for user ${ANSIBLE_USER}"
 
-  cp idgen_rsa.pub "/home/${sshu}/.ssh/idgen_rsa.pub"
-  error_log "Unable to copy idgen_rsa.pub key to $sshu .ssh directory"
+  cp idgen_rsa "/home/${ANSIBLE_USER}/.ssh/idgen_rsa"
+  error_log "Unable to copy idgen_rsa key to $ANSIBLE_USER .ssh directory"
 
-  chmod 700 "/home/${sshu}/.ssh"
-  error_log "Unable to chmod $sshu .ssh directory"
+  cp idgen_rsa.pub "/home/${ANSIBLE_USER}/.ssh/idgen_rsa.pub"
+  error_log "Unable to copy idgen_rsa.pub key to $ANSIBLE_USER .ssh directory"
 
-  chown -R "${sshu}:" "/home/${sshu}/.ssh"
-  error_log "Unable to chown to $sshu .ssh directory"
+  chmod 700 "/home/${ANSIBLE_USER}/.ssh"
+  error_log "Unable to chmod $ANSIBLE_USER .ssh directory"
 
-  chmod 400 "/home/${sshu}/.ssh/idgen_rsa"
-  error_log "Unable to chmod $sshu idgen_rsa file"
+  chown -R "${ANSIBLE_USER}:" "/home/${ANSIBLE_USER}/.ssh"
+  error_log "Unable to chown to $ANSIBLE_USER .ssh directory"
 
-  chmod 644 "/home/${sshu}/.ssh/idgen_rsa.pub"
-  error_log "Unable to chmod $sshu idgen_rsa.pub file"
+  chmod 400 "/home/${ANSIBLE_USER}/.ssh/idgen_rsa"
+  error_log "Unable to chmod $ANSIBLE_USER idgen_rsa file"
+
+  chmod 644 "/home/${ANSIBLE_USER}/.ssh/idgen_rsa.pub"
+  error_log "Unable to chmod $ANSIBLE_USER idgen_rsa.pub file"
   
   # remove when debugging
   # rm idgen_rsa idgen_rsa.pub 
@@ -385,7 +382,7 @@ subnetEtcd="${6}"
 
 vmNamePrefix="${7}"
 ansiblefqdn="${8}"
-sshu="${9}"
+ANSIBLE_USER="${9}"
 viplb="${10}"
 
 STORAGE_ACCOUNT_NAME="${11}"
@@ -441,6 +438,7 @@ log "    - Minions Subnet is  $subnetMinions" "N"
 log "    - Etcd Subnet    is  $subnetEtcd" "N"
 log "    - VM Suffix          $vmNamePrefix" "N"
 log "    - Ansible Jumpbox VM $ansiblefqdn" "N"
+log "    - ANSIBLE_USER			$ANSIBLE_USER" "N"
 log "    - STORAGE_ACCOUNT_NAME $STORAGE_ACCOUNT_NAME" "N"
 log "    - STORAGE_ACCOUNT_KEY  $STORAGE_ACCOUNT_KEY" "N"
 
