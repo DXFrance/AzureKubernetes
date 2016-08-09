@@ -110,13 +110,13 @@ function get_sshkeys()
  {
     c=0;
 
-   sleep 240
+   sleep 60
    # Pull both Private and Public Key
     log "Get ssh keys from Azure Storage" "0"
     until python GetSSHFromPrivateStorage.py "${STORAGE_ACCOUNT_NAME}" "${STORAGE_ACCOUNT_KEY}" idgen_rsa
     do
         log "Fails to Get idgen_rsa key trying again ..." "0"
-        sleep 120
+        sleep 60
         let c=${c}+1
         if [ "${c}" -gt 5 ]; then
            log "Timeout to get idgen_rsa key exiting ..." "1"
@@ -209,7 +209,7 @@ LOG_DATE=$(date +%s)
 HOST_FILE="/etc/hosts"
 
 GIT_KUB8_URL="https://github.com/DXFrance/AzureKubernetes.git"
-EPEL_REPO="http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-7.noarch.rpm"
+EPEL_REPO="http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-8.noarch.rpm"
 
 LOG_URL="https://hooks.slack.com/services/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"
 
