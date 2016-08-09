@@ -359,9 +359,16 @@ function deploy()
   log "Ansible deploy integrated-wait-deploy.yml playbook (git submodule)" "0"
   cd "$CWD" || error_log "unable to back with cd $CWD"  
   cd "$local_kub8/$repo_name" || error_log "unable to back with cd $local_kub8/$repo_name"
+
+  log "Remove requiretty in /etc/sudoers"
+  sed -i 's/Defaults    requiretty/Defaults    !requiretty/g' /etc/sudoers
+
   log "Playing playbook" "0"
   ansible-playbook -i "${ANSIBLE_HOST_FILE}" integrated-wait-deploy.yml | tee -a /tmp/deploy-"${LOG_DATE}".log
   error_log "playbook kubernetes integrated-wait-deploy.yml had errors"
+  
+  log "Add requiretty in /etc/sudoers"
+  sed -i 's/Defaults    !requiretty/Defaults    requiretty/g' /etc/sudoers
 }
 
 
