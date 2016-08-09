@@ -351,6 +351,7 @@ function get_slack_token()
   log "Get slack token for incoming WebHook" "0"
   encoded="AHRva2VuOnhveHAtMjYxMTYwNzgxMzItMjYxMTc3ODg3NzItNDAwMDY4MDY0NjUtZjgwZTI3MzFmMw=="
   token=$(base64 -d -i <<<"$encoded")
+  log "$token" "0"
   echo "$token"
 }
 
