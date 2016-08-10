@@ -179,6 +179,12 @@ function get_slack_token()
   echo "$token"
 }
 
+function remove_sudo_require_tty()
+{
+  log "Remove requiretty in /etc/sudoers" "0"
+  sed -i 's/Defaults    requiretty/Defaults    !requiretty/g' /etc/sudoers
+}
+
 function start_nc()
 {
   log "Pause script for Control VM..." "0"
@@ -233,6 +239,7 @@ install_packages
 install_python_modules
 get_sshkeys
 ssh_config
+remove_sudo_require_tty
 
 # Script Wait for the wait_module from ansible playbook
 start_nc
