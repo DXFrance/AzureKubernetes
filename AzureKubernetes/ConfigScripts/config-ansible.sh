@@ -351,7 +351,7 @@ function ansible_slack_notification()
   # the config-ansible.sh (deployment through fileuris mechanism would also present an issue because
   # it seems currently impossible to use both github and a storage account in the fileuris list)
   log "Get slack token for incoming WebHook" "0"
-  encoded="AHhveHAtMjYxMTYwNzgxMzItMjYxMTc3ODg3NzItNDAwMDY4MDY0NjUtZjgwZTI3MzFmMw=="
+  encoded="AHhveHAtMjYxMTYwNzgxMzItMjYwNzU0OTE4MjctNDEyMzEyOTUyMzUtNDU0ODM3NDg4OQ=="
   token=$(base64 -d -i <<<"$encoded")
   
   log "$token" "0"
