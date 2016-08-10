@@ -337,10 +337,12 @@ function get_kube_playbook()
   error_log "Error fetching submodules"
 }
 
-function get_slack_token()
+function ansible_slack_notification()
 {
   # this function get the slack incoming WebHook token in order to set the SLACK_TOKEN 
   # environment variable in order to use slack-ansible-plugin
+
+  log "Ansible slack notification" "0"
 
   # token=$(grep "token:" slack-token.tok | cut -f2 -d:)
   # base64 encoding in order to avoid to handle vm extension fileuris parameters outside of github
@@ -353,7 +355,12 @@ function get_slack_token()
   token=$(base64 -d -i <<<"$encoded")
   
   log "$token" "0"
-  echo "$token"
+
+  # Slack notification
+
+  export SLACK_TOKEN="$token"
+  export SLACK_CHANNEL="ansible"
+
 }
 
 function deploy()
@@ -403,12 +410,6 @@ EPEL_REPO="http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-8.noar
 
 #LOG_URL="https://rocket.alterway.fr/hooks/44vAPspqqtD7Jtmtv/k4Tw89EoXiT5GpniG/HaxMfijFFi5v1YTEN68DOe5fzFBBxB4YeTQz6w3khFE%3D"
 LOG_URL="https://hooks.slack.com/services/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"
-
-# Slack notification
-SLACK_TOKEN="$(get_slack_token)"
-SLACK_CHANNEL="ansible"
-
-export SLACK_TOKEN SLACK_CHANNEL
 
 ## Repos Variables
 local_kub8="kub8"
@@ -463,7 +464,7 @@ configure_ansible
 create_inventory
 test_ansible
 get_kube_playbook
-install_ansible_slack_callback
+ansible_slack_notification
 deploy
 
 log "Success : End of Execution of Install Script from config-ansible" "0"
