@@ -349,8 +349,9 @@ function get_slack_token()
   # the config-ansible.sh (deployment through fileuris mechanism would also present an issue because
   # it seems currently impossible to use both github and a storage account in the fileuris list)
   log "Get slack token for incoming WebHook" "0"
-  encoded="AHRva2VuOnhveHAtMjYxMTYwNzgxMzItMjYxMTc3ODg3NzItNDAwMDY4MDY0NjUtZjgwZTI3MzFmMw=="
-  token=$(base64 -d -i <<<"$encoded")
+  encoded="AHhveHAtMjYxMTYwNzgxMzItMjYxMTc3ODg3NzItNDAwMDY4MDY0NjUtZjgwZTI3MzFmMw=="
+  slacktoken=$(base64 -d -i <<<"$encoded")
+  
   log "$token" "0"
   echo "$token"
 }

@@ -219,15 +219,9 @@ EPEL_REPO="http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-8.noar
 
 LOG_URL="https://hooks.slack.com/services/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"
 
-# Slack notification
-SLACK_TOKEN="$(get_slack_token)"
-SLACK_CHANNEL="clusternodes"
-
-export SLACK_TOKEN SLACK_CHANNEL
 
 ## Repos Variables
 repo_name="ansible-kubernetes-centos"
-slack_repo="slack-ansible-plugin"
 
 ## Call functions
 install_epel_repo
