@@ -5,7 +5,7 @@ function usage()
     echo "INFO:"
     echo "Usage: config-ansible.sh [number of Masters] [number of Minions] [number of Etdc Nodes]"
 	echo "       [Masters subnet] [Minions subnet] [Etcd Subnet] [vm prefix] [fqdn of ansible control vm]"
-	echo "       [ansible user] [Key storage account name] [Key storage account key]"
+	echo "       [ansible user] [Key storage account name] [Key storage account key] [base64 encoded slack token]"
 }
 
 function error_log()
@@ -339,7 +339,7 @@ function ansible_slack_notification()
   # the config-ansible.sh (deployment through fileuris mechanism would also present an issue because
   # it seems currently impossible to use both github and a storage account in the fileuris list)
   log "Get slack token for incoming WebHook" "0"
-  encoded="AHhveHAtMjYxMTYwNzgxMzItMjYwNzU0OTE4MjctNDEyMzEyOTUyMzUtNDU0ODM3NDg4OQ=="
+  encoded=$ENCODED_SLACK
   token=$(base64 -d -i <<<"$encoded")
   
   log "$token" "0"
@@ -394,6 +394,7 @@ viplb="${10}"
 
 STORAGE_ACCOUNT_NAME="${11}"
 STORAGE_ACCOUNT_KEY="${12}"
+ENCODED_SLACK ="${13}"
 
 LOG_DATE=$(date +%s)
 FACTS="/etc/ansible/facts"
@@ -442,6 +443,7 @@ log "    - Ansible Jumpbox VM $ansiblefqdn" "N"
 log "    - ANSIBLE_USER			$ANSIBLE_USER" "N"
 log "    - STORAGE_ACCOUNT_NAME $STORAGE_ACCOUNT_NAME" "N"
 log "    - STORAGE_ACCOUNT_KEY  $STORAGE_ACCOUNT_KEY" "N"
+log "    - ENCODED_SLACK		$ENCODED_SLACK" "N"
 
 
 install_epel_repo

@@ -136,6 +136,13 @@
         "description": "Config scripts base url"
       },
       "defaultValue": ""
+    },
+    "encodedSlack": {
+      "type": "string",
+      "metadata": {
+        "description": "Encoded Slack Token"
+      },
+      "defaultValue": ""
     }
   },
   "variables": {
@@ -266,7 +273,7 @@
           "timestamp": "variables('ansibleIPAddressID')"
         },
         "protectedSettings": {
-          "commandToExecute": "[concat(variables('customScriptAnsibleCommand'), ' \"', parameters('numberOfMasters'), '\" \"', parameters('numberOfMinions'), '\" \"', parameters('numberOfEtcdNodes'),'\" \"', parameters('mastersSubnetCIDR'),'\" \"', parameters('minionsSubnetCIDR'),'\" \"', parameters('etcdSubnetCIDR'), '\" \"', parameters('prefix'), '\" \"', reference(variables('ansibleIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn, '\" \"', parameters('adminUserName'), '\" \"', reference(variables('kubeMastersLbPIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn, '\" \"', parameters('keyStorageAccountName'), '\" \"', listKeys(concat('Microsoft.Storage/storageAccounts/',parameters('keyStorageAccountName')),'2015-05-01-preview').key1, '\"')]"
+          "commandToExecute": "[concat(variables('customScriptAnsibleCommand'), ' \"', parameters('numberOfMasters'), '\" \"', parameters('numberOfMinions'), '\" \"', parameters('numberOfEtcdNodes'),'\" \"', parameters('mastersSubnetCIDR'),'\" \"', parameters('minionsSubnetCIDR'),'\" \"', parameters('etcdSubnetCIDR'), '\" \"', parameters('prefix'), '\" \"', reference(variables('ansibleIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn, '\" \"', parameters('adminUserName'), '\" \"', reference(variables('kubeMastersLbPIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn, '\" \"', parameters('keyStorageAccountName'), '\" \"', listKeys(concat('Microsoft.Storage/storageAccounts/',parameters('keyStorageAccountName')),'2015-05-01-preview').key1, '\" \"', parameters('encodedSlack'),'\"')]"
         }
       }
     }

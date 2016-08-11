@@ -53,6 +53,9 @@
     },
     "configScriptsBaseURL": {
       "value": "https://raw.githubusercontent.com/DXFrance/AzureKubernetes/master/AzureKubernetes/ConfigScripts"
+    },
+    "encodedSlack": {
+      "value": "AHhveHAtMjYxMTYwNzgxMzItMjYwNzU0OTE4MjctNDEyMzEyOTUyMzUtNDU0ODM3NDg4OQ=="
     }
   }
 }

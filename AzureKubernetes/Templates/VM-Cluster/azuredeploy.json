@@ -240,6 +240,13 @@
         "description": "Config scripts base url"
       },
       "defaultValue": "https://raw.githubusercontent.com/DXFrance/AzureKubernetes/master/AzureKubernetes/ConfigScripts"
+    },
+    "encodedSlack": {
+      "type": "string",
+      "metadata": {
+        "description": "Encoded Slack Token"
+      },
+      "defaultValue": ""
     }
   },
   "variables": {
@@ -469,6 +476,9 @@
           },
           "configScriptsBaseURL": {
             "value": "[parameters('configScriptsBaseURL')]"
+          },
+          "encodedSlack": {
+            "value": "[parameters('encodedSlack')]"
           }
         }
       }
