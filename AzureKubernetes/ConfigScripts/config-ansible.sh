@@ -443,7 +443,8 @@ log "    - Ansible Jumpbox VM $ansiblefqdn" "N"
 log "    - ANSIBLE_USER			$ANSIBLE_USER" "N"
 log "    - STORAGE_ACCOUNT_NAME $STORAGE_ACCOUNT_NAME" "N"
 log "    - STORAGE_ACCOUNT_KEY  $STORAGE_ACCOUNT_KEY" "N"
-log "    - ENCODED_SLACK		$ENCODED_SLACK" "N"
+log "    - ENCODED_SLACK" "N"
+log "$ENCODED_SLACK" "N"
 
 
 install_epel_repo
