@@ -56,10 +56,10 @@ function install_curl()
 
 function update_centos_distribution()
 {
-log "Update Centos distribution..." "0"
+log "Update Centos distribution..." "N"
 until yum -y update --exclude=WALinuxAgent
 do
-log "Lock detected on VM init Try again..." "0"
+log "Lock detected on VM init Try again..." "N"
 sleep 2
 done
 error_log "unable to update system"
@@ -67,7 +67,7 @@ error_log "unable to update system"
 
 function fix_etc_hosts()
 {
-	log "Add hostame and ip in hosts file ..." "0"
+	log "Add hostame and ip in hosts file ..." "N"
 	IP=$(ip addr show eth0 | grep inet | grep -v inet6 | awk '{ print $2; }' | sed 's?/.*$??')
 	HOST=$(hostname)
 	echo "${IP}" "${HOST}" | sudo tee -a "${HOST_FILE}"
@@ -75,10 +75,10 @@ function fix_etc_hosts()
 
 function install_required_groups()
 {
-  log "Install ansible required groups..." "0"
+  log "Install ansible required groups..." "N"
   until yum -y group install "Development Tools"
   do
-    log "Lock detected on VM init Try again..." "0"
+    log "Lock detected on VM init Try again..." "N"
     sleep 2
   done
   error_log "unable to get group packages"
@@ -86,10 +86,10 @@ function install_required_groups()
 
 function install_packages()
 {
-  log "Install pip required packages..." "0"
+  log "Install pip required packages..." "N"
   until yum install -y git python2-devel python-pip libffi-devel libssl-dev openssl-devel nc
   do
-    log "Lock detected on VM init Try again..." "0"
+    log "Lock detected on VM init Try again..." "N"
     sleep 2
   done
   error_log "Unable to get system packages"
@@ -97,10 +97,10 @@ function install_packages()
 
 function install_python_modules()
 { 
-  log "upgrading pip" "0"
+  log "upgrading pip" "N"
   pip install --upgrade pip
 
-  log "Install azure storage python module via pip..." "0"
+  log "Install azure storage python module via pip..." "N"
   pip install azure-storage
   error_log "Unable to install azure-storage package via pip"
 
@@ -112,10 +112,10 @@ function get_sshkeys()
 
    sleep 80
    # Pull both Private and Public Key
-    log "Get ssh keys from Azure Storage" "0"
+    log "Get ssh keys from Azure Storage" "N"
     until python GetSSHFromPrivateStorage.py "${STORAGE_ACCOUNT_NAME}" "${STORAGE_ACCOUNT_KEY}" idgen_rsa
     do
-        log "Fails to Get idgen_rsa key trying again ..." "0"
+        log "Fails to Get idgen_rsa key trying again ..." "N"
         sleep 80
         let c=${c}+1
         if [ "${c}" -gt 5 ]; then
@@ -129,14 +129,14 @@ function get_sshkeys()
 
 function ssh_config()
 {
-  log "Configure ssh..." "0"
-  log "Create ssh configuration for ${ANSIBLE_USER}" "0"
+  log "Configure ssh..." "N"
+  log "Create ssh configuration for ${ANSIBLE_USER}" "N"
   
   printf "Host *\n  user %s\n  StrictHostKeyChecking no\n" "${ANSIBLE_USER}"  >> "/home/${ANSIBLE_USER}/.ssh/config"
   
   error_log "Unable to create ssh config file for user ${ANSIBLE_USER}"
   
-  log "Copy generated keys..." "0"
+  log "Copy generated keys..." "N"
   
   cp idgen_rsa "/home/${ANSIBLE_USER}/.ssh/idgen_rsa"
   error_log "Unable to copy idgen_rsa key to $ANSIBLE_USER .ssh directory"
@@ -166,23 +166,23 @@ function ssh_config()
 
 function remove_sudo_require_tty()
 {
-  log "Remove requiretty in /etc/sudoers" "0"
+  log "Remove requiretty in /etc/sudoers" "N"
   sed -i 's/Defaults    requiretty/Defaults    !requiretty/g' /etc/sudoers
 }
 
 function start_nc()
 {
-  log "Pause script for Control VM..." "0"
+  log "Pause script for Control VM..." "N"
   nohup nc -l 3333 >/tmp/nohup.log 2>&1
 }
 
-log "Execution of Install Script from CustomScript ..." "0"
+log "Execution of Install Script from CustomScript ..." "N"
 
 ## Variables
 
 CWD="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
 
-log "CustomScript Directory is ${CWD}" "0"
+log "CustomScript Directory is ${CWD}" "N"
 
 BASH_SCRIPT="${0}"
 STORAGE_ACCOUNT_NAME="${1}"
@@ -223,6 +223,6 @@ remove_sudo_require_tty
 # Script Wait for the wait_module from ansible playbook
 start_nc
 
-log "Success : End of Execution of Install Script from config-node" "0"
+log "Success : End of Execution of Install Script from config-node" "N"
 
 exit 0

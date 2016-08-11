@@ -65,14 +65,14 @@ function generate_sshkeys()
 function ssh_config()
 {
   # log "tld is ${tld}"
-  log "Configure ssh..." "0"
+  log "Configure ssh..." "N"
   
   mkdir -p ~/.ssh
 
   # Root User
   # No host Checking for root 
 
-  log "Create ssh configuration for root" "0"
+  log "Create ssh configuration for root" "N"
   cat << 'EOF' >> ~/.ssh/config
 Host *
     user root
@@ -81,7 +81,7 @@ EOF
 
   error_log "Unable to create ssh config file for root"
 
-  log "Copy generated keys..." "0"
+  log "Copy generated keys..." "N"
 
   cp idgen_rsa ~/.ssh/idgen_rsa
   error_log "Unable to copy idgen_rsa key to root .ssh directory"
@@ -101,7 +101,7 @@ EOF
   ## Devops User
   # No host Checking for ANSIBLE_USER 
 
-  log "Create ssh configuration for ${ANSIBLE_USER}" "0"
+  log "Create ssh configuration for ${ANSIBLE_USER}" "N"
 
   printf "Host *\n  user %s\n  StrictHostKeyChecking no\n" "${ANSIBLE_USER}"  >> "/home/${ANSIBLE_USER}/.ssh/config"
 
@@ -132,7 +132,7 @@ EOF
 
 function add_hosts()
 {
-  log "Add cluster hosts private Ips..." "0"
+  log "Add cluster hosts private Ips..." "N"
 
   # Masters
   let numberOfMasters=$numberOfMasters-1
@@ -165,10 +165,10 @@ function add_hosts()
 
 function update_centos_distribution()
 {
-log "Update Centos distribution..." "0"
+log "Update Centos distribution..." "N"
 until yum -y update --exclude=WALinuxAgent
 do
-log "Lock detected on VM init Try again..." "0"
+log "Lock detected on VM init Try again..." "N"
 sleep 2
 done
 error_log "unable to update system"
@@ -176,7 +176,7 @@ error_log "unable to update system"
 
 function fix_etc_hosts()
 {
-	log "Add hostame and ip in hosts file ..." "0"
+	log "Add hostame and ip in hosts file ..." "N"
 	IP=$(ip addr show eth0 | grep inet | grep -v inet6 | awk '{ print $2; }' | sed 's?/.*$??')
 	HOST=$(hostname)
 	echo "${IP}" "${HOST}" | sudo tee -a "${HOST_FILE}"
@@ -184,10 +184,10 @@ function fix_etc_hosts()
 
 function install_required_groups()
 {
-  log "Install ansible required groups..." "0"
+  log "Install ansible required groups..." "N"
   until yum -y group install "Development Tools"
   do
-    log "Lock detected on VM init Try again..." "0"
+    log "Lock detected on VM init Try again..." "N"
     sleep 2
   done
   error_log "unable to get group packages"
@@ -196,10 +196,10 @@ function install_required_groups()
 function install_required_packages()
 {
 
-  log "Install ansible required packages..." "0"
+  log "Install ansible required packages..." "N"
   until yum install -y git python2-devel python-pip libffi-devel libssl-dev openssl-devel
   do
-    log "Lock detected on VM init Try again..." "0"
+    log "Lock detected on VM init Try again..." "N"
     sleep 2
   done
   error_log "Unable to get system packages"
@@ -207,20 +207,20 @@ function install_required_packages()
 
 function install_python_modules()
 {
-  log "Install ansible required python modules..." "0"
+  log "Install ansible required python modules..." "N"
   pip install PyYAML jinja2 paramiko
   error_log "Unable to install python packages via pip"
 
-  log "upgrading pip" "0"
+  log "upgrading pip" "N"
   pip install --upgrade pip
-  log "Install azure storage python module via pip..." "0"
+  log "Install azure storage python module via pip..." "N"
   pip install azure-storage
 }
 
 function put_sshkeys()
  {
   
-  log "Push ssh keys to Azure Storage" "0"
+  log "Push ssh keys to Azure Storage" "N"
   python WriteSSHToPrivateStorage.py "${STORAGE_ACCOUNT_NAME}" "${STORAGE_ACCOUNT_KEY}" idgen_rsa
   error_log "Unable to write idgen_rsa to storage account ${STORAGE_ACCOUNT_NAME}"
   python WriteSSHToPrivateStorage.py "${STORAGE_ACCOUNT_NAME}" "${STORAGE_ACCOUNT_KEY}" idgen_rsa.pub
@@ -229,7 +229,7 @@ function put_sshkeys()
 
 function install_ansible()
 {
-  log "Clone ansible repo..." "0"
+  log "Clone ansible repo..." "N"
   rm -rf ansible
   error_log "Unable to remove ansible directory"
 
@@ -238,11 +238,11 @@ function install_ansible()
 
   cd ansible || error_log "Unable to cd to ansible directory"
 
-  log "Clone ansible submodules..." "0"
+  log "Clone ansible submodules..." "N"
   git submodule update --init --recursive
   error_log "Unable to clone ansible submodules"
 
-  log "Install ansible..." "0"
+  log "Install ansible..." "N"
   make install
   error_log "Unable to install ansible"
 }
@@ -250,7 +250,7 @@ function install_ansible()
 
 function configure_ansible()
 {
-  log "Generate ansible files..." "0"
+  log "Generate ansible files..." "N"
   rm -rf /etc/ansible
   error_log "Unable to remove /etc/ansible directory"
   mkdir -p /etc/ansible
@@ -273,18 +273,18 @@ function configure_ansible()
 
 function test_ansible()
 {
-  log "Test ansible..." "0"
+  log "Test ansible..." "N"
   mess=$(ansible masters -m ping)
-  log "$mess" "0"
+  log "$mess" "N"
   mess=$(ansible minions -m ping)
-  log "$mess" "0"
+  log "$mess" "N"
   mess=$(ansible etcd -m ping)
-  log "$mess" "0"
+  log "$mess" "N"
 }
 
 function create_inventory()
 {
-  log "Create ansible inventory..." "0"
+  log "Create ansible inventory..." "N"
 
   masters=""
   etcd=""
@@ -315,7 +315,7 @@ function create_inventory()
 
 function get_kube_playbook()
 {
-  log "Get kubernetes playbook from $local_kub8/$repo_name" "0"
+  log "Get kubernetes playbook from $local_kub8/$repo_name" "N"
 
   cd "$CWD" || error_log "unable to back with cd .."  
   rm -f kub8
@@ -330,7 +330,7 @@ function ansible_slack_notification()
   # this function get the slack incoming WebHook token in order to set the SLACK_TOKEN 
   # environment variable in order to use slack-ansible-plugin
 
-  log "Ansible slack notification" "0"
+  log "Ansible slack notification" "N"
 
   # token=$(grep "token:" slack-token.tok | cut -f2 -d:)
   # base64 encoding in order to avoid to handle vm extension fileuris parameters outside of github
@@ -338,18 +338,18 @@ function ansible_slack_notification()
   # the alternative would be to put a file in a vault or a storage account and copy this file from 
   # the config-ansible.sh (deployment through fileuris mechanism would also present an issue because
   # it seems currently impossible to use both github and a storage account in the fileuris list)
-  log "Get slack token for incoming WebHook" "0"
+  log "Get slack token for incoming WebHook" "N"
   encoded=$ENCODED_SLACK
   token=$(base64 -d -i <<<"$encoded")
   
-  log "$token" "0"
+  log "$token" "N"
 
   # Slack notification
 
   export SLACK_TOKEN="$token"
   export SLACK_CHANNEL="ansible"
 
-  log "Install ansible callback..." "0"
+  log "Install ansible callback..." "N"
 
   mkdir -p "/usr/share/ansible_plugins/callback_plugins"
   error_log "Unable to create callback plugin"
@@ -361,18 +361,18 @@ function ansible_slack_notification()
 
 function deploy()
 {
-  log "Ansible deploy integrated-wait-deploy.yml playbook (git submodule)" "0"
+  log "Ansible deploy integrated-wait-deploy.yml playbook (git submodule)" "N"
   cd "$CWD" || error_log "unable to back with cd $CWD"  
   cd "$local_kub8/$repo_name" || error_log "unable to back with cd $local_kub8/$repo_name"
 
-  log "Remove requiretty in /etc/sudoers" "0"
+  log "Remove requiretty in /etc/sudoers" "N"
   sed -i 's/Defaults    requiretty/Defaults    !requiretty/g' /etc/sudoers
 
-  log "Playing playbook" "0"
+  log "Playing playbook" "N"
   ansible-playbook -i "${ANSIBLE_HOST_FILE}" integrated-wait-deploy.yml | tee -a /tmp/deploy-"${LOG_DATE}".log
   error_log "playbook kubernetes integrated-wait-deploy.yml had errors"
   
-  log "Add requiretty in /etc/sudoers" "0"
+  log "Add requiretty in /etc/sudoers" "N"
   sed -i 's/Defaults    !requiretty/Defaults    requiretty/g' /etc/sudoers
 }
 
@@ -394,7 +394,7 @@ viplb="${10}"
 
 STORAGE_ACCOUNT_NAME="${11}"
 STORAGE_ACCOUNT_KEY="${12}"
-ENCODED_SLACK ="${13}"
+ENCODED_SLACK="${13}"
 
 LOG_DATE=$(date +%s)
 FACTS="/etc/ansible/facts"
@@ -465,4 +465,4 @@ get_kube_playbook
 ansible_slack_notification
 deploy
 
-log "Success : End of Execution of Install Script from config-ansible" "0"
+log "Success : End of Execution of Install Script from config-ansible" "N"
