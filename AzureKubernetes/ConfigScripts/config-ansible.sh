@@ -282,18 +282,6 @@ function test_ansible()
   log "$mess" "0"
 }
 
-function install_ansible_slack_callback()
-{
-  log "Install ansible callback..." "0"
-
-  mkdir -p "/usr/share/ansible_plugins/callback_plugins"
-  error_log "Unable to create callback plugin"
-  cd "$CWD" || error_log "unable to back with cd .."
-  cd "$local_kub8/$slack_repo" || error_log "unable to back with cd $local_kub8/$slack_repo"
-  pip install -r requirements.txt
-  cp slack-logger.py /usr/share/ansible_plugins/callback_plugins/slack-logger.py
-}
-
 function create_inventory()
 {
   log "Create ansible inventory..." "0"
@@ -361,6 +349,14 @@ function ansible_slack_notification()
   export SLACK_TOKEN="$token"
   export SLACK_CHANNEL="ansible"
 
+  log "Install ansible callback..." "0"
+
+  mkdir -p "/usr/share/ansible_plugins/callback_plugins"
+  error_log "Unable to create callback plugin"
+  cd "$CWD" || error_log "unable to back with cd .."
+  cd "$local_kub8/$slack_repo" || error_log "unable to back with cd $local_kub8/$slack_repo"
+  pip install -r requirements.txt
+  cp slack-logger.py /usr/share/ansible_plugins/callback_plugins/slack-logger.py
 }
 
 function deploy()

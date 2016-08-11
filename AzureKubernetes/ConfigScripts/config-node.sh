@@ -164,21 +164,6 @@ function ssh_config()
   
 }
 
-function get_slack_token()
-{
-  # this function set the SLACK_TOKEN environment variable in order to use slack-ansible-plugin
-
-  # token=$(grep "token:" slack-token.tok | cut -f2 -d:)
-  # base64 encoding in order to avoid to handle vm extension fileuris parameters outside of github
-  # because github forbids token archiving
-  # the alternative would be to put a file in a vault or a storage account and copy this file from 
-  # the config-ansible.sh (deployment through fileuris mechanism would also present an issue because
-  # it seems currently impossible to use both github and a storage account in the fileuris list)
-  encoded="AHRva2VuOnhveHAtMjYxMTYwNzgxMzItMjYxMTc3ODg3NzItNDAwMDY4MDY0NjUtZjgwZTI3MzFmMw=="
-  token=$(base64 -d -i <<<"$encoded")
-  echo "$token"
-}
-
 function remove_sudo_require_tty()
 {
   log "Remove requiretty in /etc/sudoers" "0"
