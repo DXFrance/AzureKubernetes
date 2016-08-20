@@ -216,9 +216,12 @@ function install_required_packages()
 
 function install_python_modules()
 {
+  log "upgrading pip" "N"
+  pip install --upgrade pip
+
   log "Install ansible required python modules..." "0"
   pip install PyYAML jinja2 paramiko
-  error_log "Unable to install python packages via pip"
+  error_log "Unable t
 }
 
 function install_ansible()
