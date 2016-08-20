@@ -232,7 +232,7 @@
       "metadata": {
         "description": "Templates base url"
       },
-      "defaultValue": ""
+      "defaultValue": "https://raw.githubusercontent.com/DXFrance/AzureKubernetes/master/AzureKubernetes/Templates/VM-Cluster"
     },
     "configScriptsBaseURL": {
       "type": "string",

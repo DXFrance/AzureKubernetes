@@ -17,7 +17,7 @@
     "numberOfMinions": {
       "value": 1
     },
-     "numberOfEtcd": {
+    "numberOfEtcd": {
       "value": 1
     },
     "adminUsername": {
@@ -33,7 +33,7 @@
       "value": "https://raw.githubusercontent.com/DXFrance/AzureKubernetes/master/Kubernetes-Ansible-Centos-Azure/scripts/first-boot.sh"
     },
     "commandToExecute": {
-      "value": "bash deploy.sh"
+      "value": "first-boot.sh"
     },
     "vaultAccountName": {
       "value": "stephgouvault"

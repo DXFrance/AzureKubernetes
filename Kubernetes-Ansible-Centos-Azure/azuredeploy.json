@@ -171,30 +171,6 @@
         "description": "Username to login to the VMs"
       }
     },
-    "adminSubnetCIDR": {
-      "type": "string",
-      "metadata": {
-        "description": "subnet Admin CIDR"
-      }
-    },
-    "mastersSubnetCIDR": {
-      "type": "string",
-      "metadata": {
-        "description": "subnet Masters CIDR"
-      }
-    },
-    "minionsSubnetCIDR": {
-      "type": "string",
-      "metadata": {
-        "description": "subnet Minions CIDR"
-      }
-    },
-    "etcdSubnetCIDR": {
-      "type": "string",
-      "metadata": {
-        "description": "subnet Etcd CIDR"
-      }
-    },
     "sshKeyData": {
       "type": "string",
       "defaultValue": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDLWadgtcq8rg0HMWlv1/1HQfRayLzGKmHg2ISmAJx+LQCa8SWCwBFGS0vKKwgdwhpMMCl0wI2/eURmxbpOF4Tp10jRikSIlSZyua7FU9VmlLWtYAmRQ42eWvmsCCI/IpgJ4LGODe8xDQtcXOtp3yUhkX5g9HHNwwR35Nnzum1VGMk4ftTA9CC3gfqWcIIKqQ+xE1BzqUNmGpJHghCgG/g8Oh7/sR05CXwASMoGTYuLpPHp2sEfGNm91CmnMa21ifaz4RMAcD2SwqReLgMmi0tZGUGQqLnzX/6ibJvpYSU5iZ/7qEzgDy83dBqaHbI0LEA4H0q59TJ2DWXYu+dloITz hleclerc@HeL.local",
@@ -206,7 +182,7 @@
       "type": "string",
       "defaultValue": "https://raw.githubusercontent.com/DXFrance/AzureKubernetes/master/Kubernetes-Ansible-Centos-Azure/scripts/first-boot.sh",
       "metadata": {
-        "description": "Deploy/SetUp script url for ansible control vm"
+        "description": "Deploy/Setup script url for ansible control vm"
       }
     },
     "commandToExecute": {
@@ -228,58 +204,62 @@
     "apiVersion": "2015-06-15",
     "virtualNetworkName": "KubVNET",
     "addressPrefix": "10.0.0.0/16",
-   
+
     "subnetAdminName": "SubnetADMIN",
+    "adminSubnetPrefix": "10.0.2.0/24",
     "subnetAdminRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetAdminName'))]",
-    
+
     "subnetMastersName": "SubnetMASTERS",
+    "mastersSubnetPrefix": "10.0.4.0/24",
     "kubeMastersSubnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetMastersName'))]",
-    
+
     "subnetMinionsName": "SubnetMINIONS",
-    "kubeMinionsSubnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetMinionsName'))]", 
-    
+    "minionsSubnetPrefix": "10.0.6.0/24",
+    "kubeMinionsSubnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetMinionsName'))]",
+
     "subnetEtcdName": "SubnetETCD",
-    "etcdSubnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetEtcdName'))]", 
-       
+    "etcdSubnetPrefix": "10.0.8.0/24",
+    "etcdSubnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetEtcdName'))]",
+
     "storageAccountName": "[concat(uniquestring(resourceGroup().id), parameters('nameSuffix'))]",
-    
+
     "availabilitySetMasters": "[concat('avma',parameters('nameSuffix'))]",
     "availabilitySetMinions": "[concat('avmi',parameters('nameSuffix'))]",
     "availabilitySetEtcd": "[concat('avet',parameters('nameSuffix'))]",
-    
+
     "faultDomainCount": "3",
     "updateDomainCount": "10",
     "publicIPAddressType": "Dynamic",
     "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
-    
+
     "storageAccountType": "Standard_LRS",
-    
+
     "sshKeyPath": "[concat('/home/',parameters('adminUserName'),'/.ssh/authorized_keys')]",
     "ansibleIPAddressName": "ansiblePip",
     "ansibleIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('ansibleIPAddressName'))]",
-    
+
     "ansibleDomainName": "[concat('hc',parameters('nameSuffix'))]",
     "scriptBlobLocation": "scripts/deploy.sh",
     "scriptBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('scriptBlobLocation'))]",
-    
+
     "keysBlobLocation": "keys/id_rsa",
     "keysBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('keysBlobLocation'))]",
-    
+
     "pubBlobLocation": "keys/id_rsa.pub",
     "pubBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('pubBlobLocation'))]",
-    
+
     "tokenBlobLocation": "keys/slack-token.tok",
     "tokenBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('tokenBlobLocation'))]",
-    
+
     "assetsStorageAccountId": "[resourceId(parameters('vaultAccountName'),'Microsoft.Storage/storageAccounts', parameters('vaultAccountName'))]",
-    
+
     "imageReference": {
       "publisher": "OpenLogic",
       "offer": "CentOS",
       "sku": "[parameters('centosOSVersion')]",
       "version": "latest"
     },
-    
+
     "lbDomainName": "[concat('lb',parameters('nameSuffix'))]",
     "lbPublicIPAddressName": "lbPublicIP",
     "lbPublicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('lbPublicIPAddressName'))]",
@@ -287,9 +267,11 @@
     "lbPublicIPAddressType": "Dynamic",
     "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('lbName'))]",
     "frontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/loadBalancerFrontend')]",
-    
+
     "disablePasswordAuthentication": "true",
-    "adminPassword": "V3l0C1RaPt0R#"
+    "adminPassword": "V3l0C1RaPt0R#",
+    "customScriptNodeCommand": "[concat('bash ',parameters('commandToExecute'))]"
+
   },
   "resources": [
     {
@@ -418,25 +400,25 @@
           {
             "name": "[variables('subnetMastersName')]",
             "properties": {
-              "addressPrefix": "[parameters('mastersSubnetCIDR')]"
+              "addressPrefix": "[variables('mastersSubnetPrefix')]"
             }
           },
           {
             "name": "[variables('subnetMinionsName')]",
             "properties": {
-              "addressPrefix": "[parameters('minionsSubnetCIDR')]"
+              "addressPrefix": "[variables('minionsSubnetPrefix')]"
             }
           },
           {
             "name": "[variables('subnetEtcdName')]",
             "properties": {
-              "addressPrefix": "[parameters('etcdSubnetCIDR')]"
+              "addressPrefix": "[variables('etcdSubnetPrefix')]"
             }
           },
           {
             "name": "[variables('subnetAdminName')]",
             "properties": {
-              "addressPrefix": "[parameters('adminSubnetCIDR')]"
+              "addressPrefix": "[variables('adminSubnetPrefix')]"
             }
           }
         ]
@@ -829,7 +811,7 @@
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
         "type": "CustomScriptForLinux",
-        "typeHandlerVersion": "1.2",
+        "typeHandlerVersion": "1.4",
         "settings": {
           "fileUris": [
             "[variables('scriptBlobUrl')]",
@@ -837,7 +819,7 @@
             "[variables('pubBlobUrl')]",
             "[variables('tokenBlobUrl')]"
           ],
-          "commandToExecute": "[concat('/bin/bash deploy.sh ',parameters('numberOfMasters'), ' ',parameters('numberOfMinions'), ' ',parameters('numberOfEtcd'), ' ', variables('mastersSubnetCIDR'), ' ', variables('minionsSubnetCIDR'), ' ',variables('etcdSubnetCIDR'), ' ',parameters('nameSuffix'), ' ', ' ', reference(variables('ansibleIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn,' ', parameters('adminUserName'), ' ', reference(variables('lbPublicIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn,' >/tmp/deploy.log 2>&1 &') ]",
+          "commandToExecute": "[concat('/bin/bash deploy.sh ',parameters('numberOfMasters'), ' ',parameters('numberOfMinions'), ' ',parameters('numberOfEtcd'), ' ', variables('mastersSubnetPrefix'), ' ', variables('minionsSubnetPrefix'), ' ',variables('etcdSubnetPrefix'), ' ',parameters('nameSuffix'), ' ', ' ', reference(variables('ansibleIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn,' ', parameters('adminUserName'), ' ', reference(variables('lbPublicIPAddressID'),providers('Microsoft.Network','publicIPAddresses').apiVersions[0]).dnsSettings.fqdn,' >/tmp/deploy.log 2>&1 &') ]",
           "timestamp": "variables('ansibleIPAddressID')"
         },
         "protectedSettings": {
@@ -861,12 +843,12 @@
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
         "type": "CustomScriptForLinux",
-        "typeHandlerVersion": "1.2",
+        "typeHandlerVersion": "1.4",
         "settings": {
           "fileUris": [
             "[parameters('fileUris')]"
           ],
-          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(concat('mastersNic', copyindex())).ipConfigurations[0].properties.privateIPAddress,' masters')]"
+          "commandToExecute": "[concat(variables('customScriptNodeCommand'), ' ', reference(concat('mastersNic', copyindex())).ipConfigurations[0].properties.privateIPAddress,' masters')]"
         }
       }
     },
@@ -885,12 +867,12 @@
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
         "type": "CustomScriptForLinux",
-        "typeHandlerVersion": "1.2",
+        "typeHandlerVersion": "1.4",
         "settings": {
           "fileUris": [
             "[parameters('fileUris')]"
           ],
-          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(concat('minionsNic', copyindex())).ipConfigurations[0].properties.privateIPAddress,' minions')]"
+          "commandToExecute": "[concat(variables('customScriptNodeCommand'), ' ', reference(concat('minionsNic', copyindex())).ipConfigurations[0].properties.privateIPAddress,' minions')]"
         }
       }
     },
@@ -909,12 +891,12 @@
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
         "type": "CustomScriptForLinux",
-        "typeHandlerVersion": "1.2",
+        "typeHandlerVersion": "1.4",
         "settings": {
           "fileUris": [
             "[parameters('fileUris')]"
           ],
-          "commandToExecute": "[concat(parameters('commandToExecute'), ' ', reference(concat('etcdNic', copyindex())).ipConfigurations[0].properties.privateIPAddress,' etcd')]"
+          "commandToExecute": "[concat(variables('customScriptNodeCommand'), ' ', reference(concat('etcdNic', copyindex())).ipConfigurations[0].properties.privateIPAddress,' etcd')]"
         }
       }
     }
