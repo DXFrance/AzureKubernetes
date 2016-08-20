@@ -173,7 +173,7 @@ function remove_sudo_require_tty()
 function start_nc()
 {
   log "Pause script for Control VM..." "N"
-  nohup nc -l 3333 >/tmp/nohup.log 2>&1
+  nohup nc -l 3333 </dev/null >/tmp/nohup.log 2>&1 &
 }
 
 log "Execution of Install Script from CustomScript ..." "N"
