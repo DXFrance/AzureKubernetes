@@ -107,7 +107,7 @@
     }
   },
   "variables": {
-    "masterNetworkInterfacesCopy": "nicopy-kube-master",
+    "kubeMastersNetworkInterfacesCopy": "nicopy-kube-master",
     "kubeMastersVmName": "[concat(parameters('prefix'),'-kube-master-')]",
     "kubeMastersOsDiskName": "[concat(parameters('prefix'),'-kube-master-os-')]",
     "kubeMastersDataDiskName": "[concat(parameters('prefix'),'-kube-master-data-')]",
@@ -136,7 +136,7 @@
       "name": "[concat(parameters('kubeMastersNicName'), copyindex())]",
       "location": "[resourceGroup().location]",
       "copy": {
-        "name": "[variables('masterNetworkInterfacesCopy')]",
+        "name": "[variables('kubeMastersNetworkInterfacesCopy')]",
         "count": "[parameters('numberOfMasters')]"
       },
       "properties": {

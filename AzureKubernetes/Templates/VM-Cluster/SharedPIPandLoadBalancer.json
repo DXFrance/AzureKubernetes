@@ -17,34 +17,56 @@
     "numberOfMasters": {
       "type": "int",
       "metadata": {
-        "description": "Number of kubernetes Masters nodes to create"
+        "description": "Number of kubernetes Master nodes to create"
+      }
+    },
+    "numberOfMinions": {
+      "type": "int",
+      "metadata": {
+        "description": "Number of kubernetes Minion nodes to create"
       }
     },
     "ansibleIPAddressName": {
       "type": "string",
       "metadata": {
-        "description": "ansible IP Address Name"
+        "description": "Ansible IP Address Name"
       }
     },
     "kubeMastersLbPIPAddressName": {
       "type": "string",
       "metadata": {
-        "description": "ansible IP Address Name"
+        "description": "Kube master nodes LB IP Address Name"
+      }
+    },
+    "kubeMinionsLbPIPAddressName": {
+      "type": "string",
+      "metadata": {
+        "description": "Kube minion nodes LB IP Address Name"
       }
     }
   },
   "variables": {
+    "ansibleDomainName": "[concat(parameters('prefix'),'-ansible')]",
+    
     "kubeMastersLbBackendPool": "[concat(parameters('prefix'),'-bap-kube-masters')]",
     "kubeMastersLbFrontend": "[concat(parameters('prefix'),'-fe-kube-masters')]",
     "kubeMastersLbName": "[concat(parameters('prefix'),'-lb-kube-masters')]",
-    "kubeMastersDomainName": "[concat(parameters('prefix'),'-kube')]",
-    "ansibleDomainName": "[concat(parameters('prefix'),'-ansible')]",
+    "kubeMastersDomainName": "[concat(parameters('prefix'),'-kube-masters')]",
     "kubeMastersLbPIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('kubeMastersLbPIPAddressName'))]",
     "kubeMastersLbNatRulesCopy": "lbnrcopy-kube-masters",
-    "kubeMastersLbPIPAddressType": "Dynamic",
     "kubeMastersLbID": "[resourceId('Microsoft.Network/loadBalancers',variables('kubeMastersLbName'))]",
     "kubeMastersFrontEndIPConfigID": "[concat(variables('kubeMastersLbID'),'/frontendIPConfigurations/',variables('kubeMastersLbFrontend'))]",
-    "ansiblePIPAddressType": "Dynamic"
+    
+    "kubeMinionsLbBackendPool": "[concat(parameters('prefix'),'-bap-kube-minions')]",
+    "kubeMinionsLbFrontend": "[concat(parameters('prefix'),'-fe-kube-minions')]",
+    "kubeMinionsLbName": "[concat(parameters('prefix'),'-lb-kube-minions')]",
+    "kubeMinionsDomainName": "[concat(parameters('prefix'),'-kube-minions')]",
+    "kubeMinionsLbPIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('kubeMinionsLbPIPAddressName'))]",
+    "kubeMinionsLbNatRulesCopy": "lbnrcopy-kube-minions",
+    "kubeMinionsLbID": "[resourceId('Microsoft.Network/loadBalancers',variables('kubeMinionsLbName'))]",
+    "kubeMinionsFrontEndIPConfigID": "[concat(variables('kubeMinionsLbID'),'/frontendIPConfigurations/',variables('kubeMinionsLbFrontend'))]",
+    
+    "PIPAddressType": "Dynamic"
   },
   "resources": [
     {
@@ -53,7 +75,7 @@
       "name": "[parameters('kubeMastersLbPIPAddressName')]",
       "location": "[resourceGroup().location]",
       "properties": {
-        "publicIPAllocationMethod": "[variables('kubeMastersLbPIPAddressType')]",
+        "publicIPAllocationMethod": "[variables('PIPAddressType')]",
         "dnsSettings": {
           "domainNameLabel": "[variables('kubeMastersDomainName')]"
         }
@@ -81,6 +103,32 @@
         "backendAddressPools": [
           {
             "name": "[variables('kubeMastersLbBackendPool')]"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "[parameters('apiVersion')]",
+      "name": "[variables('kubeMinionsLbName')]",
+      "type": "Microsoft.Network/loadBalancers",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/publicIPAddresses/', parameters('kubeMinionsLbPIPAddressName'))]"
+      ],
+      "properties": {
+        "frontendIPConfigurations": [
+          {
+            "name": "[variables('kubeMinionsLbFrontend')]",
+            "properties": {
+              "publicIPAddress": {
+                "id": "[variables('kubeMinionsLbPIPAddressID')]"
+              }
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "[variables('kubeMinionsLbBackendPool')]"
           }
         ]
       }
@@ -131,11 +179,55 @@
     },
     {
       "apiVersion": "[parameters('apiVersion')]",
+      "type": "Microsoft.Network/loadBalancers/inboundNatRules",
+      "name": "[concat(variables('kubeMinionsLbName'), '/', 'HTTP-8', copyIndex())]",
+      "location": "[resourceGroup().location]",
+      "copy": {
+        "name": "[variables('kubeMinionsLbNatRulesCopy')]",
+        "count": "[parameters('numberOfMinions')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/loadBalancers/', variables('kubeMinionsLbName'))]"
+      ],
+      "properties": {
+        "frontendIPConfiguration": {
+          "id": "[variables('kubeMinionsFrontEndIPConfigID')]"
+        },
+        "protocol": "tcp",
+        "frontendPort": "[copyIndex(80)]",
+        "backendPort": 80,
+        "enableFloatingIP": false
+      }
+    },
+    {
+      "apiVersion": "[parameters('apiVersion')]",
+      "type": "Microsoft.Network/loadBalancers/inboundNatRules",
+      "name": "[concat(variables('kubeMinionsLbName'), '/', 'SSH-', copyIndex())]",
+      "location": "[resourceGroup().location]",
+      "copy": {
+        "name": "[variables('kubeMinionsLbNatRulesCopy')]",
+        "count": "[parameters('numberOfMinions')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/loadBalancers/', variables('kubeMinionsLbName'))]"
+      ],
+      "properties": {
+        "frontendIPConfiguration": {
+          "id": "[variables('kubeMinionsFrontEndIPConfigID')]"
+        },
+        "protocol": "tcp",
+        "frontendPort": "[copyIndex(22)]",
+        "backendPort": 22,
+        "enableFloatingIP": false
+      }
+    },
+    {
+      "apiVersion": "[parameters('apiVersion')]",
       "type": "Microsoft.Network/publicIPAddresses",
       "name": "[parameters('ansibleIPAddressName')]",
       "location": "[resourceGroup().location]",
       "properties": {
-        "publicIPAllocationMethod": "[variables('ansiblePIPAddressType')]",
+        "publicIPAllocationMethod": "[variables('PIPAddressType')]",
         "dnsSettings": {
           "domainNameLabel": "[variables('ansibleDomainName')]"
         }

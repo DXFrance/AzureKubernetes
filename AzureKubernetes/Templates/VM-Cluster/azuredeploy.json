@@ -286,6 +286,7 @@
 
     "ansibleIPAddressName": "[concat(parameters('prefix'),'-pip-ansible')]",
     "kubeMastersLbPIPAddressName": "[concat(parameters('prefix'),'-pip-kube-masters')]",
+    "kubeMinionsLbPIPAddressName": "[concat(parameters('prefix'),'-pip-kube-minions')]",
     "ansibleVMName": "[concat(parameters('prefix'), '-ansible')]"
 
   },
@@ -386,11 +387,17 @@
           "numberOfMasters": {
             "value": "[parameters('numberOfMasters')]"
           },
+          "numberOfMinions": {
+            "value": "[parameters('numberOfMinions')]"
+          },
           "ansibleIPAddressName": {
             "value": "[variables('ansibleIPAddressName')]"
           },
           "kubeMastersLbPIPAddressName": {
             "value": "[variables('kubeMastersLbPIPAddressName')]"
+          },
+          "kubeMinionsLbPIPAddressName": {
+            "value": "[variables('kubeMinionsLbPIPAddressName')]"
           }
         }
       }
@@ -586,6 +593,12 @@
           },
           "kubeMinionsNicName": {
             "value": "[variables('kubeMinionsNicName')]"
+          },
+          "kubeMinionsLbID": {
+            "value": "[reference('SharedPIPandLoadBalancer').outputs.kubeMinionsLbID.value]"
+          },
+          "kubeMinionsLbBackendPoolID": {
+            "value": "[reference('SharedPIPandLoadBalancer').outputs.kubeMinionsLbBackendPoolID.value]"
           },
           "kubeMinionsSubnetRef": {
             "value": "[reference('SharedNetwork').outputs.kubeMinionsSubnetRef.value]"

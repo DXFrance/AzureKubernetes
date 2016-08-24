@@ -26,6 +26,18 @@
         "description": "kube Minion NicName"
       }
     },
+    "kubeMinionsLbID": {
+      "type": "string",
+      "metadata": {
+        "description": "kube Minion Load Balancer ID"
+      }
+    },
+    "kubeMinionsLbBackendPoolID": {
+      "type": "string",
+      "metadata": {
+        "description": "kube Minion Backend Address Pool ID"
+      }
+    },
     "kubeMinionsSubnetRef": {
       "type": "string",
       "metadata": {
@@ -95,6 +107,7 @@
     }
   },
   "variables": {
+    "kubeMinionsNetworkInterfacesCopy": "nicopy-kube-minion",
     "kubeMinionsVmName": "[concat(parameters('prefix'),'-kube-minion-')]",
     "kubeMinionsOsDiskName": "[concat(parameters('prefix'),'-kube-minion-os-')]",
     "kubeMinionsDataDiskName": "[concat(parameters('prefix'),'-kube-minion-data-')]",
@@ -123,7 +136,7 @@
       "name": "[concat(parameters('kubeMinionsNicName'), copyindex())]",
       "location": "[resourceGroup().location]",
       "copy": {
-        "name": "nicLoopMinions",
+        "name": "[variables('kubeMinionsNetworkInterfacesCopy')]",
         "count": "[parameters('numberOfMinions')]"
       },
       "properties": {
@@ -135,7 +148,20 @@
               "privateIPAddress": "[concat(parameters('kubeMinionsSubnetRoot'), '.',add(copyindex(),4) )]",
               "subnet": {
                 "id": "[parameters('kubeMinionsSubnetRef')]"
-              }
+              },
+              "loadBalancerBackendAddressPools": [
+                {
+                  "id": "[parameters('kubeMinionsLbBackendPoolID')]"
+                }
+              ],
+              "loadBalancerInboundNatRules": [
+                {
+                  "id": "[concat(parameters('kubeMinionsLbID'),'/inboundNatRules/HTTP-8', copyindex())]"
+                },
+                {
+                  "id": "[concat(parameters('kubeMinionsLbID'),'/inboundNatRules/SSH-', copyindex())]"
+                }
+              ]
             }
           }
         ]
