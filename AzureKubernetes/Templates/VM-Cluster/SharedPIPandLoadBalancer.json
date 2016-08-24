@@ -280,7 +280,7 @@
     },
     "kubeMastersLbBackendPoolID": {
       "type": "string",
-      "value": "[[variables('kubeMastersLbBEPoolID')]"
+      "value": "[variables('kubeMastersLbBEPoolID')]"
     },
     "kubeMinionsLbID": {
       "type": "string",
