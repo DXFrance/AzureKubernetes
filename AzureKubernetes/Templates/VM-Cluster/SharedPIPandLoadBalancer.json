@@ -256,6 +256,14 @@
       "type": "string",
       "value": "[concat(variables('kubeMastersLbID'), '/backendAddressPools/', variables('kubeMastersLbBackendPool'))]"
     },
+    "kubeMinionsLbID": {
+      "type": "string",
+      "value": "[variables('kubeMinionsLbID')]"
+    },
+    "kubeMinionsLbBackendPoolID": {
+      "type": "string",
+      "value": "[concat(variables('kubeMinionsLbID'), '/backendAddressPools/', variables('kubeMinionsLbBackendPool'))]"
+    },
     "result": {
       "value": "Load Balancers and IP Provisioning achieved",
       "type": "string"
