@@ -583,7 +583,7 @@
             "value": "[parameters('prefix')]"
           },
           "numberOfMinions": {
-            "value": "[parameters('numberOfMasters')]"
+            "value": "[parameters('numberOfMinions')]"
           },
           "kubeMinionsAvailabilitySetName": {
             "value": "[variables('kubeMinionsAvailabilitySetName')]"
