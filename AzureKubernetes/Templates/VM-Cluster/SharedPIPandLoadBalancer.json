@@ -47,25 +47,33 @@
   },
   "variables": {
     "ansibleDomainName": "[concat(parameters('prefix'),'-ansible')]",
-    
-    "kubeMastersLbBackendPool": "[concat(parameters('prefix'),'-bap-kube-masters')]",
-    "kubeMastersLbFrontend": "[concat(parameters('prefix'),'-fe-kube-masters')]",
+
     "kubeMastersLbName": "[concat(parameters('prefix'),'-lb-kube-masters')]",
+    "kubeMastersLbID": "[resourceId('Microsoft.Network/loadBalancers',variables('kubeMastersLbName'))]",
     "kubeMastersDomainName": "[concat(parameters('prefix'),'-kube-masters')]",
+    "kubeMastersLbFEName": "[concat(parameters('prefix'),'-fe-kube-masters')]",
+    "kubeMastersLbFEID": "[concat(variables('kubeMastersLbID'),'/frontendIPConfigurations/',variables('kubeMastersLbFEName'))]",
+    "kubeMastersLbBEPoolName": "[concat(parameters('prefix'),'-be-kube-masters')]",
+    "kubeMastersLbBEPoolID": "[concat(variables('kubeMastersLbID'),'/backendAddressPools/',variables('kubeMastersLbBEPoolName'))]",
     "kubeMastersLbPIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('kubeMastersLbPIPAddressName'))]",
     "kubeMastersLbNatRulesCopy": "lbnrcopy-kube-masters",
-    "kubeMastersLbID": "[resourceId('Microsoft.Network/loadBalancers',variables('kubeMastersLbName'))]",
-    "kubeMastersFrontEndIPConfigID": "[concat(variables('kubeMastersLbID'),'/frontendIPConfigurations/',variables('kubeMastersLbFrontend'))]",
-    
-    "kubeMinionsLbBackendPool": "[concat(parameters('prefix'),'-bap-kube-minions')]",
-    "kubeMinionsLbFrontend": "[concat(parameters('prefix'),'-fe-kube-minions')]",
+    "kubeMastersLbProbeName": "[concat(parameters('prefix'),'-lb-kube-masters-probe')]",
+    "kubeMastersLbProbeID": "[concat(variables('kubeMastersLbID'),'/probes/',variables('kubeMastersLbProbeName'))]",
+    "kubeMastersLbRulesName": "[concat(parameters('prefix'),'-lb-kube-masters-HTTP')]",
+
     "kubeMinionsLbName": "[concat(parameters('prefix'),'-lb-kube-minions')]",
+    "kubeMinionsLbID": "[resourceId('Microsoft.Network/loadBalancers',variables('kubeMinionsLbName'))]",
     "kubeMinionsDomainName": "[concat(parameters('prefix'),'-kube-minions')]",
+    "kubeMinionsLbFEName": "[concat(parameters('prefix'),'-fe-kube-minions')]",
+    "kubeMinionsLbFEID": "[concat(variables('kubeMinionsLbID'),'/frontendIPConfigurations/',variables('kubeMinionsLbFEName'))]",
+    "kubeMinionsLbBEPoolName": "[concat(parameters('prefix'),'-be-kube-minions')]",
+    "kubeMinionsLbBEPoolID": "[concat(variables('kubeMinionsLbID'),'/backendAddressPools/',variables('kubeMinionsLbBEPoolName'))]",
     "kubeMinionsLbPIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('kubeMinionsLbPIPAddressName'))]",
     "kubeMinionsLbNatRulesCopy": "lbnrcopy-kube-minions",
-    "kubeMinionsLbID": "[resourceId('Microsoft.Network/loadBalancers',variables('kubeMinionsLbName'))]",
-    "kubeMinionsFrontEndIPConfigID": "[concat(variables('kubeMinionsLbID'),'/frontendIPConfigurations/',variables('kubeMinionsLbFrontend'))]",
-    
+    "kubeMinionsLbProbeName": "[concat(parameters('prefix'),'-lb-kube-minions-probe')]",
+    "kubeMinionsLbProbeID": "[concat(variables('kubeMinionsLbID'),'/probes/',variables('kubeMinionsLbProbeName'))]",
+    "kubeMinionsLbRulesName": "[concat(parameters('prefix'),'-lb-kube-minions-HTTP')]",
+
     "PIPAddressType": "Dynamic"
   },
   "resources": [
@@ -104,7 +112,7 @@
       "properties": {
         "frontendIPConfigurations": [
           {
-            "name": "[variables('kubeMastersLbFrontend')]",
+            "name": "[variables('kubeMastersLbFEName')]",
             "properties": {
               "publicIPAddress": {
                 "id": "[variables('kubeMastersLbPIPAddressID')]"
@@ -114,7 +122,38 @@
         ],
         "backendAddressPools": [
           {
-            "name": "[variables('kubeMastersLbBackendPool')]"
+            "name": "[variables('kubeMastersLbBEPoolName')]"
+          }
+        ],
+        "loadBalancingRules": [
+          {
+            "name": "[variables('kubeMastersLbRulesName')]",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('kubeMastersLbFEID')]"
+              },
+              "backendAddressPool": {
+                "id": "[variables('kubeMastersLbBEPoolID')]"
+              },
+              "probe": {
+                "id": "[variables('kubeMastersLbProbeID')]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": 80,
+              "backendPort": 80,
+              "enableFloatingIP": true
+            }
+          }
+        ],
+        "probes": [
+          {
+            "name": "[variables('kubeMastersLbProbeName')]",
+            "properties": {
+              "protocol": "Tcp",
+              "port": 80,
+              "intervalInSeconds": "5",
+              "numberOfProbes": "2"
+            }
           }
         ]
       }
@@ -130,7 +169,7 @@
       "properties": {
         "frontendIPConfigurations": [
           {
-            "name": "[variables('kubeMinionsLbFrontend')]",
+            "name": "[variables('kubeMinionsLbFEName')]",
             "properties": {
               "publicIPAddress": {
                 "id": "[variables('kubeMinionsLbPIPAddressID')]"
@@ -140,31 +179,40 @@
         ],
         "backendAddressPools": [
           {
-            "name": "[variables('kubeMinionsLbBackendPool')]"
+            "name": "[variables('kubeMinionsLbBEPoolName')]"
+          }
+        ],
+        "loadBalancingRules": [
+          {
+            "name": "[variables('kubeMinionsLbRulesName')]",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('kubeMinionsLbFEID')]"
+              },
+              "backendAddressPool": {
+                "id": "[variables('kubeMinionsLbBEPoolID')]"
+              },
+              "probe": {
+                "id": "[variables('kubeMinionsLbProbeID')]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": 80,
+              "backendPort": 80,
+              "enableFloatingIP": true
+            }
+          }
+        ],
+        "probes": [
+          {
+            "name": "[variables('kubeMinionsLbProbeName')]",
+            "properties": {
+              "protocol": "Tcp",
+              "port": 80,
+              "intervalInSeconds": "5",
+              "numberOfProbes": "2"
+            }
           }
         ]
-      }
-    },
-    {
-      "apiVersion": "[parameters('apiVersion')]",
-      "type": "Microsoft.Network/loadBalancers/inboundNatRules",
-      "name": "[concat(variables('kubeMastersLbName'), '/', 'HTTP-8', copyIndex())]",
-      "location": "[resourceGroup().location]",
-      "copy": {
-        "name": "[variables('kubeMastersLbNatRulesCopy')]",
-        "count": "[parameters('numberOfMasters')]"
-      },
-      "dependsOn": [
-        "[concat('Microsoft.Network/loadBalancers/', variables('kubeMastersLbName'))]"
-      ],
-      "properties": {
-        "frontendIPConfiguration": {
-          "id": "[variables('kubeMastersFrontEndIPConfigID')]"
-        },
-        "protocol": "tcp",
-        "frontendPort": "[copyIndex(80)]",
-        "backendPort": 80,
-        "enableFloatingIP": false
       }
     },
     {
@@ -181,33 +229,11 @@
       ],
       "properties": {
         "frontendIPConfiguration": {
-          "id": "[variables('kubeMastersFrontEndIPConfigID')]"
+          "id": "[variables('kubeMastersLbFEID')]"
         },
         "protocol": "tcp",
         "frontendPort": "[copyIndex(22)]",
         "backendPort": 22,
-        "enableFloatingIP": false
-      }
-    },
-    {
-      "apiVersion": "[parameters('apiVersion')]",
-      "type": "Microsoft.Network/loadBalancers/inboundNatRules",
-      "name": "[concat(variables('kubeMinionsLbName'), '/', 'HTTP-8', copyIndex())]",
-      "location": "[resourceGroup().location]",
-      "copy": {
-        "name": "[variables('kubeMinionsLbNatRulesCopy')]",
-        "count": "[parameters('numberOfMinions')]"
-      },
-      "dependsOn": [
-        "[concat('Microsoft.Network/loadBalancers/', variables('kubeMinionsLbName'))]"
-      ],
-      "properties": {
-        "frontendIPConfiguration": {
-          "id": "[variables('kubeMinionsFrontEndIPConfigID')]"
-        },
-        "protocol": "tcp",
-        "frontendPort": "[copyIndex(80)]",
-        "backendPort": 80,
         "enableFloatingIP": false
       }
     },
@@ -225,7 +251,7 @@
       ],
       "properties": {
         "frontendIPConfiguration": {
-          "id": "[variables('kubeMinionsFrontEndIPConfigID')]"
+          "id": "[variables('kubeMinionsLbFEID')]"
         },
         "protocol": "tcp",
         "frontendPort": "[copyIndex(22)]",
@@ -254,7 +280,7 @@
     },
     "kubeMastersLbBackendPoolID": {
       "type": "string",
-      "value": "[concat(variables('kubeMastersLbID'), '/backendAddressPools/', variables('kubeMastersLbBackendPool'))]"
+      "value": "[[variables('kubeMastersLbBEPoolID')]"
     },
     "kubeMinionsLbID": {
       "type": "string",
@@ -262,7 +288,7 @@
     },
     "kubeMinionsLbBackendPoolID": {
       "type": "string",
-      "value": "[concat(variables('kubeMinionsLbID'), '/backendAddressPools/', variables('kubeMinionsLbBackendPool'))]"
+      "value": "[variables('kubeMinionsLbBEPoolID')]"
     },
     "result": {
       "value": "Load Balancers and IP Provisioning achieved",
