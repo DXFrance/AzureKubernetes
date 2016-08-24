@@ -156,9 +156,6 @@
               ],
               "loadBalancerInboundNatRules": [
                 {
-                  "id": "[concat(parameters('kubeMinionsLbID'),'/inboundNatRules/HTTP-8', copyindex())]"
-                },
-                {
                   "id": "[concat(parameters('kubeMinionsLbID'),'/inboundNatRules/SSH-', copyindex())]"
                 }
               ]
