@@ -208,6 +208,7 @@
             "name": "[variables('kubeMinionsLbProbeName')]",
             "properties": {
               "protocol": "Http",
+              "requestPath": "/",
               "port": 9090,
               "intervalInSeconds": 5,
               "numberOfProbes": 2
