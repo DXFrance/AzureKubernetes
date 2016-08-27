@@ -193,8 +193,8 @@
                 "id": "[variables('kubeMinionsLbBEPoolID')]"
               },
               "protocol": "Tcp",
-              "frontendPort": 9090,
-              "backendPort": 9090,
+              "frontendPort": 80,
+              "backendPort": 80,
               "enableFloatingIP": false,
               "idleTimeoutInMinutes": 5,
               "probe": {
@@ -209,7 +209,7 @@
             "properties": {
               "protocol": "Http",
               "requestPath": "/",
-              "port": 9090,
+              "port": 80,
               "intervalInSeconds": 5,
               "numberOfProbes": 2
             }
