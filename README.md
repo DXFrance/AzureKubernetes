@@ -2,6 +2,20 @@
 Kubernetes provisioning template
 
 Kubernetes is an open-source orchestration platform for automating deployment, operations, and scaling of applications across multiple hosts. It targets applications composed of multiple Docker containers, such as distributed micro-services and provides ways for containers to find and communicate with each other. It enables users to ask a cluster to run a set of containers with an automatic scheduling and choice of the hosts to run those containers on. It regroups containers that make up an application into logical units for easy management with self-healing mechanisms (auto-restarting, re-scheduling, and replicating containers) and discovery. Kubernetes has been created by Google but contributors to this project now include IBM, Microsoft, Red Hat, CoreOS, Mesosphere, and others… 
+Please note that there are two templates available in this repository :
+- The first version (which is the version you deploy if you use the deploy button at the bottom)
+  https://github.com/DXFrance/AzureKubernetes/blob/master/Kubernetes-Ansible-Centos-Azure/azuredeploy.json
+  This version requires first the upload of you ssh key files in an Azure Storage Vault (explanations on the blog articles referenced below)
+- The second version which is the version you  deploy if you use the "deploy button" at the bottom.
+  It's a link template : it automatically generates SSH keys for Ansible, so you do not require to pre-upload your key files
+
+Both are documented in a list of blog articles which we encourage you to read:
+- https://blogs.msdn.microsoft.com/stephgou/2016/07/11/kubernetes-cluster-automated-deployment-on-azure-first-step/
+- https://blogs.msdn.microsoft.com/stephgou/2016/07/15/kubernetes-cluster-automated-deployment-on-azure-programmatic-scripting/
+- https://blogs.msdn.microsoft.com/stephgou/2016/08/19/provisioning-the-azure-kubernetes-infrastructure-with-a-declarative-template/
+- https://blogs.msdn.microsoft.com/stephgou/2016/08/27/configuring-the-azure-kubernetes-infrastructure-with-bash-scripts-and-ansible-tasks/
+
+Have fun !
 
 
                           ┌───────────────────────────────┐
@@ -70,9 +84,10 @@ arm:
 azure group create kuber8grp northeurope
 azure group deployment create kuber8grp kuber8cluster --template-uri https://raw.githubusercontent.com/DXFrance/AzureKubernetes/master/Kubernetes-Ansible-Centos-Azure/azuredeploy.json
 ```
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FDXFrance%2FAzureKubernetes%2Fmaster%2FKubernetes-Ansible-Centos-Azure%2Fazuredeploy.json" target="_blank">
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FDXFrance%2FAzureKubernetes%2Fmaster%2FAzureKubernetes%2FTemplates%2FVM-Cluster%2Fazuredeploy.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png"/>
 </a>
+
 <a href="http://armviz.io/#/?load=https://raw.githubusercontent.com/DXFrance/AzureKubernetes/master/Kubernetes-Ansible-Centos-Azure/azuredeploy.json" target="_blank">
     <img src="http://armviz.io/visualizebutton.png"/>
 </a>
