@@ -161,7 +161,7 @@
     },
     "adminPassword": {
       "type": "string",
-      "defaultValue": "devops",
+      "defaultValue": "V3l0C1RaPt0R#",
       "metadata": {
         "description": "Password for on the VMs"
       }
