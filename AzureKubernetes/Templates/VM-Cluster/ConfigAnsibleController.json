@@ -118,12 +118,6 @@
         "description": "The CentOS version for the VM. This will pick a fully patched image of this given CentOS version. Allowed values are: 7.0, 7.1, 7.2"
       }
     },
-    "vaultAccountName": {
-      "type": "string",
-      "metadata": {
-        "description": "Private storage account name in which you are storing your certificates for ansible and the template bash scripts"
-      }
-    },
     "keyStorageAccountName": {
       "type": "string",
       "metadata": {
@@ -157,24 +151,12 @@
       "sku": "[parameters('centosOSVersion')]",
       "version": "latest"
     },
-    "scriptBlobLocation": "scripts/config-ansible.sh",
-    "scriptBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('scriptBlobLocation'))]",
-
-    "keysBlobLocation": "keys/id_rsa",
-    "keysBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('keysBlobLocation'))]",
-
-    "pubBlobLocation": "keys/id_rsa.pub",
-    "pubBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('pubBlobLocation'))]",
 
     "customScriptDeployFile": "config-ansible.sh",
     "customScriptDeployURL": "[concat(parameters('configScriptsBaseURL'),'/',variables('customScriptDeployFile'))]",
     "customScriptAnsibleCommand": "[concat('bash ',variables('customScriptDeployFile'))]",
     "pythonAzureScriptURL": "[concat(parameters('configScriptsBaseURL'),'/','WriteSSHToPrivateStorage.py')]",
 
-    "tokenBlobLocation": "keys/slack-token.tok",
-    "tokenBlobUrl": "[concat('https://',parameters('vaultAccountName'),'.blob.core.windows.net/',variables('tokenBlobLocation'))]",
-
-    "assetsStorageAccountId": "[resourceId(parameters('vaultAccountName'),'Microsoft.Storage/storageAccounts', parameters('vaultAccountName'))]",
     "ansibleIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('ansibleIPAddressName'))]",
     "kubeMastersLbPIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('kubeMastersLbPIPAddressName'))]",
 

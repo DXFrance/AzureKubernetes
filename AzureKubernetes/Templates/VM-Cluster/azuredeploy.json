@@ -11,14 +11,8 @@
     },
     "kubernetesVmSize": {
       "type": "string",
-      "defaultValue": "Standard_A0",
+      "defaultValue": "Standard_A1",
       "allowedValues": [
-        "Basic_A0",
-        "Basic_A1",
-        "Basic_A2",
-        "Basic_A3",
-        "Basic_A4",
-        "Standard_A0",
         "Standard_A1",
         "Standard_A2",
         "Standard_A3",
@@ -72,14 +66,8 @@
     },
     "ansibleVmSize": {
       "type": "string",
-      "defaultValue": "Standard_A0",
+      "defaultValue": "Standard_A1",
       "allowedValues": [
-        "Basic_A0",
-        "Basic_A1",
-        "Basic_A2",
-        "Basic_A3",
-        "Basic_A4",
-        "Standard_A0",
         "Standard_A1",
         "Standard_A2",
         "Standard_A3",
@@ -211,20 +199,6 @@
       "defaultValue": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDLWadgtcq8rg0HMWlv1/1HQfRayLzGKmHg2ISmAJx+LQCa8SWCwBFGS0vKKwgdwhpMMCl0wI2/eURmxbpOF4Tp10jRikSIlSZyua7FU9VmlLWtYAmRQ42eWvmsCCI/IpgJ4LGODe8xDQtcXOtp3yUhkX5g9HHNwwR35Nnzum1VGMk4ftTA9CC3gfqWcIIKqQ+xE1BzqUNmGpJHghCgG/g8Oh7/sR05CXwASMoGTYuLpPHp2sEfGNm91CmnMa21ifaz4RMAcD2SwqReLgMmi0tZGUGQqLnzX/6ibJvpYSU5iZ/7qEzgDy83dBqaHbI0LEA4H0q59TJ2DWXYu+dloITz hleclerc@HeL.local",
       "metadata": {
         "description": "Public key for SSH authentication"
-      }
-    },
-    "commandToExecute": {
-      "type": "string",
-      "defaultValue": "bash first-boot.sh",
-      "metadata": {
-        "description": "The command to execute."
-      }
-    },
-    "vaultAccountName": {
-      "type": "string",
-      "defaultValue": "kub8vault",
-      "metadata": {
-        "description": "Private storage account name in which you are storing your certificates for ansible and the template bash scripts"
       }
     },
     "templatesBaseURL": {
@@ -474,9 +448,6 @@
           },
           "centosOSVersion": {
             "value": "[parameters('centosOSVersion')]"
-          },
-          "vaultAccountName": {
-            "value": "[parameters('vaultAccountName')]"
           },
           "keyStorageAccountName": {
             "value": "[variables('keyStorageAccountName')]"
