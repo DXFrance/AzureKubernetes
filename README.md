@@ -6,8 +6,7 @@ Please note that there are two templates available in this repository :
 - The first version (which is the version you deploy if you use the deploy button at the bottom)
   https://github.com/DXFrance/AzureKubernetes/blob/master/Kubernetes-Ansible-Centos-Azure/azuredeploy.json
   This version requires first the upload of you ssh key files in an Azure Storage Vault (explanations on the blog articles referenced below)
-- The second version which is the version you  deploy if you use the "deploy button" at the bottom.
-  It's a link template : it automatically generates SSH keys for Ansible, so you do not require to pre-upload your key files
+- The second version is a link template : it automatically generates SSH keys for Ansible, so you do not require to pre-upload your key files
 
 Both are documented in a list of blog articles which we encourage you to read:
 - https://blogs.msdn.microsoft.com/stephgou/2016/07/11/kubernetes-cluster-automated-deployment-on-azure-first-step/
@@ -84,10 +83,9 @@ arm:
 azure group create kuber8grp northeurope
 azure group deployment create kuber8grp kuber8cluster --template-uri https://raw.githubusercontent.com/DXFrance/AzureKubernetes/master/Kubernetes-Ansible-Centos-Azure/azuredeploy.json
 ```
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FDXFrance%2FAzureKubernetes%2Fmaster%2FAzureKubernetes%2FTemplates%2FVM-Cluster%2Fazuredeploy.json" target="_blank">
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FDXFrance%2FAzureKubernetes%2Fmaster%2FKubernetes-Ansible-Centos-Azure%2Fazuredeploy.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png"/>
 </a>
-
 <a href="http://armviz.io/#/?load=https://raw.githubusercontent.com/DXFrance/AzureKubernetes/master/Kubernetes-Ansible-Centos-Azure/azuredeploy.json" target="_blank">
     <img src="http://armviz.io/visualizebutton.png"/>
 </a>
