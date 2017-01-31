@@ -235,11 +235,13 @@
       "ConfigAnsibleControllerTemplateURL": "[concat(parameters('templatesBaseURL'),'/ConfigAnsibleController.json')]"
     },
 
-    "ansibleStorageAccountName": "[concat(parameters('prefix'), 'ansible')]",
-    "kubeMastersStorageAccountName": "[concat(parameters('prefix'), 'kubemasters')]",
-    "kubeMinionsStorageAccountName": "[concat(parameters('prefix'), 'kubeminions')]",
-    "etcdStorageAccountName": "[concat(parameters('prefix'), 'etcd')]",
-    "keyStorageAccountName": "[concat(parameters('prefix'), 'key')]",
+    "storageAccountprefix": "[replace(replace(tolower(concat(parameters('prefix'), uniquestring(resourceGroup().id))), '-',''),'.','')]",
+
+    "ansibleStorageAccountName": "[concat(variables('storageAccountprefix'), 'ansible')]",
+    "kubeMastersStorageAccountName": "[concat(variables('storageAccountprefix'), 'masters')]",
+    "kubeMinionsStorageAccountName": "[concat(variables('storageAccountprefix'), 'minions')]",
+    "etcdStorageAccountName": "[concat(variables('storageAccountprefix'), 'etcd')]",
+    "keyStorageAccountName": "[concat(variables('storageAccountprefix'), 'key')]",
 
     "kubeMastersAvailabilitySetName": "[concat(parameters('prefix'), 'as-kube-masters')]",
     "kubeMinionsAvailabilitySetName": "[concat(parameters('prefix'), 'as-kube-minions')]",

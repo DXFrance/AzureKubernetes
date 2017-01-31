@@ -191,7 +191,7 @@
               "diskSizeGB": "1000",
               "lun": 0,
               "vhd": {
-                "uri": "[concat('http://', parameters('etcdStorageAccountName'),'.blob.core.windows.net/vhds/', variables('etcdDataDiskName'), copyIndex(), 'datadisk1.vhd')]"
+                "uri": "[concat('http://', parameters('etcdStorageAccountName'),'.blob.core.windows.net/vhds/', variables('etcdDataDiskName'), copyIndex(), '.vhd')]"
               },
               "createOption": "Empty"
             }

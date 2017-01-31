@@ -4,7 +4,8 @@
   "parameters": {
     "prefix": {
       //"value": "GEN-UNIQUE",
-      "value": "kubiscool"
+      // Max 4 letters because of 24 characters limit on storage account name constructed with resourceid
+      "value": "kub"
     },
     "ansibleVmSize": {
       "value": "Standard_A1"
