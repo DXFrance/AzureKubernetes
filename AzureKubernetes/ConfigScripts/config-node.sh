@@ -200,7 +200,7 @@ LOG_DATE=$(date +%s)
 HOST_FILE="/etc/hosts"
 
 GIT_KUB8_URL="https://github.com/DXFrance/AzureKubernetes.git"
-EPEL_REPO="http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-8.noarch.rpm"
+EPEL_REPO="http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-9.noarch.rpm"
 
 LOG_URL="https://hooks.slack.com/services/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"
 
