@@ -38,3 +38,4 @@ az group deployment create -g $resourceGroupName `
 
 $d = get-date
 Write-Host "Stopping Deployment $d"
+

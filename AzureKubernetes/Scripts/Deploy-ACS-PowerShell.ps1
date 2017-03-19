@@ -44,7 +44,13 @@ param(
  $templateFilePath = "..\Templates\acskubernetesdeploy.json",
 
  [string]
- $parametersFilePath = "..\Templates\acskubernetes.parameters.json"
+ $parametersFilePath = "..\Templates\acskubernetes.parameters.json",
+
+ [string]
+ $clusterName = "containerservice-$resourceGroupName",
+
+ [string]
+ $sshKeyFile = "C:\DEV\keys\idrsa"
 )
 
 <#
@@ -119,8 +125,12 @@ if(Test-Path $parametersFilePath) {
 $d = get-date
 Write-Host "Stopping Deployment $d"
 
-$clusterName = "containerservice-$resourceGroupName"
-$sshKeyFile = "C:\DEV\keys\idrsa"
+
 az acs kubernetes get-credentials --resource-group=$resourceGroupName --name=$clusterName --ssh-key-file=$sshKeyFile
 
 az acs kubernetes browse --resource-group=$resourceGroupName --name=$clusterName --ssh-key-file=$sshKeyFile
+
+#ubuntu
+az login
+az account set --subscription "0459dbd5-b73e-4a5b-b052-250dc51ac622"
+az acs kubernetes get-credentials --resource-group="PSArmAcsKubernetes" --name="containerservice-PSArmAcsKubernetes" --ssh-key-file="/mnt/c/DEV/keys/idrsa"

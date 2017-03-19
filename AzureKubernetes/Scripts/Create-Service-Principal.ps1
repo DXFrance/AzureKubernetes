@@ -1,6 +1,7 @@
 ﻿Add-AzureRmAccount
-$app = New-AzureRmADApplication -DisplayName "Kubernetes" -HomePage "https://stephgou/kubernetes" -IdentifierUris "https://stephgou/kubernetes" -Password "Azure007"
-New-AzureRmADServicePrincipal -ApplicationId $app.ApplicationId
+$app = New-AzureRmADApplication -DisplayName "oldKubernetes" `
+ -HomePage "https://stephgou/kubernetes" -IdentifierUris "https://stephgou/kubernetes" -Password "cecinestpasunpassword"
+New-AzureRmADServicePrincipal -ApplicationId $app.A-pplicationId
 New-AzureRmRoleAssignment -RoleDefinitionName Contributor -ServicePrincipalName $app.ApplicationId.Guid
 
 
@@ -14,14 +15,6 @@ Login-AzureRmAccount -Credential $creds -ServicePrincipal -TenantId $tenant
 #az login --service-principal -u yourClientID -p yourClientSecret --tenant yourTenant
 #az vm list-sizes --location westus
 
-
-# Service principal client ID = Application ID -> ad75912a-0087-4e03-9bb4-9b2f28a03ab4
-
-# Do not use Object ID -> 202a6664-9f8b-417d-bf94-01c79a72af5a
-
-# Password - Azure007
-
-# Key (2 years) ? -> aNfhajdJH0ZG/B8nCbe/EkVhVQwKqKlZVdyo6rwMYgg=
 
 #ssh-keygen -f "/home/stephgou/.ssh/known_hosts" -R kub-kube-masters.westeurope.cloudapp.azure.com
 #ssh -p 22 -i /mnt/c/DEV/keys/idrsa devops@kub-ansible.westeurope.cloudapp.azure.com

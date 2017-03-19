@@ -1,6 +1,4 @@
-﻿#ad75912a-0087-4e03-9bb4-9b2f28a03ab4
-
-#Add-AzureRmAccount
+﻿#Add-AzureRmAccount
 $app = Get-AzureRmADApplication -IdentifierUri "https://stephgou/kubernetes"
 echo $app.ApplicationId.Guid
 
