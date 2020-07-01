@@ -4,11 +4,11 @@ Kubernetes provisioning template
 Kubernetes is an open-source orchestration platform for automating deployment, operations, and scaling of applications across multiple hosts. It targets applications composed of multiple Docker containers, such as distributed micro-services and provides ways for containers to find and communicate with each other. It enables users to ask a cluster to run a set of containers with an automatic scheduling and choice of the hosts to run those containers on. It regroups containers that make up an application into logical units for easy management with self-healing mechanisms (auto-restarting, re-scheduling, and replicating containers) and discovery. Kubernetes has been created by Google but contributors to this project now include IBM, Microsoft, Red Hat, CoreOS, Mesosphere, and others… 
 Please note that there are two templates available in this repository :
 - The first version
-  https://github.com/DXFrance/AzureKubernetes/blob/master/Kubernetes-Ansible-Centos-Azure/azuredeploy.json
+  https://github.com/stephgou/AzureKubernetes/blob/master/Kubernetes-Ansible-Centos-Azure/azuredeploy.json
   This version requires first the upload of you ssh key files in an Azure Storage Vault (explanations on the blog articles referenced below)
 
 - The second version is a link template
-https://github.com/DXFrance/AzureKubernetes/blob/master/AzureKubernetes/Templates/VM-Cluster/azuredeploy.json
+https://github.com/stephgou/AzureKubernetes/blob/master/AzureKubernetes/Templates/VM-Cluster/azuredeploy.json
   This version automatically generates SSH keys for Ansible, so you do not require to pre-upload your key files
 
 Both are documented in a list of blog articles which we encourage you to read:
@@ -84,18 +84,18 @@ arm:
 ### azure-cli : 
 ```bash
 azure group create kuber8grp northeurope
-azure group deployment create kuber8grp kuber8cluster --template-uri https://raw.githubusercontent.com/DXFrance/AzureKubernetes/master/Kubernetes-Ansible-Centos-Azure/azuredeploy.json
+azure group deployment create kuber8grp kuber8cluster --template-uri https://raw.githubusercontent.com/stephgou/AzureKubernetes/master/Kubernetes-Ansible-Centos-Azure/azuredeploy.json
 ```
 Template V1:
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FDXFrance%2FAzureKubernetes%2Fmaster%2FKubernetes-Ansible-Centos-Azure%2Fazuredeploy.json" target="_blank">
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fstephgou%2FAzureKubernetes%2Fmaster%2FKubernetes-Ansible-Centos-Azure%2Fazuredeploy.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png"/>
 </a>
 Template V2 (Linked template)
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FDXFrance%2FAzureKubernetes%2Fmaster%2FAzureKubernetes%2FTemplates%2FVM-Cluster%2Fazuredeploy.json" target="_blank">
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fstephgou%2FAzureKubernetes%2Fmaster%2FAzureKubernetes%2FTemplates%2FVM-Cluster%2Fazuredeploy.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png"/>
 </a>
 
 visualize Template V1
-<a href="http://armviz.io/#/?load=https://raw.githubusercontent.com/DXFrance/AzureKubernetes/master/Kubernetes-Ansible-Centos-Azure/azuredeploy.json" target="_blank">
+<a href="http://armviz.io/#/?load=https://raw.githubusercontent.com/stephgou/AzureKubernetes/master/Kubernetes-Ansible-Centos-Azure/azuredeploy.json" target="_blank">
     <img src="http://armviz.io/visualizebutton.png"/>
 </a>
